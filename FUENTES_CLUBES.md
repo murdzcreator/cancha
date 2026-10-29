@@ -1,0 +1,65 @@
+# Fuentes y cobertura de fichas de clubes
+
+La base de CANCHA V13 distingue hechos contrastados al 27/10/2026 y referencias históricas de estadio/ciudad que deben confirmarse por temporada. **Un club sin fuente no recibe entrenador ficticio.**
+
+- **AC Milan**: Referencia histórica / catálogo local
+- **Aldosivi**: https://www.ligaprofesional.ar/clubes/aldosivi — Entrenador: https://buscador.ole.com.ar/futbol-primera/aldosivi-sarmiento-torneo-clausura-fecha-12-minuto-minuto_0_ddLIK8YEdn.html
+- **Alianza Lima**: https://dev.ovacion.pe/noticias/alianza-lima/arosemena-continuidad-pablo-guede-depende — Estadio: https://www.gob.pe/institucion/ipd/normas-legales/8358383-394-2026-disede-ipd
+- **Arsenal**: Referencia histórica / catálogo local
+- **AS Monaco**: Referencia histórica / catálogo local
+- **AS Roma**: Referencia histórica / catálogo local
+- **Aston Villa**: Referencia histórica / catálogo local
+- **Athletic Club**: Referencia histórica / catálogo local
+- **Atlético de Madrid**: Referencia histórica / catálogo local
+- **Bayern Múnich**: Referencia histórica / catálogo local
+- **Boca Juniors**: Referencia histórica / catálogo local
+- **Botafogo**: Referencia histórica / catálogo local
+- **Chelsea**: Referencia histórica / catálogo local
+- **Club América**: Referencia histórica / catálogo local
+- **Corinthians**: Referencia histórica / catálogo local
+- **Cruz Azul**: Referencia histórica / catálogo local
+- **Everton**: Referencia histórica / catálogo local
+- **FBC Melgar**: Referencia histórica / catálogo local
+- **FC Barcelona**: Referencia histórica / catálogo local
+- **Flamengo**: Referencia histórica / catálogo local
+- **Fluminense**: Referencia histórica / catálogo local
+- **Grêmio**: Referencia histórica / catálogo local
+- **Guadalajara**: Referencia histórica / catálogo local
+- **Independiente**: Referencia histórica / catálogo local
+- **Inter de Milán**: Referencia histórica / catálogo local
+- **Internacional**: Referencia histórica / catálogo local
+- **Juventus**: Referencia histórica / catálogo local
+- **Lazio**: Referencia histórica / catálogo local
+- **Lille**: Referencia histórica / catálogo local
+- **Liverpool**: Referencia histórica / catálogo local
+- **Manchester City**: Referencia histórica / catálogo local
+- **Manchester United**: https://www.manutd.com/en/news/michael-carrick-continues-as-man-united-head-coach-2026 — Estadio: https://www.manutd.com/
+- **Monterrey**: Referencia histórica / catálogo local
+- **Napoli**: Referencia histórica / catálogo local
+- **Newcastle United**: Referencia histórica / catálogo local
+- **Newell’s Old Boys**: Referencia histórica / catálogo local
+- **Olympique Lyon**: Referencia histórica / catálogo local
+- **Olympique Marsella**: Referencia histórica / catálogo local
+- **Osasuna**: Referencia histórica / catálogo local
+- **Palmeiras**: Referencia histórica / catálogo local
+- **Paris Saint-Germain**: https://www.psg.fr/en/mens-football/staff — Estadio: https://www.psg.fr/es/el-club/instalaciones/parc-des-princes
+- **Pumas UNAM**: Referencia histórica / catálogo local
+- **Racing Club**: Referencia histórica / catálogo local
+- **Real Madrid**: Referencia histórica / catálogo local
+- **River Plate**: Referencia histórica / catálogo local
+- **Rosario Central**: Referencia histórica / catálogo local
+- **San Lorenzo**: Referencia histórica / catálogo local
+- **Santos**: Referencia histórica / catálogo local
+- **São Paulo**: Referencia histórica / catálogo local
+- **Sevilla**: Referencia histórica / catálogo local
+- **Sport Boys**: Referencia histórica / catálogo local
+- **Sporting Cristal**: Referencia histórica / catálogo local
+- **Talleres**: Referencia histórica / catálogo local
+- **Tigres UANL**: Referencia histórica / catálogo local
+- **Tottenham**: Referencia histórica / catálogo local
+- **Universitario**: Referencia histórica / catálogo local
+- **Valencia**: Referencia histórica / catálogo local
+- **Vélez Sarsfield**: Referencia histórica / catálogo local
+- **Villarreal**: Referencia histórica / catálogo local
+
+Los datos de partidos y estadística individual dependen de APIs gratuitas opcionales; no se generan alineaciones artificiales.

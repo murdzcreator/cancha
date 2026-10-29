@@ -1,0 +1,44 @@
+{
+  "fecha": "2026-10-26",
+  "catalogos": [
+    {
+      "liga": "Liga 1 Perú",
+      "fuente": "https://elcomercio.pe/resultados/torneo/liga-1-primera-division-futbol-peru/clubes/"
+    },
+    {
+      "liga": "UEFA Champions League",
+      "fuente": "https://www.uefa.com/uefachampionsleague/clubs/"
+    },
+    {
+      "liga": "LaLiga EA Sports",
+      "fuente": "https://www.laliga.com/laliga-easports/clubes"
+    },
+    {
+      "liga": "Premier League",
+      "fuente": "https://www.premierleague.com/en/news/4365156/new-to-the-premier-league-heres-all-you-need-to-know"
+    },
+    {
+      "liga": "Liga Profesional Argentina",
+      "fuente": "https://www.afa.com.ar/es/posts/sorteo-de-la-liga-profesional-2026-se-definen-los-grupos-del-torneo-apertura-y-torneo-clausura"
+    },
+    {
+      "liga": "Serie A",
+      "fuente": "https://programmi.sky.it/sport/calcio/serie-a"
+    },
+    {
+      "liga": "Ligue 1",
+      "fuente": "https://ligue1.com/fr/articles/l1_article_5293-les-dates-de-reprise-des-clubs-de-l1-2627"
+    },
+    {
+      "liga": "Brasileirão Série A",
+      "fuente": "https://www.cbf.com.br/futebol-brasileiro/times/campeonato-brasileiro/serie-a/2026"
+    },
+    {
+      "liga": "Liga MX",
+      "fuente": "https://depor.com/resultados/torneo/liga-mx-primera-division-futbo-mexico/clubes/"
+    }
+  ],
+  "tablaChampions": "https://sport.sky.it/calcio/champions-league/classifica",
+  "fixtureChampions": "https://es.uefa.com/uefachampionsleague/news/02a8-21767f6df81a-a97aaf2bf581-1000--champions-league-2026-27-calendario-fechas-y-horarios-de-los/",
+  "datosEnLinea": "https://github.com/pseudo-r/Public-ESPN-API"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "cancha-v14-1",
+  "version": "14.2.0",
+  "private": true,
+  "description": "CANCHA V14 con importador opcional SoccerData, calendario paginado y trazabilidad",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "logos:audit": "node scripts/auditar-escudos.mjs",
+    "soccerdata:help": "python scripts/soccerdata_export.py --help"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

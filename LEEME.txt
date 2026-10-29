@@ -1,0 +1,5 @@
+CANCHA V13 · Centro universal de partidos
+Instalación: abre INICIAR_CANCHA_WINDOWS.bat después de extraer el ZIP.
+Guía y límites: INSTRUCCIONES_V13.md
+
+CANCHA V14.1: Premier League y LaLiga, importación CC0 desde OpenFootball; consulta README_V14_1.md.

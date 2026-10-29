@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {downloadOpenFootball} from '../server/openfootball.mjs';
+const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const content=fs.readFileSync(path.join(root,'db.js'),'utf8');
+const db=JSON.parse(content.slice(content.indexOf('=')+1).trim().replace(/;\s*$/,''));
+console.log('CANCHA · Sincronización OpenFootball (CC0) · Premier League + LaLiga');
+console.log('Se consultan archivos abiertos. No son resultados en directo.');
+const data=await downloadOpenFootball(root,db,{timeoutMs:9500,force:process.argv.includes('--forzar'),log:console.log});
+console.log('Resumen:',JSON.stringify(data));
+process.exitCode=data.some(x=>x.ok)?0:2;

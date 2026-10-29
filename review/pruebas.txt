@@ -1,0 +1,54 @@
+
+> cancha-v14-1@14.2.0 test
+> node --test test/*.test.mjs
+
+✔ caché reutiliza y preserva última respuesta ante error (3.183379ms)
+✔ solo nombre exacto + país correcto; aliases explícitos (1.921068ms)
+✔ archivos de un club homónimo extranjero no contaminan el escudo (0.288624ms)
+✔ rechaza SVG con scripts, enlaces externos y png incorrectos (0.575065ms)
+✔ integración automática: descarga SVG de ruta exacta y guarda manifest, sin intervención manual (49.560746ms)
+✔ OpenFootball: 380 encuentros y tabla de 20 equipos con datos reales estructurados, no en vivo (82.230568ms)
+✔ no se confunde Real Madrid con otro club ni se aceptan homónimos (53.711634ms)
+✔ rechaza una entrada duplicada para no falsear puntos (52.774526ms)
+✔ sin conexión conserva la última importación válida (57.023563ms)
+✔ respuesta remota válida se importa y la URL de origen es inalterable (167.695586ms)
+✔ importaciones empaquetadas conservan cobertura y resultados coherentes tras actualizar (140.390454ms)
+✔ normaliza nombres de clubes sin enlazar coincidencias ambiguas (3.539189ms)
+✔ API-Football normaliza tabla peruana completa de 18 equipos (5.961781ms)
+✔ TheSportsDB free top-5 never counts as full 18-team standings (1.747817ms)
+✔ API-Football squads can load the real club without fake placeholders (1.443079ms)
+✔ fechas: rechaza días imposibles y horas sin zona, sin normalizar febrero a marzo (20.105101ms)
+✔ selección de partidos: evita los primeros ocho antiguos y programados vencidos (1.511222ms)
+✔ enteros: cero válido; fracciones, booleanos y blancos no se vuelven estadísticas (0.256756ms)
+✔ las nueve competiciones tienen clubes únicos y partidos ligados a equipos de la competición (0.754014ms)
+✔ OpenFootball conserva el día si falta hora; convierte horario de verano e invierno (4.145561ms)
+✔ importación no transforma FINAL sin resultado ni medio marcador en un resultado válido (2.935553ms)
+✔ estadísticas local/visitante se unen por ID del equipo aunque el proveedor invierta las filas (3.79163ms)
+✔ no permite abrir un partido de otra liga ni otra temporada (4.119532ms)
+✔ vista: alineaciones invertidas se ubican por equipo y no heredan estadísticas del rival (4.791612ms)
+✔ diferencia de goles: corrige la resta conservando cifra fuente, puntos y posición (0.85833ms)
+✔ ningún calendario importado = no sobreescritura del proveedor (5.177102ms)
+✔ partidos de liga válidos quedan navegables sin estadísticas inventadas (4.963706ms)
+✔ tablas parciales no se presentan como clasificaciones completas (0.622035ms)
+✔ rechaza valores que contradicen PJ = ganados + empates + perdidos (1.152006ms)
+✔ temporada incorrecta o club ambiguo no entran en CANCHA (0.794404ms)
+✔ combina perfiles iguales, respeta la prioridad y añade campos faltantes (2.542912ms)
+✔ elige tabla completa antes que fragmentos gratuitos sin mezclar puntos de fechas distintas (0.926462ms)
+✔ índice persiste futbolistas de plantillas consultadas y permite buscar (4.248045ms)
+✔ encuentro de API-Football consulta eventos y estadísticas por endpoints separados (3.70589ms)
+✔ 183 clubes conservados y escudos locales de V12.4 (3.333511ms)
+✔ cada uno de los 37 partidos históricos tiene identificador y equipos (0.301753ms)
+✔ hechos verificados tienen fuente y fecha, y no inventamos entrenadores para el resto (0.215124ms)
+✔ búsqueda de ficha pública valida país y evita clubes homónimos (2.407849ms)
+✔ página contiene plantilla universal y fuente estática local (0.582125ms)
+✔ importación abre fichas con vecinos reales del catálogo sin inventar alineaciones (166.159417ms)
+✔ navegación de pestañas de ficha no usa enlaces hash que destruyen la ruta (0.420221ms)
+✔ contadores importados sustituyen a los estáticos de la versión anterior (0.447643ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 654.027253
