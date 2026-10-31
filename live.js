@@ -8,11 +8,12 @@
  const date=s=>window.CANCHA_DATES.format(s);
  let healthLoaded=false;
  let routeGeneration=0,activeLeague=null,groups=[],groupSelected=0,activeStandings=null;
+ let standingsDetailed=false,standingsSearch='';
  const fixturePages=new Map(),fixtureSnapshots=new Map();
  const status=()=>document.getElementById('v11-system-status');
  function headline(mark,info=''){
    healthLoaded=true;
-   const el=status();if(el)el.innerHTML=`<span class="status-dot"></span>${esc(mark)}${info?` <small>${esc(info)}</small>`:''}`;
+   const el=status();if(el)el.innerHTML=`<a class="m16-source-link" href="#/fuentes" title="${esc(info||mark)}">Fuentes y cobertura</a>`;
  }
  function banner(type,message){return `<div class="v11-banner ${type}">${message}</div>`}
  const offline=location.protocol==='file:';
@@ -20,7 +21,7 @@
  const key=(type,id)=>`cancha-v15-${type}-${id}`;
  function read(type,id){try{return JSON.parse(localStorage.getItem(key(type,id))||'null')}catch{return null}}
  function write(type,id,data){try{localStorage.setItem(key(type,id),JSON.stringify(data))}catch{}}
- function tableHead(){return `<div class="table-wrap"><table class="standings v11-table"><thead><tr><th>#</th><th class="teamcol">Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th><th>Forma</th></tr></thead><tbody>`}
+ function tableHead(){return `<div class="table-wrap m16-table-wrap ${standingsDetailed?'is-detailed':''}"><table class="standings v11-table"><thead><tr><th scope="col">#</th><th scope="col" class="teamcol">Equipo</th><th scope="col" class="pts">PTS</th><th scope="col">PJ</th><th scope="col">DG</th>${['G','E','P','GF','GC','Forma'].map(n=>`<th scope="col" class="m16-detail-col">${n}</th>`).join('')}</tr></thead><tbody>`}
  function rowHtml(r,pos,isRank){
   let name=team(r.teamId)?.name||r.name||'Equipo';
   let image=r.logo||'';
@@ -29,7 +30,7 @@
   const link=r.teamId?`<a class="team-link" href="#/equipo/${encodeURIComponent(r.teamId)}">${avatar}<span>${esc(name)}</span></a>`:`<span class="team-link">${avatar}<span>${esc(name)}</span></span>`;
   const n=v=>v===null||v===undefined?'—':esc(v);
   const dg=r.dg==null?(r.gf!=null&&r.gc!=null?r.gf-r.gc:null):r.dg;
-  return `<tr><td>${isRank&&pos!=null?`<span class="position ${activeLeague==='ucl'?(pos<=8?'top':pos<=24?'playoff':''):''}">${pos}</span>`:'—'}</td><td class="teamcol">${link}</td><td>${n(r.pj)}</td><td>${n(r.g)}</td><td>${n(r.e)}</td><td>${n(r.p)}</td><td>${n(r.gf)}</td><td>${n(r.gc)}</td><td>${dg!=null&&dg>0?'+':''}${n(dg)}</td><td class="pts">${n(r.pts)}</td><td>${esc(r.form||'—')}</td></tr>`;
+  return `<tr ${standingsSearch&&!name.toLocaleLowerCase().includes(standingsSearch)?'hidden':''}><td>${isRank&&pos!=null?`<span class="position ${activeLeague==='ucl'?(pos<=8?'top':pos<=24?'playoff':''):''}">${pos}</span>`:'—'}</td><td class="teamcol">${link}</td><td class="pts">${n(r.pts)}</td><td>${n(r.pj)}</td><td>${dg!=null&&dg>0?'+':''}${n(dg)}</td>${[r.g,r.e,r.p,r.gf,r.gc,r.form||'—'].map(v=>`<td class="m16-detail-col">${n(v)}</td>`).join('')}</tr>`;
  }
  function wrapStandings(group,result){
   const l=league(activeLeague);if(!l)return '';
@@ -47,7 +48,7 @@
   note+=(result.warnings||[]).map(w=>banner('warning',esc(w))).join('');
   note+=!complete?banner('warning','Esta fuente devuelve una tabla incompleta. CANCHA conserva a todos los participantes y solo rellena las cifras que pudieron relacionarse; los guiones no son ceros.') : '';
   if(result.cache?.state==='stale'||result.stale)note+=banner('warning','No se pudo actualizar. Se conserva la última tabla guardada y su fecha original.');
-  return `${meta}${groupsNav}${note}${activeLeague==='ucl'&&rs.length===36?'<p class="v18-caption pad">1–8: acceso directo · 9–24: eliminatoria previa · 25–36: fuera de clasificación.</p>':''}<label class="v18-table-search">Buscar equipo <input type="search" id="v18-standings-filter" placeholder="Nombre del club"></label>${tableHead()}${rows.map((r,i)=>rowHtml(r,complete?(r.position??i+1):null,complete)).join('')}</tbody></table></div>`;
+  return `${meta}${groupsNav}${note}${activeLeague==='ucl'&&rs.length===36?'<p class="v18-caption pad">1–8: acceso directo · 9–24: eliminatoria previa · 25–36: fuera de clasificación.</p>':''}<div class="m16-table-tools"><label class="v18-table-search"><span class="sr-only">Buscar equipo</span><input type="search" id="v18-standings-filter" placeholder="Buscar equipo" value="${esc(standingsSearch)}"></label><button type="button" class="btn btn-outline" data-standings-detail aria-pressed="${standingsDetailed}">${standingsDetailed?'Vista resumida':'Vista detallada'}</button></div>${tableHead()}${rows.map((r,i)=>rowHtml(r,complete?(r.position??i+1):null,complete)).join('')}</tbody></table></div>`;
  }
  function updateFixtureCounters(lid,d){
   const qty=Array.isArray(d?.events)?d.events.length:0;
@@ -121,9 +122,8 @@
   }
   const page=Math.max(0,Math.min(total-1,fixturePages.get(d.league)||0));fixturePages.set(d.league,page);
   const show=all.slice(page*size,(page+1)*size);
-  const escLogo=id=>team(id)?window.CANCHA_BRAND.teamHTML(id):'';
   const nav=total>1?`<div class="v14-calendar-nav"><button class="btn btn-outline" data-v14-fixture-page="${page-1}" data-v14-league="${esc(d.league)}" ${page===0?'disabled':''}>← Anteriores</button><span>Página ${page+1} de ${total} · ${all.length} encuentros</span><button class="btn btn-outline" data-v14-fixture-page="${page+1}" data-v14-league="${esc(d.league)}" ${page===total-1?'disabled':''}>Siguientes →</button></div>`:'';
-  return `<div class="v11-subline">Datos de <b>${esc(d.source)}</b> · ${esc(date(d.updatedAt))} ${d.imported?'· Archivo importado, no en vivo':''}${d.cache?.state==='stale'||d.stale?'· No se pudo actualizar: última copia guardada':''} ${d.source==='ESPN'?'· Consulta cada 45 s; puede haber demora':''} ${esc(d.notice||d.note||'')} · ${all.length} partidos relacionados</div>${nav}<div class="row-list">${show.map(m=>`<a class="score-row" href="#/evento/${encodeURIComponent(d.league)}/${encodeURIComponent(m.provider)}/${encodeURIComponent(m.id)}"><span class="kick">${esc(date(m.date))}<br><span class="muted">${esc(window.CANCHA_DATES.statusLabel(m))}</span></span><span class="t-name" style="justify-content:flex-end;text-align:right">${esc(m.homeName)}${escLogo(m.home)}</span><span class="score">${m.hs==null?'–':m.hs} : ${m.as==null?'–':m.as}<small>${esc(window.CANCHA_DATES.statusLabel(m))}</small></span><span class="t-name">${escLogo(m.away)}${esc(m.awayName)}</span><span class="arrow">›</span></a>`).join('')}</div>${nav}`;
+  return `<div class="v11-subline">Datos de <b>${esc(d.source)}</b> · ${esc(date(d.updatedAt))} ${d.imported?'· Archivo importado, no en vivo':''}${d.cache?.state==='stale'||d.stale?'· No se pudo actualizar: última copia guardada':''} ${d.source==='ESPN'?'· Consulta cada 45 s; puede haber demora':''} ${esc(d.notice||d.note||'')} · ${all.length} partidos relacionados</div>${nav}<div class="row-list">${show.map(m=>window.CANCHA_MATCHES.row({...m,stale:!!d.stale||d.cache?.state==='stale'},d.league)).join('')}</div>${nav}`;
  }
  document.addEventListener('click',e=>{
   const b=e.target.closest('[data-v14-fixture-page]');if(!b)return;
@@ -190,16 +190,7 @@
    el.innerHTML=`<div class="v12-profile-heading"><span class="v12-athlete-photo">${safe(p.photo)?`<img src="${safe(p.photo)}" alt="">`:'♟'}</span><div><h2>${esc(p.name)}</h2><span>${esc(team(t)?.name||t)} · ${esc(p.position||'Posición no registrada')}</span></div></div><div class="v12-profile-facts">${[['Club registrado',team(t)?.name||t],['Dorsal',p.number??'No publicado'],['Nacionalidad',p.country||'No publicada'],['Fecha de nacimiento',p.birth||'No publicada'],['Fuente',p.source],['Temporada',p.season||'Sin confirmar'],['Actualización',p.snapshot?'Instantánea histórica':date(p.updatedAt)]].map(([a,b])=>`<div class="keyrow"><span>${esc(a)}</span><strong>${esc(b)}</strong></div>`).join('')}</div>${window.CANCHA_INSIGHTS.shell('player',t,id)}<div class="v12-profile-actions"><a class="btn btn-outline" href="#/equipo/${encodeURIComponent(t)}">Ver ficha del club →</a></div>`;
   }catch(e){el.innerHTML=banner('warning','Ficha no disponible en el índice: '+esc(e.message))}finally{window.CANCHA_INSIGHTS.afterDraw('perfil',t,[id])}
  }
- let activeHomeLeague='per',periodic=null;
- async function loadHomeFixtures(lid){let el=document.getElementById('v11-home-matches');if(!el)return;
-  activeHomeLeague=lid;document.querySelectorAll('[data-v11-home-league]').forEach(b=>b.classList.toggle('is-active',b.dataset.v11HomeLeague===lid));
-  let cached=read('fixtures',lid);if(cached?.events?.length)el.innerHTML=fixtureHtml(cached);else el.innerHTML='<div class="v11-loading">Cargando datos de la competición…</div>';
-  if(offline){el.innerHTML=banner('warning','Inicia el servidor local para consultar encuentros actualizados.');return}
-  let gen=routeGeneration;
-  try{let d=await get('/api/fixtures?league='+encodeURIComponent(lid));if(gen!==routeGeneration||lid!==activeHomeLeague||!document.getElementById('v11-home-matches'))return;
-   write('fixtures',lid,d);el.innerHTML=fixtureHtml(d);
-  }catch(e){if(gen!==routeGeneration||lid!==activeHomeLeague||!document.contains(el))return;if(cached)el.insertAdjacentHTML('afterbegin',banner('warning','No se pudo actualizar. Se conserva la copia con la fecha indicada.'));if(!cached)el.innerHTML=banner('warning','Esta competición no tiene un calendario accesible en la fuente conectada. '+esc(e.message));}
- }
+ let periodic=null;
  async function loadTeamSummary(tid){const el=document.getElementById('v11-team-current');if(!el)return;
   const t=team(tid);if(!t)return;let l=t.leagues.includes('per')?'per':(t.leagues.find(x=>x!=='ucl')||t.leagues[0]);
   const gen=routeGeneration;if(offline){el.innerHTML=banner('info','Abre el servidor local para consultar posiciones del equipo.');return}
@@ -211,25 +202,23 @@
  }
  function autoRefresh(route,id){if(periodic){clearInterval(periodic);periodic=null}if(offline)return;
   // El cliente consulta el caché compartido del servidor; NO solicita una API por visitante.
-  if(route==='liga'||route==='inicio'||route==='partidos')periodic=setInterval(()=>{
+  if(route==='liga'||route==='partidos')periodic=setInterval(()=>{
    if(document.visibilityState==='hidden')return;
    if(route==='liga'){if(document.getElementById('v11-standings'))loadStandings(id);if(document.getElementById('v11-fixtures'))loadFixtures(id)}
-   if(route==='inicio'&&document.getElementById('v11-home-matches'))loadHomeFixtures(activeHomeLeague);
    if(route==='partidos'&&document.getElementById('v15-calendar'))loadCalendar();
   },45000);
  }
  function afterDraw(route,id,params=[]){routeGeneration++;activeStandings=null;let l=route==='liga'?id:null;
-  if(l){activeLeague=l;if(document.getElementById('v11-standings'))loadStandings(l);if(document.getElementById('v11-fixtures'))loadFixtures(l);refreshLeagueCounter(l)}
+  if(l){if(activeLeague!==l){standingsSearch='';standingsDetailed=false}activeLeague=l;if(document.getElementById('v11-standings'))loadStandings(l);if(document.getElementById('v11-fixtures'))loadFixtures(l);refreshLeagueCounter(l)}
   if(route==='equipo'&&document.getElementById('rosterTarget'))loadRoster(id);
-  if(route==='fuentes'||route==='inicio'||!healthLoaded)loadHealth();if(route==='inicio')loadHomeFixtures('per');if(route==='equipo'&&document.getElementById('v11-team-current'))loadTeamSummary(id);if(route==='partidos')loadCalendar();if(route==='jugadores')loadDirectory();if(route==='perfil')loadPlayerProfile(id,params[0]);
+  if(route==='fuentes'||route==='inicio'||!healthLoaded)loadHealth();if(route==='equipo'&&document.getElementById('v11-team-current'))loadTeamSummary(id);if(route==='partidos')loadCalendar();if(route==='jugadores')loadDirectory();if(route==='perfil')loadPlayerProfile(id,params[0]);
   if(route==='evento-v12')loadMatch(id,params[0],params[1]);autoRefresh(route,id);
  }
- let searchTimer=null;document.addEventListener('input',e=>{if(e.target.id==='v18-standings-filter'){const q=e.target.value.toLocaleLowerCase();document.querySelectorAll('.v11-table tbody tr').forEach(r=>r.hidden=!r.querySelector('.teamcol')?.textContent.toLocaleLowerCase().includes(q));return}if(e.target.id==='v12-player-search'){clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadDirectory(e.target.value),250)}});
+ let searchTimer=null;document.addEventListener('input',e=>{if(e.target.id==='v18-standings-filter'){const q=e.target.value.toLocaleLowerCase();standingsSearch=q;document.querySelectorAll('.v11-table tbody tr').forEach(r=>r.hidden=!r.querySelector('.teamcol')?.textContent.toLocaleLowerCase().includes(q));return}if(e.target.id==='v12-player-search'){clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadDirectory(e.target.value),250)}});
  document.addEventListener('click',async e=>{
   if(e.target.id==='v18-sync-rosters'){const button=e.target,msg=document.getElementById('v18-sync-message');button.disabled=true;let added=0,failed=0;try{for(let n=0;n<35&&document.contains(button);n++){const d=await get('/api/rosters/sync');added+=d.added;failed+=d.failed;msg.textContent=`${added} clubes actualizados · ${d.remaining} pendientes${failed?' · '+failed+' no disponibles':''}`;await loadDirectory(directoryQuery);if(!d.remaining||!d.added&&d.failed)break}}catch(e){msg.textContent=e.message}finally{button.disabled=false}return}
-  let b=e.target.closest('[data-directory-offset]');if(b){loadDirectory(directoryQuery,Number(b.dataset.directoryOffset));return}b=e.target.closest('[data-v11-group]');if(b){groupSelected=Number(b.dataset.v11Group);if(activeStandings){let el=document.getElementById('v11-standings');if(el)el.innerHTML=wrapStandings(activeStandings.groups[groupSelected],activeStandings)}return}
+  let b=e.target.closest('[data-standings-detail]');if(b){standingsDetailed=!standingsDetailed;document.querySelector('.m16-table-wrap')?.classList.toggle('is-detailed',standingsDetailed);b.setAttribute('aria-pressed',String(standingsDetailed));b.textContent=standingsDetailed?'Vista resumida':'Vista detallada';return}b=e.target.closest('[data-directory-offset]');if(b){loadDirectory(directoryQuery,Number(b.dataset.directoryOffset));return}b=e.target.closest('[data-v11-group]');if(b){groupSelected=Number(b.dataset.v11Group);if(activeStandings){let el=document.getElementById('v11-standings');if(el)el.innerHTML=wrapStandings(activeStandings.groups[groupSelected],activeStandings)}return}
   b=e.target.closest('[data-v11-player]');if(b){loadPlayer(b);return}
-  b=e.target.closest('[data-v11-home-league]');if(b){loadHomeFixtures(b.dataset.v11HomeLeague);return}
   b=e.target.closest('[data-v11-close]');if(b){let el=document.getElementById('v11-player-detail');if(el)el.innerHTML='';return}
  });
  window.CANCHA_LIVE={calendarShell,afterDraw,matchShell,playerShell,refreshStandings,refreshRoster:id=>loadRoster(id,true),loadHealth};

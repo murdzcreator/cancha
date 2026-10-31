@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import vm from 'node:vm';
+import '../dates.js';
 import {fileURLToPath} from 'node:url';
 import {createSoccerDataImports} from '../server/soccerdata-import.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -26,12 +28,16 @@ test('importación abre fichas con vecinos reales del catálogo sin inventar ali
  }
 });
 test('navegación de pestañas de ficha no usa enlaces hash que destruyen la ruta',()=>{
- const ui=fs.readFileSync(path.join(root,'universal.js'),'utf8');
+ const window={CANCHA_DB:db,CANCHA_BRAND:{teamHTML:id=>id},CANCHA_DATES:globalThis.CANCHA_DATES};
+ vm.runInNewContext(fs.readFileSync(path.join(root,'universal.js'),'utf8'),{window,document:{addEventListener(){}},Intl,Date});
+ const ui=window.CANCHA_UNIVERSAL.matchHTML({id:'navigation',home:'alianza-lima',away:'universitario',homeName:'Alianza Lima',awayName:'Universitario',date:'2026-10-29',league:'per'});
  for(const name of ['v13-lineups','v13-events','v13-stats','v13-match-facts']){
   assert.ok(ui.includes(`data-v14-jump="${name}"`));
   assert.ok(!ui.includes(`href="#${name}"`));
  }
- assert.ok(ui.includes('relatedMatchHTML(data)'));
+ assert.match(ui,/role="tablist"/);
+ assert.equal((ui.match(/role="tab"/g)||[]).length,5);
+ assert.match(ui,/id="m16-match-summary"[^>]*role="tabpanel"[^>]*aria-labelledby="m16-tab-resumen"[^>]*>/);
 });
 test('contadores importados sustituyen a los estáticos de la versión anterior',()=>{
  const app=fs.readFileSync(path.join(root,'app.js'),'utf8');

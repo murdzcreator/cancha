@@ -1,6 +1,6 @@
 {
   "name": "cancha",
-  "version": "15.0.0",
+  "version": "16.0.0",
   "private": true,
   "description": "CANCHA: clasificaciones, calendarios ESPN y OpenFootball, plantillas e historial con estadísticas",
   "type": "module",

@@ -1,4 +1,4 @@
-# CANCHA V15
+# CANCHA V16
 
 Centro de fútbol con nueve competiciones y 183 clubes del catálogo. Combina calendarios abiertos de OpenFootball con clasificaciones, plantillas y actualizaciones de partidos de ESPN, sin claves de pago.
 
@@ -12,7 +12,10 @@ También puedes ejecutar `npm start`. No se necesitan dependencias npm adicional
 
 ## Qué puedes consultar
 
-- **Competiciones → Clasificación:** tablas ESPN con fase/grupo, puntos y orden publicados por la fuente. Buscador de equipo y tabla desplazable en teléfono.
+- **Inicio:** partidos del día en hora de Perú, fecha elegible, filtros de estado y competición, destacado de esa jornada y grupos por liga.
+- **Diseño V16:** texto más grande, estadísticas agrupadas en filas y navegación inferior en teléfono. Las fichas de partido separan resumen, alineaciones, estadísticas, historial e información.
+
+- **Competiciones → Clasificación:** tablas ESPN con fase/grupo, puntos y orden publicados por la fuente. Buscador de equipo; en teléfono, tabla resumida con puntos/PJ/DG y opción **Vista detallada** con todas las columnas.
 - **Partidos:** fecha de Perú, competición, equipo y filtro En vivo. Premier League y LaLiga conservan sus 380 partidos de OpenFootball y reciben los marcadores ESPN coincidentes.
 - **Equipo → Plantilla:** jugadores de temporada consultados desde ESPN. Cada jugador abre su perfil.
 - **Equipo → Estadísticas:** resultados, G/E/P, goles, promedios, vallas invictas, local/visitante, forma y rivales, dentro de la muestra disponible.
@@ -34,4 +37,4 @@ Los archivos personales de caché e historial están en `data-cache/`, que no se
 
 ## Validación
 
-Ejecuta `npm test`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.
+Ejecuta `npm test` (63 pruebas). El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.

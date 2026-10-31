@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-31T05:21:22.142Z",
+  "errors": [],
+  "checks": {
+    "homeToday": {
+      "peru": "2026-10-31",
+      "competitions": 9,
+      "rows": 25
+    },
+    "homeFiltersAndGroups": true,
+    "dayControls": true,
+    "tableFilterSurvivesRefresh": true,
+    "matchTabsAndKeyboard": true,
+    "matchToProfile": true,
+    "compactGroupedStats": true,
+    "calendarSharedRows": true,
+    "search": true,
+    "fonts": {
+      "team": "16px",
+      "score": "21px",
+      "body": "16px"
+    },
+    "mobileTableModes": true,
+    "playerSheetFocusAndBackdrop": true,
+    "midnightAndFixedDate": true,
+    "failureNeverFillsAnotherDay": true,
+    "staleLiveNotAdvertised": true,
+    "pollPreservesTabAndFailure": true
+  },
+  "viewports": [
+    {
+      "width": 1440,
+      "page": "inicio-1440"
+    },
+    {
+      "width": 390,
+      "page": "inicio-390"
+    },
+    {
+      "width": 390,
+      "page": "tabla-resumida-390"
+    },
+    {
+      "width": 390,
+      "page": "tabla-detallada-390"
+    },
+    {
+      "width": 390,
+      "page": "alineaciones-390"
+    },
+    {
+      "width": 360,
+      "page": "#/inicio-360"
+    },
+    {
+      "width": 360,
+      "page": "#/jugadores-360"
+    },
+    {
+      "width": 360,
+      "page": "#/liga/ucl-360"
+    },
+    {
+      "width": 360,
+      "page": "#/equipo/arsenal-360"
+    },
+    {
+      "width": 768,
+      "page": "#/inicio-768"
+    },
+    {
+      "width": 768,
+      "page": "#/jugadores-768"
+    },
+    {
+      "width": 768,
+      "page": "#/liga/ucl-768"
+    },
+    {
+      "width": 768,
+      "page": "#/equipo/arsenal-768"
+    },
+    {
+      "width": 1024,
+      "page": "#/inicio-1024"
+    },
+    {
+      "width": 1024,
+      "page": "#/jugadores-1024"
+    },
+    {
+      "width": 1024,
+      "page": "#/liga/ucl-1024"
+    },
+    {
+      "width": 1024,
+      "page": "#/equipo/arsenal-1024"
+    }
+  ]
+}
