@@ -1,0 +1,58 @@
+{
+  "commit": "168a62b",
+  "errors": [],
+  "players": {
+    "before": 55,
+    "afterOpeningEspnMatch": 55,
+    "teamsIndexed": 3,
+    "catalogClubs": 183,
+    "coverage": [
+      {
+        "team": "alianza-lima",
+        "count": 33
+      },
+      {
+        "team": "paris-saint-germain",
+        "count": 11
+      },
+      {
+        "team": "fc-barcelona",
+        "count": 11
+      }
+    ]
+  },
+  "matchSample": {
+    "stats": 19,
+    "events": 19,
+    "lineups": 2
+  },
+  "search": {
+    "hash": "#/buscar?q=Arsenal",
+    "text": "CANCHA\nPágina no encontrada\n\nRegresa a las competiciones y selecciona un club del catálogo.\n\nVolver al inicio"
+  },
+  "teamStats": {
+    "text": "PERFIL DE CLUB\nArsenal\n\nUEFA Champions League · Premier League · 2026/27 / 2026/27\n\nParticipación verificada. Los resultados se muestran solo donde tenemos fuente. El plantel completo debe consultarse desde un proveedor actualizado; sin datos no se inventan jugadores.\nResumen\nPartidos\nPlantilla\nEstadísticas\nInformación\nRendimiento actual · fuentes conectadas\nTemporada consultada\nFuente: OpenFootball · dominio público CC0 · 2026/27 · 29 oct. 2026, 00:56 · Perú · Tabla calculada, no oficial\nTabla importada\n2º\n12 puntos · 5 PJ\nG 4 · E 0 · P 1\nGF 8 · GC 4 · DG 4\nInstantánea · UCL\nJornada 3\n3\nPJ\n2\nVictorias\n1\nEmpates\n0\nDerrotas\n6\nGF\n2\nGC\n4\nDiferencia\n7\nPuntos\nAnálisis de temporada\nMás estadísticas requieren datos verificables\n\nPara remates, posesión, asistencias, tarjetas y ratings no se muestran números inventados. Puedes consultar una fuente actualizada para el club.\n\nCompeticiones\nUEFA Champions League\n›\nPremier League\n›\nPosición histórica · Champions\n7º\nPosición\n7\nPuntos\n3\nJuegos\nFicha del equipo\nNombre\nArsenal\nPaís\nInglaterra\nCiudad\nLondres\nEstadio\nEmirates Stadium\nEntrenador\nPor verificar\nActualización\nReferencia histórica / pendiente de verificación\nLos datos no contrastados por temporada se señalan como referencia; falta comprobar entrenador y otros campos.\nConsultar futbolistas →"
+  },
+  "leagueStats": {
+    "text": "COMPETICIÓN · INGLATERRA\nPremier League\n\nTemporada 2026/27 · 20 participantes confirmados\n\nFecha de la información: 26/10/2026. Participantes verificados; resultados y clasificación sujetos a la disponibilidad de datos. Fuente de clubes ↗\nClasificación\nCalendario\nEquipos\nEstadísticas\nLíderes y estadísticas\nSolo mostramos estadísticas comprobables\n\nLas estadísticas avanzadas y los líderes dependen de registros actualizados del proveedor. La fase de liga tiene su tabla completa; los demás apartados no se han rellenado con cifras simuladas.\n\nEn esta competición\n20\nClubes\n380\nPartidos disponibles\n2026/27\nTemporada\nAccesos directos\nBournemouth\n›\nArsenal\n›\nAston Villa\n›\nBrentford\n›\nBrighton\n›\nChelsea\n›"
+  },
+  "standings": {
+    "per": {
+      "source": "Fuentes públicas verificadas · Liga 1 2026",
+      "updatedAt": null,
+      "snapshot": true
+    },
+    "eng": {
+      "source": "OpenFootball · dominio público CC0",
+      "updatedAt": "2026-10-29T05:56:57.061Z",
+      "calculated": true,
+      "groups": [
+        {
+          "label": "Tabla importada",
+          "rows": 20,
+          "details": "Tabla CALCULADA con 50 partidos finalizados incluidos en el archivo; NO es la clasificación oficial ni necesariamente la última jornada. Orden técnico por puntos, diferencia y goles."
+        }
+      ]
+    }
+  }
+}

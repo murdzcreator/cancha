@@ -1,4 +1,6 @@
-# CANCHA: marcadores y fichas de ESPN
+# CANCHA: conexión ESPN de la entrega anterior
+
+> La versión V15 amplía esta conexión con tablas, plantillas e historial. Consulta [MEJORAS_V15.md](MEJORAS_V15.md) para el comportamiento actual.
 
 Esta entrega añade una lectura directa del mismo origen público que utiliza el conector ESPN de SoccerData. No se instaló Python ni SoccerData: su consulta `read_schedule` omite los marcadores, y el servidor de CANCHA puede aprovechar directamente los campos de la respuesta JSON. La documentación de Read the Docs sigue devolviendo 403; el repositorio oficial permite consultar el funcionamiento del conector.
 

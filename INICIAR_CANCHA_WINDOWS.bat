@@ -3,7 +3,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 echo.
 echo ========================================
-echo  CANCHA - MARCADORES Y FICHAS ESPN
+echo  CANCHA V15 - TU CENTRO DE FUTBOL
  echo ========================================
 echo.
 where.exe node >nul 2>&1
@@ -12,7 +12,7 @@ node --version
 if not exist "server.mjs" goto SIN_SERVIDOR
 echo.
 echo ESPN se consulta al abrir calendarios y fichas, sin clave de pago.
-echo Los archivos de OpenFootball se conservan como alternativa fechada.
+echo OpenFootball se sincroniza en segundo plano y completa los calendarios.
 echo.
 echo Iniciando CANCHA en http://127.0.0.1:4173/
 echo Abre Partidos, elige competicion y fecha en hora de Peru.

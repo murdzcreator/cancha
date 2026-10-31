@@ -1,0 +1,33 @@
+{
+  "rosters": {
+    "added": 6,
+    "failed": 0,
+    "remaining": 176,
+    "coverage": 13
+  },
+  "history": {
+    "added": 10,
+    "days": 4,
+    "failed": 0,
+    "remaining": 99
+  },
+  "enrich": {
+    "added": 4,
+    "failed": 0,
+    "remaining": 16
+  },
+  "analytics": {
+    "coverage": {
+      "fixtures": 25,
+      "results": 21,
+      "details": 5,
+      "first": "2026-10-18T16:00:00.000Z",
+      "last": "2026-10-30T00:30:00.000Z"
+    },
+    "players": 130
+  },
+  "players": {
+    "total": 353,
+    "teams": 15
+  }
+}

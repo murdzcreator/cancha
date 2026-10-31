@@ -1,0 +1,15 @@
+{
+  "probe": "Partido nocturno tras medianoche de Perú",
+  "before": {
+    "date": "2026-10-31T04:55:00.000Z",
+    "score": 0
+  },
+  "after": {
+    "date": "2026-10-31T04:55:00.000Z",
+    "score": 0,
+    "stale": false
+  },
+  "sourceScore": 1,
+  "requestsForMatchDay": 1,
+  "confirmedBug": true
+}

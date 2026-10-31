@@ -29,25 +29,25 @@
   const link=r.teamId?`<a class="team-link" href="#/equipo/${encodeURIComponent(r.teamId)}">${avatar}<span>${esc(name)}</span></a>`:`<span class="team-link">${avatar}<span>${esc(name)}</span></span>`;
   const n=v=>v===null||v===undefined?'—':esc(v);
   const dg=r.dg==null?(r.gf!=null&&r.gc!=null?r.gf-r.gc:null):r.dg;
-  return `<tr><td>${isRank&&pos!=null?`<span class="position ${['eng','esp','ita','fra'].includes(activeLeague)?pos<=4?'top':pos>17?'out':'playoff':pos<=8?'top':pos<=24?'playoff':'out'}">${pos}</span>`:'—'}</td><td class="teamcol">${link}</td><td>${n(r.pj)}</td><td>${n(r.g)}</td><td>${n(r.e)}</td><td>${n(r.p)}</td><td>${n(r.gf)}</td><td>${n(r.gc)}</td><td>${dg!=null&&dg>0?'+':''}${n(dg)}</td><td class="pts">${n(r.pts)}</td><td>${esc(r.form||'—')}</td></tr>`;
+  return `<tr><td>${isRank&&pos!=null?`<span class="position ${activeLeague==='ucl'?(pos<=8?'top':pos<=24?'playoff':''):''}">${pos}</span>`:'—'}</td><td class="teamcol">${link}</td><td>${n(r.pj)}</td><td>${n(r.g)}</td><td>${n(r.e)}</td><td>${n(r.p)}</td><td>${n(r.gf)}</td><td>${n(r.gc)}</td><td>${dg!=null&&dg>0?'+':''}${n(dg)}</td><td class="pts">${n(r.pts)}</td><td>${esc(r.form||'—')}</td></tr>`;
  }
  function wrapStandings(group,result){
   const l=league(activeLeague);if(!l)return '';
   let rs=group?.rows||[];
   const found=new Set(rs.map(r=>r.teamId).filter(Boolean));
-  let complete=found.size===l.teams.length && rs.every(r=>r.position!=null && r.pts!=null);
+  let complete=(result.quality?.complete??found.size===l.teams.length)&&rs.every(r=>r.position!=null&&r.pts!=null);
   let byTeam=new Map(rs.filter(r=>r.teamId).map(r=>[r.teamId,r]));
   // Incomplete provider responses must not pretend to be official rankings.
   let rows=complete?rs.slice().sort((a,b)=>(a.position??999)-(b.position??999)):l.teams.slice().sort((a,b)=>team(a).name.localeCompare(team(b).name,'es')).map(id=>byTeam.get(id)||{teamId:id,name:team(id).name});
   let label=complete?(result.source?.includes('OpenFootball')?'Tabla calculada con resultados publicados':'Clasificación de la temporada'):`Cobertura parcial · ${found.size} de ${l.teams.length} clubes relacionados`;
   const provenance=result.snapshot?`${esc(group.source||result.source)} · ${esc(group.dateLabel||'Instantánea fechada')}`:`${esc(result.source)} · ${esc(date(result.updatedAt||result.cache?.savedAt))}`;
-  const meta=`<div class="v11-subline"><span><b>${provenance}</b> · ${esc(l.season)} · ${esc(label)}</span><button class="btn btn-outline" data-fetch-standings="${esc(activeLeague)}">↻ Comprobar datos</button></div>`;
+  const meta=`<div class="v11-subline"><span><b>${provenance}</b> · ${esc(l.season)} · ${esc(group.label||'General')} · ${esc(label)}</span><button class="btn btn-outline" data-fetch-standings="${esc(activeLeague)}">↻ Comprobar datos</button></div>`;
   let groupsNav=(result.groups.length>1)?`<div class="v11-grouptabs">${result.groups.map((g,i)=>`<button class="v11-group-btn ${groupSelected===i?'is-active':''}" data-v11-group="${i}">${esc(g.label||'Tabla '+(i+1))}</button>`).join('')}</div>`:'';
   let note=(result.snapshot||result.imported)?banner('info',`<b>${result.source?.includes('OpenFootball')?'Tabla calculada con fuente abierta; no oficial ni en vivo.':'Datos de referencia, no en vivo.'}</b> ${esc(group.details||result.note||'')} ${safe(group.sourceUrl)?`<a href="${safe(group.sourceUrl)}" target="_blank" rel="noopener noreferrer">Ver fuente ↗</a>`:''}`):'';
   note+=(result.warnings||[]).map(w=>banner('warning',esc(w))).join('');
   note+=!complete?banner('warning','Esta fuente devuelve una tabla incompleta. CANCHA conserva a todos los participantes y solo rellena las cifras que pudieron relacionarse; los guiones no son ceros.') : '';
-  if(result.cache?.state==='stale')note+=banner('warning','No se pudo actualizar. Se conserva la última tabla guardada y su fecha original.');
-  return `${meta}${groupsNav}${note}${tableHead()}${rows.map((r,i)=>rowHtml(r,complete?(r.position??i+1):null,complete)).join('')}</tbody></table></div>`;
+  if(result.cache?.state==='stale'||result.stale)note+=banner('warning','No se pudo actualizar. Se conserva la última tabla guardada y su fecha original.');
+  return `${meta}${groupsNav}${note}${activeLeague==='ucl'&&rs.length===36?'<p class="v18-caption pad">1–8: acceso directo · 9–24: eliminatoria previa · 25–36: fuera de clasificación.</p>':''}<label class="v18-table-search">Buscar equipo <input type="search" id="v18-standings-filter" placeholder="Nombre del club"></label>${tableHead()}${rows.map((r,i)=>rowHtml(r,complete?(r.position??i+1):null,complete)).join('')}</tbody></table></div>`;
  }
  function updateFixtureCounters(lid,d){
   const qty=Array.isArray(d?.events)?d.events.length:0;
@@ -58,7 +58,7 @@
  }
  async function refreshLeagueCounter(lid){
   const counter=document.querySelector('[data-v14-league-counter]');if(!counter||counter.dataset.v14LeagueCounter!==lid)return;
-  try{const d=await get('/api/health');const leagueInfo=(d.soccerdataImports||[]).find(x=>x.league===lid);
+  try{const d=await get('/api/health');const current=(d.calendarCoverage||[]).find(x=>x.league===lid);if(document.contains(counter)&&current){counter.textContent=String(current.count);return}const leagueInfo=(d.soccerdataImports||[]).find(x=>x.league===lid);
    if(document.contains(counter)&&counter.dataset.v14LeagueCounter===lid&&leagueInfo?.fixtures)counter.textContent=String(leagueInfo.fixtures);
   }catch{/* se conserva el contador local */}
  }
@@ -100,7 +100,7 @@
    if(data.players?.length){write('roster',id,data);el.innerHTML=rosterHtml(data)}else if(!saved)el.innerHTML=banner('warning','No se encontraron jugadores publicados para este club.');
   }catch(e){if(gen!==routeGeneration)return;if(!saved)el.innerHTML=banner('warning','La plantilla no está accesible: '+esc(e.message)+'. No se inventaron jugadores.');}
  }
- async function loadPlayer(btn){let box=document.getElementById('v11-player-detail');if(!box)return;const id=btn.dataset.v11Player,team=btn.dataset.v11Team,source=btn.dataset.v11Source;
+ async function loadPlayer(btn){let box=document.getElementById('v11-player-detail');if(!box)return;const id=btn.dataset.v11Player,team=btn.dataset.v11Team,source=btn.dataset.v11Source;if(source==='ESPN'){location.hash='#/perfil/'+encodeURIComponent(team)+'/'+encodeURIComponent(id);return}
   let card=document.createElement('div');box.innerHTML='<div class="v11-loading">Consultando estadísticas individuales…</div>';
   try{let data=await get('/api/player-stats?team='+encodeURIComponent(team)+'&player='+encodeURIComponent(id)+'&source='+encodeURIComponent(source));if(!document.contains(box))return;
    let rows=data.rows||[];let first=rows.slice(0,5).map(r=>{
@@ -142,8 +142,9 @@
  async function loadHealth(){const panel=document.getElementById('v11-health');if(offline){headline('MODO ARCHIVO','No se ejecutan APIs');if(panel)panel.innerHTML=banner('warning','Para actualizar automáticamente, inicia el servidor de V12 como se explica en INSTRUCCIONES.md.');return}
   try{const d=await get('/api/health');headline(d.espn?.enabled?'ESPN HABILITADO':d.hasImportedFixtures?'DATOS IMPORTADOS':d.liveCredentialsConfigured?'SERVIDOR ACTIVO':'SERVIDOR LOCAL',d.espn?.enabled?'Consulta periódica de marcadores · cobertura según la fuente':d.hasImportedFixtures?'Resultados importados (OpenFootball / SoccerData), no en vivo':d.liveCredentialsConfigured?'Claves instaladas · cobertura por verificar':'Sin claves privadas de APIs');if(panel){panel.innerHTML=`<div class="v11-provider-grid">${[['espn','ESPN'],['footballData','football-data.org'],['apiFootball','API-Football'],['theSportsDB','TheSportsDB']].map(([k,name])=>`<div class="source-card"><h3>${name}</h3><p>${d.providers?.[k]?(k==='espn'?'Consulta pública periódica, sin clave':k==='theSportsDB'?'Acceso público limitado':'Clave configurada'):'Sin clave configurada'}${k==='theSportsDB'?' · versión pública limitada':''}</p></div>`).join('')}</div><div class="section-heading"><h2>Datos de temporadas importados</h2></div><div class="v11-provider-grid">${(d.soccerdataImports||[]).filter(x=>x.fixtures||x.standings).map(x=>`<div class="source-card"><h3>${esc(league(x.league)?.name||x.league)}</h3><p>${x.fixtures} encuentros · ${x.standings} registros de tabla ${x.tableComplete?'· tabla completa':''}</p><small>${x.lastUpdated?esc(date(x.lastUpdated)):'Sin importación'}</small></div>`).join('')}</div>${!(d.soccerdataImports||[]).some(x=>x.fixtures||x.standings)?'<p class="subdued">No hay importaciones de temporada adicionales.</p>':''}<p class="subdued">Importaciones fechadas, no marcadores en vivo. Su disponibilidad y permiso de reutilización dependen de la fuente original.</p>`;}}catch{headline('SIN SERVIDOR','Solo datos locales');if(panel)panel.innerHTML=banner('warning','El servidor no está ejecutándose.');}
  }
- let calendarLeague='todos',calendarDate='',calendarToken=0;
- function calendarShell(filter){return `<div class="v17-calendar-controls"><label class="search-filter">Fecha en Perú <input type="date" class="filter-input" id="v17-calendar-date" value="${esc(calendarDate)}"></label><button class="btn btn-outline" id="v17-calendar-today">Hoy en Perú</button><button class="btn btn-outline" id="v17-calendar-nearby">Jornadas cercanas</button><label class="search-filter">Competición <select id="v15-calendar-league" class="filter-input">${[['todos','Todas las competiciones'],...db.leagues.map(l=>[l.id,l.name])].map(([id,name])=>`<option value="${esc(id)}" ${calendarLeague===id?'selected':''}>${esc(name)}</option>`).join('')}</select></label></div><div id="v15-calendar" data-filter="${esc(filter)}"></div>`}
+ let calendarLeague='todos',calendarDate='',calendarTeam='',calendarToken=0;
+ function calendarAccept(m,filter){const day=m.date?.length===10?m.date:window.CANCHA_DATES.dayInPeru(new Date(m.date));return (!calendarDate||day===calendarDate)&&(!calendarTeam||m.home===calendarTeam||m.away===calendarTeam)&&(filter==='todos'||(filter==='vivo'?m.status==='EN VIVO':filter==='resultados'?m.status==='FINAL':window.CANCHA_DATES.upcoming(m)));}
+ function calendarShell(filter){return `<div class="v17-calendar-controls"><label class="search-filter">Fecha en Perú <input type="date" class="filter-input" id="v17-calendar-date" value="${esc(calendarDate)}"></label><button class="btn btn-outline" id="v17-calendar-today">Hoy en Perú</button><button class="btn btn-outline" id="v17-calendar-nearby">Jornadas cercanas</button><label class="search-filter">Competición <select id="v15-calendar-league" class="filter-input">${[['todos','Todas las competiciones'],...db.leagues.map(l=>[l.id,l.name])].map(([id,name])=>`<option value="${esc(id)}" ${calendarLeague===id?'selected':''}>${esc(name)}</option>`).join('')}</select></label><label class="search-filter">Equipo <select id="v18-calendar-team" class="filter-input"><option value="">Todos los equipos</option>${Object.values(db.teams).filter(t=>calendarLeague==='todos'||league(calendarLeague).teams.includes(t.id)).sort((a,b)=>a.name.localeCompare(b.name)).map(t=>`<option value="${esc(t.id)}" ${calendarTeam===t.id?'selected':''}>${esc(t.name)}</option>`).join('')}</select></label></div><div id="v15-calendar" data-filter="${esc(filter)}"></div>`}
  async function loadCalendar(){
   const box=document.getElementById('v15-calendar');if(!box)return;
   const token=++calendarToken,gen=routeGeneration,filter=box.dataset.filter;
@@ -155,16 +156,16 @@
     if(offline)throw Error('Inicia el servidor local para consultar importaciones.');
     const d=await get('/api/fixtures?league='+encodeURIComponent(l.id)+(calendarDate?'&date='+encodeURIComponent(calendarDate):''));
     if(gen!==routeGeneration||token!==calendarToken||!document.contains(el))return;
-    const events=(d.events||[]).filter(m=>filter==='todos'||(filter==='resultados'?m.status==='FINAL':window.CANCHA_DATES.upcoming(m)));
+    const events=(d.events||[]).filter(m=>calendarAccept(m,filter));
     el.innerHTML=events.length?fixtureHtml({...d,league:l.id,events}):banner('info','No hay partidos que cumplan este filtro en la fuente disponible.')+`<p class="v13-provenance">${esc(d.source)} · ${esc(date(d.updatedAt))} · ${esc(d.notice||'')}</p>`;
    }catch(e){
     if(gen!==routeGeneration||token!==calendarToken||!document.contains(el))return;
-    const local=(db.matches||[]).filter(m=>m.league===l.id&&(filter==='todos'||(filter==='resultados'?m.status==='FINAL':window.CANCHA_DATES.upcoming(m))));
+    const local=(db.matches||[]).filter(m=>m.league===l.id&&calendarAccept(m,filter));
     el.innerHTML=banner('warning',esc(e.message))+(local.length?'<p class="v13-provenance">Catálogo histórico incluido en el ZIP.</p>'+local.map(m=>`<a class="v13-provider-row" href="#/encuentro/${encodeURIComponent(m.id)}"><span>${esc(date(m.date))}</span><strong>${esc(team(m.home)?.name)} ${esc(m.hs??'–')} : ${esc(m.as??'–')} ${esc(team(m.away)?.name)}</strong><span>${esc(window.CANCHA_DATES.statusLabel(m))}</span></a>`).join(''):'');
    }
   }));
  }
- document.addEventListener('change',e=>{if(e.target.id==='v17-calendar-date'){calendarDate=e.target.value;fixturePages.clear();loadCalendar();return}if(e.target.id==='v15-calendar-league'){calendarLeague=e.target.value;fixturePages.clear();loadCalendar();}});
+ document.addEventListener('change',async e=>{if(e.target.id==='v18-directory-team'){directoryTeam=e.target.value;if(directoryTeam){try{await get('/api/roster?team='+encodeURIComponent(directoryTeam))}catch{}}loadDirectory(directoryQuery);return}if(e.target.id==='v18-calendar-team'){calendarTeam=e.target.value;fixturePages.clear();loadCalendar();return}if(e.target.id==='v17-calendar-date'){calendarDate=e.target.value;fixturePages.clear();loadCalendar();return}if(e.target.id==='v15-calendar-league'){calendarLeague=e.target.value;calendarTeam='';fixturePages.clear();window.CANCHA_REDRAW();}});
  document.addEventListener('click',e=>{if(e.target.id==='v17-calendar-today'||e.target.id==='v17-calendar-nearby'){calendarDate=e.target.id==='v17-calendar-today'?window.CANCHA_DATES.dayInPeru():'';const input=document.getElementById('v17-calendar-date');if(input)input.value=calendarDate;fixturePages.clear();loadCalendar();}});
  function matchShell(lid,source,id){return `<div class="eyebrow">CANCHA · PARTIDO CONECTADO</div><div class="page-head"><div><h1>Centro del partido</h1><p>${esc(league(lid)?.name||'Competición')} · ${esc(source||'Proveedor')}</p></div></div><section class="panel"><div class="panel-title">Partido · datos actuales <small>${esc(id)}</small></div><div id="v11-fixture-detail" class="pad"><div class="v11-loading">Consultando el proveedor…</div></div></section>`}
  async function loadMatch(lid,source,id){const el=document.getElementById('v11-fixture-detail');if(!el)return;const gen=routeGeneration;
@@ -176,17 +177,18 @@
  }
 
  function playerShell(teamId,playerId){return `<div class="eyebrow">CANCHA · PERFIL CONECTADO</div><div class="page-head"><div><h1>Ficha del futbolista</h1><p>Información del proveedor y temporada documentada</p></div></div><section class="panel"><div class="panel-title">Registro individual <small>Fecha y procedencia visibles</small></div><div id="v12-player-profile" class="pad"><div class="v11-loading">Consultando el índice de jugadores…</div></div></section>`}
- async function loadDirectory(q=''){
+ let directoryTeam='',directoryQuery='';
+ async function loadDirectory(q='',offset=0){directoryQuery=q;
   const el=document.getElementById('v12-player-directory');if(!el)return;const gen=routeGeneration;
   if(offline){el.innerHTML=banner('warning','Inicia el servidor Node.js para consultar el directorio persistente.');return}
-  try{const d=await get(`/api/players?q=${encodeURIComponent(q)}&limit=100`);if(gen!==routeGeneration||!document.contains(el))return;
-   el.innerHTML=`<p class="v12-directory-meta">${esc(d.total)} registros disponibles · ${esc(d.teamsIndexed)} plantillas consultadas o incorporadas · ${esc(d.coverage)}</p>`+(d.players.length?`<div class="v12-athlete-grid">${d.players.map(p=>`<a class="v12-athlete" href="#/perfil/${encodeURIComponent(p.team)}/${encodeURIComponent(p.id)}"><span class="v12-athlete-photo">${safe(p.photo)?`<img src="${safe(p.photo)}" alt="" loading="lazy">`:'♟'}</span><span><b>${esc(p.name)}</b><small>${esc(team(p.team)?.name||p.team)} · ${esc(p.position||'Posición no disponible')}</small></span><span class="arr">›</span></a>`).join('')}</div>`:banner('info','Sin coincidencias dentro del índice disponible. Prueba consultar primero la plantilla del club.'));
+  try{const d=await get(`/api/players?q=${encodeURIComponent(q)}&team=${encodeURIComponent(directoryTeam)}&offset=${offset}&limit=100`);if(gen!==routeGeneration||!document.contains(el))return;
+   el.innerHTML=`<p class="v12-directory-meta">${esc(d.total)} registros disponibles · ${esc(d.teamsIndexed)} plantillas consultadas o incorporadas · ${esc(d.coverage)}</p><div class="v18-directory-pages"><button class="btn btn-outline" data-directory-offset="${Math.max(0,offset-100)}" ${offset===0?'disabled':''}>← Anteriores</button><span>${offset+1}–${Math.min(offset+100,d.total)} de ${d.total}</span><button class="btn btn-outline" data-directory-offset="${offset+100}" ${offset+100>=d.total?'disabled':''}>Siguientes →</button></div>`+(d.players.length?`<div class="v12-athlete-grid">${d.players.map(p=>`<a class="v12-athlete" href="#/perfil/${encodeURIComponent(p.team)}/${encodeURIComponent(p.id)}"><span class="v12-athlete-photo">${safe(p.photo)?`<img src="${safe(p.photo)}" alt="" loading="lazy">`:'♟'}</span><span><b>${esc(p.name)}</b><small>${esc(team(p.team)?.name||p.team)} · ${esc(p.position||'Posición no disponible')}</small></span><span class="arr">›</span></a>`).join('')}</div>`:banner('info','Sin coincidencias dentro del índice disponible. Prueba consultar primero la plantilla del club.'));
   }catch(e){el.innerHTML=banner('warning','Directorio no disponible: '+esc(e.message))}
  }
  async function loadPlayerProfile(t,id){let el=document.getElementById('v12-player-profile');if(!el)return;const gen=routeGeneration;
   try{const p=await get(`/api/player-profile?team=${encodeURIComponent(t)}&id=${encodeURIComponent(id)}`);if(gen!==routeGeneration||!document.contains(el))return;
-   el.innerHTML=`<div class="v12-profile-heading"><span class="v12-athlete-photo">${safe(p.photo)?`<img src="${safe(p.photo)}" alt="">`:'♟'}</span><div><h2>${esc(p.name)}</h2><span>${esc(team(t)?.name||t)} · ${esc(p.position||'Posición no registrada')}</span></div></div><div class="v12-profile-facts">${[['Club registrado',team(t)?.name||t],['Dorsal',p.number??'No publicado'],['Nacionalidad',p.country||'No publicada'],['Fecha de nacimiento',p.birth||'No publicada'],['Fuente',p.source],['Temporada',p.season||'Sin confirmar'],['Actualización',p.snapshot?'Instantánea histórica':date(p.updatedAt)]].map(([a,b])=>`<div class="keyrow"><span>${esc(a)}</span><strong>${esc(b)}</strong></div>`).join('')}</div><div class="v12-profile-actions"><a class="btn btn-outline" href="#/equipo/${encodeURIComponent(t)}">Ver ficha del club →</a></div>`;
-  }catch(e){el.innerHTML=banner('warning','Ficha no disponible en el índice: '+esc(e.message))}
+   el.innerHTML=`<div class="v12-profile-heading"><span class="v12-athlete-photo">${safe(p.photo)?`<img src="${safe(p.photo)}" alt="">`:'♟'}</span><div><h2>${esc(p.name)}</h2><span>${esc(team(t)?.name||t)} · ${esc(p.position||'Posición no registrada')}</span></div></div><div class="v12-profile-facts">${[['Club registrado',team(t)?.name||t],['Dorsal',p.number??'No publicado'],['Nacionalidad',p.country||'No publicada'],['Fecha de nacimiento',p.birth||'No publicada'],['Fuente',p.source],['Temporada',p.season||'Sin confirmar'],['Actualización',p.snapshot?'Instantánea histórica':date(p.updatedAt)]].map(([a,b])=>`<div class="keyrow"><span>${esc(a)}</span><strong>${esc(b)}</strong></div>`).join('')}</div>${window.CANCHA_INSIGHTS.shell('player',t,id)}<div class="v12-profile-actions"><a class="btn btn-outline" href="#/equipo/${encodeURIComponent(t)}">Ver ficha del club →</a></div>`;
+  }catch(e){el.innerHTML=banner('warning','Ficha no disponible en el índice: '+esc(e.message))}finally{window.CANCHA_INSIGHTS.afterDraw('perfil',t,[id])}
  }
  let activeHomeLeague='per',periodic=null;
  async function loadHomeFixtures(lid){let el=document.getElementById('v11-home-matches');if(!el)return;
@@ -196,7 +198,7 @@
   let gen=routeGeneration;
   try{let d=await get('/api/fixtures?league='+encodeURIComponent(lid));if(gen!==routeGeneration||lid!==activeHomeLeague||!document.getElementById('v11-home-matches'))return;
    write('fixtures',lid,d);el.innerHTML=fixtureHtml(d);
-  }catch(e){if(gen!==routeGeneration||lid!==activeHomeLeague||!document.contains(el))return;if(!cached)el.innerHTML=banner('warning','Esta competición no tiene un calendario accesible con las claves actuales. '+esc(e.message));}
+  }catch(e){if(gen!==routeGeneration||lid!==activeHomeLeague||!document.contains(el))return;if(cached)el.insertAdjacentHTML('afterbegin',banner('warning','No se pudo actualizar. Se conserva la copia con la fecha indicada.'));if(!cached)el.innerHTML=banner('warning','Esta competición no tiene un calendario accesible en la fuente conectada. '+esc(e.message));}
  }
  async function loadTeamSummary(tid){const el=document.getElementById('v11-team-current');if(!el)return;
   const t=team(tid);if(!t)return;let l=t.leagues.includes('per')?'per':(t.leagues.find(x=>x!=='ucl')||t.leagues[0]);
@@ -222,9 +224,10 @@
   if(route==='fuentes'||route==='inicio'||!healthLoaded)loadHealth();if(route==='inicio')loadHomeFixtures('per');if(route==='equipo'&&document.getElementById('v11-team-current'))loadTeamSummary(id);if(route==='partidos')loadCalendar();if(route==='jugadores')loadDirectory();if(route==='perfil')loadPlayerProfile(id,params[0]);
   if(route==='evento-v12')loadMatch(id,params[0],params[1]);autoRefresh(route,id);
  }
- let searchTimer=null;document.addEventListener('input',e=>{if(e.target.id==='v12-player-search'){clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadDirectory(e.target.value),250)}});
- document.addEventListener('click',e=>{
-  let b=e.target.closest('[data-v11-group]');if(b){groupSelected=Number(b.dataset.v11Group);if(activeStandings){let el=document.getElementById('v11-standings');if(el)el.innerHTML=wrapStandings(activeStandings.groups[groupSelected],activeStandings)}return}
+ let searchTimer=null;document.addEventListener('input',e=>{if(e.target.id==='v18-standings-filter'){const q=e.target.value.toLocaleLowerCase();document.querySelectorAll('.v11-table tbody tr').forEach(r=>r.hidden=!r.querySelector('.teamcol')?.textContent.toLocaleLowerCase().includes(q));return}if(e.target.id==='v12-player-search'){clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadDirectory(e.target.value),250)}});
+ document.addEventListener('click',async e=>{
+  if(e.target.id==='v18-sync-rosters'){const button=e.target,msg=document.getElementById('v18-sync-message');button.disabled=true;let added=0,failed=0;try{for(let n=0;n<35&&document.contains(button);n++){const d=await get('/api/rosters/sync');added+=d.added;failed+=d.failed;msg.textContent=`${added} clubes actualizados · ${d.remaining} pendientes${failed?' · '+failed+' no disponibles':''}`;await loadDirectory(directoryQuery);if(!d.remaining||!d.added&&d.failed)break}}catch(e){msg.textContent=e.message}finally{button.disabled=false}return}
+  let b=e.target.closest('[data-directory-offset]');if(b){loadDirectory(directoryQuery,Number(b.dataset.directoryOffset));return}b=e.target.closest('[data-v11-group]');if(b){groupSelected=Number(b.dataset.v11Group);if(activeStandings){let el=document.getElementById('v11-standings');if(el)el.innerHTML=wrapStandings(activeStandings.groups[groupSelected],activeStandings)}return}
   b=e.target.closest('[data-v11-player]');if(b){loadPlayer(b);return}
   b=e.target.closest('[data-v11-home-league]');if(b){loadHomeFixtures(b.dataset.v11HomeLeague);return}
   b=e.target.closest('[data-v11-close]');if(b){let el=document.getElementById('v11-player-detail');if(el)el.innerHTML='';return}

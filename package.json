@@ -1,8 +1,8 @@
 {
-  "name": "cancha-v14-1",
-  "version": "14.2.0",
+  "name": "cancha",
+  "version": "15.0.0",
   "private": true,
-  "description": "CANCHA V14 con importador opcional SoccerData, calendario paginado y trazabilidad",
+  "description": "CANCHA: clasificaciones, calendarios ESPN y OpenFootball, plantillas e historial con estadísticas",
   "type": "module",
   "scripts": {
     "start": "node server.mjs",

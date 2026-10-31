@@ -1,0 +1,65 @@
+[
+  {
+    "league": "per",
+    "team": "universitario",
+    "players": 28,
+    "source": "ESPN",
+    "season": "2026"
+  },
+  {
+    "league": "ucl",
+    "team": "aek-atenas",
+    "players": 32,
+    "source": "ESPN",
+    "season": "2026/27"
+  },
+  {
+    "league": "esp",
+    "team": "athletic-club",
+    "players": 31,
+    "source": "ESPN",
+    "season": "2026/27"
+  },
+  {
+    "league": "eng",
+    "team": "bournemouth",
+    "players": 29,
+    "source": "ESPN",
+    "season": "2026/27"
+  },
+  {
+    "league": "arg",
+    "team": "platense",
+    "players": 50,
+    "source": "ESPN",
+    "season": "2026"
+  },
+  {
+    "league": "ita",
+    "team": "atalanta",
+    "players": 36,
+    "source": "ESPN",
+    "season": "2026/27"
+  },
+  {
+    "league": "fra",
+    "team": "angers",
+    "players": 25,
+    "source": "ESPN",
+    "season": "2026/27"
+  },
+  {
+    "league": "bra",
+    "team": "athletico-paranaense",
+    "players": 48,
+    "source": "ESPN",
+    "season": "2026"
+  },
+  {
+    "league": "mex",
+    "team": "club-america",
+    "players": 35,
+    "source": "ESPN",
+    "season": "2026/27"
+  }
+]

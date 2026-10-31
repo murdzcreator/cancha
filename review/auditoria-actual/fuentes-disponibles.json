@@ -1,0 +1,48 @@
+[
+  {
+    "key": "per-standings",
+    "http": 200,
+    "groups": [
+      {
+        "name": "2026 Clausura",
+        "entries": 18
+      }
+    ],
+    "directEntries": 0,
+    "season": {
+      "year": 2026,
+      "startDate": "2026-01-01T05:00Z",
+      "endDate": "2027-01-01T04:59Z",
+      "displayName": "2026 Liga1 de Perú"
+    }
+  },
+  {
+    "key": "eng-standings",
+    "http": 200,
+    "groups": [
+      {
+        "name": "2026-27 English Premier League",
+        "entries": 20
+      }
+    ],
+    "directEntries": 0,
+    "season": {
+      "year": 2026,
+      "startDate": "2026-06-01T04:00Z",
+      "endDate": "2027-06-01T03:59Z",
+      "displayName": "2026-27 English Premier League"
+    }
+  },
+  {
+    "key": "alianza-roster",
+    "http": 200,
+    "athletes": 31,
+    "team": "Alianza Lima",
+    "season": {
+      "year": 2026,
+      "displayName": "2026 Liga1 de Perú",
+      "type": 14009,
+      "name": "Clausura"
+    }
+  }
+]

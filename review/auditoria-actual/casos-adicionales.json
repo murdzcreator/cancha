@@ -1,0 +1,14 @@
+{
+  "fallback": {
+    "selectedDate": "2026-10-25",
+    "rows": 36,
+    "sample": [
+      "20 oct. 2026 · hora por confirmar\nFenerbahçe 2 : 2 Slavia Praga\nFINAL",
+      "20 oct. 2026 · hora por confirmar\nSabah FK 1 : 2 Borussia Dortmund\nFINAL"
+    ]
+  },
+  "queryHtml": {
+    "executedHarmlessMarker": true,
+    "vector": "Texto de búsqueda de la URL insertado como HTML en subtítulo; ruta /buscar/."
+  }
+}

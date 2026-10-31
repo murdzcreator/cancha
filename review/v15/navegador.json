@@ -1,0 +1,144 @@
+{
+  "errors": [],
+  "apis": [
+    {
+      "league": "per",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "2026 Clausura",
+          "teams": 18
+        }
+      ],
+      "complete": true
+    },
+    {
+      "league": "ucl",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "Fase de liga",
+          "teams": 36
+        }
+      ],
+      "complete": true
+    },
+    {
+      "league": "esp",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "2026-27 LALIGA",
+          "teams": 20
+        }
+      ],
+      "complete": true
+    },
+    {
+      "league": "eng",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "2026-27 English Premier League",
+          "teams": 20
+        }
+      ],
+      "complete": true
+    },
+    {
+      "league": "arg",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "Grupo A",
+          "teams": 15
+        },
+        {
+          "phase": "Grupo B",
+          "teams": 15
+        }
+      ],
+      "complete": true
+    },
+    {
+      "league": "ita",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "2026-2027 Italian Serie A",
+          "teams": 20
+        }
+      ],
+      "complete": true
+    },
+    {
+      "league": "fra",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "French Ligue 1 2026-27",
+          "teams": 18
+        }
+      ],
+      "complete": true
+    },
+    {
+      "league": "bra",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "2026",
+          "teams": 20
+        }
+      ],
+      "complete": true
+    },
+    {
+      "league": "mex",
+      "status": 200,
+      "source": "ESPN",
+      "groups": [
+        {
+          "phase": "2026 Torneo Apertura",
+          "teams": 18
+        }
+      ],
+      "complete": true
+    }
+  ],
+  "checks": {
+    "search": true,
+    "safeSearch": true,
+    "standingsFilter": true,
+    "roster": 31,
+    "rosterToProfile": true,
+    "matchToPlayerHistory": true,
+    "teamStats": true,
+    "headToHead": true,
+    "rankings": true,
+    "calendarDate": true,
+    "calendarTeam": true,
+    "fallbackDate": true,
+    "mobile": true,
+    "enriched": {
+      "added": 0,
+      "failed": 0,
+      "remaining": 0
+    },
+    "savedPlayerStats": 30,
+    "combinedSeason": 380,
+    "noDuplicateActas": true
+  },
+  "players": {
+    "total": 353,
+    "teams": 15
+  }
+}
