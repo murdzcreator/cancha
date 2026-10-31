@@ -3,7 +3,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 echo.
 echo ========================================
-echo  CANCHA 14.2 - DATOS REALES ABIERTOS
+echo  CANCHA - MARCADORES Y FICHAS ESPN
  echo ========================================
 echo.
 where.exe node >nul 2>&1
@@ -11,12 +11,11 @@ if errorlevel 1 goto SIN_NODE
 node --version
 if not exist "server.mjs" goto SIN_SERVIDOR
 echo.
-echo Sincronizando Premier League y LaLiga con OpenFootball CC0...
-echo Espera la comprobacion de la conexion (sin claves ni registros).
-node "scripts\sincronizar-openfootball.mjs"
+echo ESPN se consulta al abrir calendarios y fichas, sin clave de pago.
+echo Los archivos de OpenFootball se conservan como alternativa fechada.
 echo.
 echo Iniciando CANCHA en http://127.0.0.1:4173/
-echo Puedes revisar Premier League, LaLiga, tablas y calendarios.
+echo Abre Partidos, elige competicion y fecha en hora de Peru.
 echo No cierres esta ventana mientras usas CANCHA.
 start "" cmd /c "timeout /t 3 /nobreak >nul & start http://127.0.0.1:4173/"
 node "server.mjs"

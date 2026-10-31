@@ -14,8 +14,14 @@ También puedes iniciar desde una terminal con `npm start`. Abre la dirección q
 
 ## Datos y cobertura
 
+La conexión nueva de ESPN consulta marcadores por fecha en hora de Perú y abre fichas con alineaciones, suplentes, eventos, estadísticas comparativas y métricas individuales del partido cuando la fuente las publica. Calendarios y fichas se consultan cada 45 segundos mientras la página está visible. Es una consulta periódica, no una garantía de transmisión instantánea. No necesita Python ni una clave de pago.
+
+En **Partidos**, elige competición y fecha. Ejemplo comprobado: Perú, 25/10/2026 → Comerciantes Unidos–Cienciano. Los datos sin disponibilidad quedan ausentes. Esta entrega no completa estadísticas individuales de temporada ni actualiza las clasificaciones desde ESPN.
+
+Consulta [CONEXION_ESPN.md](CONEXION_ESPN.md) para cobertura, pruebas y cómo volver al modo anterior. Los dominios autorizados del entorno no publican automáticamente la web.
+
 Premier League y LaLiga incluyen 380 partidos de OpenFootball por liga. Los resultados disponibles son parciales y las tablas calculadas no son clasificaciones oficiales ni un servicio en directo. Las demás competiciones y las estadísticas individuales dependen de la cobertura de las fuentes configuradas. Los datos históricos mantienen su fecha y sus límites.
 
-Consulta el informe de revisión para conocer las correcciones, las 42 pruebas aprobadas y las verificaciones de navegador. No se han verificado como actuales todos los jugadores, entrenadores ni participantes de cada competición.
+Consulta el informe de revisión para conocer las correcciones y verificaciones anteriores. La conexión ESPN tiene pruebas adicionales descritas en su documento. No se han verificado como actuales todos los jugadores, entrenadores ni participantes de cada competición.
 
 Las claves opcionales se configuran localmente siguiendo `.env.example`. No publiques tu archivo `.env`.

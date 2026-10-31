@@ -1,0 +1,133 @@
+{
+  "checkedAt": "2026-10-30",
+  "sampleDate": "2026-10-25",
+  "note": "Acceso por fecha; no demuestra temporada completa ni latencia de un partido en vivo. Cero encuentros significa respuesta vacía para el día probado.",
+  "competitions": [
+    {
+      "league": "per",
+      "status": 200,
+      "matches": 4,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    },
+    {
+      "league": "ucl",
+      "status": 200,
+      "matches": 0,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    },
+    {
+      "league": "esp",
+      "status": 200,
+      "matches": 4,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    },
+    {
+      "league": "eng",
+      "status": 200,
+      "matches": 5,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    },
+    {
+      "league": "arg",
+      "status": 200,
+      "matches": 5,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    },
+    {
+      "league": "ita",
+      "status": 200,
+      "matches": 5,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    },
+    {
+      "league": "fra",
+      "status": 200,
+      "matches": 6,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    },
+    {
+      "league": "bra",
+      "status": 200,
+      "matches": 0,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    },
+    {
+      "league": "mex",
+      "status": 200,
+      "matches": 4,
+      "source": "ESPN",
+      "coverage": {
+        "days": [
+          "2026-10-25",
+          "2026-10-26"
+        ],
+        "failedDays": 0,
+        "rejected": 0
+      }
+    }
+  ]
+}

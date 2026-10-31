@@ -9,6 +9,10 @@ import {makeProviders} from './server/providers.mjs';
 import {createPlayerIndex} from './server/player-index.mjs';
 import {readBranding} from './server/branding.mjs';
 import {createSoccerDataImports} from './server/soccerdata-import.mjs';
+import {createEspnProvider} from './server/espn.mjs';
+import {normalize} from './server/dates.mjs';
+// Node 24 utiliza el proxy administrado cuando está presente; Node 20 no lo necesita en uso local.
+if((process.env.HTTPS_PROXY||process.env.HTTP_PROXY)&&typeof http.setGlobalProxyFromEnv==='function')http.setGlobalProxyFromEnv();
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
 const crestCount=Object.keys(readBranding(path.dirname(fileURLToPath(import.meta.url))).teams||{}).length;
 let crestStatus={state:'complete',local:crestCount,source:'biblioteca local del ZIP aportado'};
@@ -21,6 +25,7 @@ const providers=makeProviders({db}),cache=cacheLayer(path.join(ROOT,'data-cache'
 const verifiedSnapshots=JSON.parse(fs.readFileSync(path.join(ROOT,'server','public-snapshots.json'),'utf8'));
 verifiedSnapshots.standings=reconcileStandings(verifiedSnapshots.standings);
 const soccerdata=createSoccerDataImports(ROOT,db);
+const espn=createEspnProvider({db,enabled:process.env.CANCHA_ESPN!=='0'});
 const dataKeysPresent=Boolean(process.env.FOOTBALL_DATA_KEY||process.env.API_FOOTBALL_KEY);
 const playerIndex=createPlayerIndex(path.join(ROOT,'data-cache'),{db,snapshots:verifiedSnapshots});
 async function standingsFor(l){
@@ -35,9 +40,11 @@ async function standingsFor(l){
  }catch(e){if(local)return l==='per'&&!local.quality.complete?verifiedSnapshots.standings:local;if(l==='per')return verifiedSnapshots.standings;throw e;}
 }
 async function fixturesFor(l){
- const imported=soccerdata.fixtures(l);
- if(imported?.events.length)return imported;
- return providers.getFixtures(l);
+ try{return await espn.fixtures(l)}catch(err){
+  const imported=soccerdata.fixtures(l);
+  if(imported?.events.length)return {...imported,fallback:true,note:'ESPN no respondió. Se muestra el archivo fechado, sin actualización en vivo.'};
+  throw err;
+ }
 }
 async function rosterFor(t){
  if(t==='alianza-lima'&&!dataKeysPresent)return verifiedSnapshots.roster;
@@ -56,18 +63,24 @@ async function router(req,res){
  if(url.pathname==='/api/branding/status'){send(res,200,crestStatus);return}
  if(url.pathname==='/api/branding/manifest'){send(res,200,readBranding(ROOT));return}
  if(url.pathname.startsWith('/api/')){
-  if(url.pathname==='/api/health'){send(res,200,{version:'14.2',server:true,asOf:new Date().toISOString(),providers:providers.status,liveCredentialsConfigured:dataKeysPresent,soccerdataImports:soccerdata.status(),hasImportedFixtures:soccerdata.status().some(x=>x.fixtures>0),playerCoverage:playerIndex.coverage(),snapshotFallbacks:['per','alianza-lima'],competitions:db.leagues.map(x=>({id:x.id,name:x.name,season:x.season}))});return}
+  if(url.pathname==='/api/health'){send(res,200,{version:'14.3',server:true,asOf:new Date().toISOString(),providers:{...providers.status,espn:espn.status().enabled},espn:espn.status(),liveCredentialsConfigured:dataKeysPresent,soccerdataImports:soccerdata.status(),hasImportedFixtures:soccerdata.status().some(x=>x.fixtures>0),playerCoverage:playerIndex.coverage(),snapshotFallbacks:['per','alianza-lima'],competitions:db.leagues.map(x=>({id:x.id,name:x.name,season:x.season}))});return}
   if(url.pathname==='/api/club-profile'){const id=url.searchParams.get('team');if(!teams.has(id)){send(res,404,{error:'Club desconocido'});return}try{const data=await cache.retrieve('club-profile:'+id,72*60*60_000,()=>providers.getClubProfile(id));send(res,200,data)}catch(err){send(res,503,{error:'Ficha pública adicional no disponible',detail:err.message})}return}
   if(url.pathname==='/api/players'){const integer=(v,fallback,max)=>/^\d+$/.test(v||'')?Math.min(max,Number(v)):fallback;const count=Math.max(1,integer(url.searchParams.get('limit'),80,100));const offset=integer(url.searchParams.get('offset'),0,100000);send(res,200,playerIndex.listing({q:url.searchParams.get('q')||'',team:url.searchParams.get('team')||'',limit:count,offset}));return}
   if(url.pathname==='/api/player-profile'){const t=url.searchParams.get('team')||'',id=url.searchParams.get('id')||'';if(!teams.has(t)){send(res,404,{error:'Club desconocido'});return}const p=playerIndex.one(t,id);if(!p){send(res,404,{error:'Jugador no documentado en el índice local'});return}send(res,200,p);return}
   const l=url.searchParams.get('league'),t=url.searchParams.get('team'),force=url.searchParams.get('refresh')==='1';
   try{
    if(url.pathname==='/api/standings'&&leagues.has(l)){const local=soccerdata.standings(l);if(local?.quality.complete&&!dataKeysPresent){send(res,200,local);return}let d=await cache.retrieve('standings:v15:'+l,ttl('standings'),()=>standingsFor(l),{force});send(res,200,d);return}
-   if(url.pathname==='/api/fixtures'&&leagues.has(l)){const local=soccerdata.fixtures(l);if(local?.events.length){send(res,200,local);return}let d=await cache.retrieve('fixtures:v15:'+l,ttl('fixtures'),()=>fixturesFor(l),{force});send(res,200,d);return}
+   if(url.pathname==='/api/fixtures'&&leagues.has(l)){
+    const day=url.searchParams.get('date');if(day&&(day.length!==10||normalize(day)!==day)){send(res,400,{error:'Fecha no válida; utiliza AAAA-MM-DD'});return}
+    if(day){send(res,200,await espn.fixtures(l,day));return}
+    if(process.env.CANCHA_ESPN==='0'){const local=soccerdata.fixtures(l);if(local?.events.length){send(res,200,local);return}send(res,200,await cache.retrieve('fixtures:v15:'+l,ttl('fixtures'),()=>providers.getFixtures(l),{force}));return}
+    const d=await cache.retrieve('fixtures:espn:v1:'+l,45000,()=>fixturesFor(l));send(res,200,d);return;
+   }
    if(url.pathname==='/api/roster'&&teams.has(t)){let d=await cache.retrieve('roster:'+t,ttl('roster'),()=>rosterFor(t),{force});if(d.players?.length)playerIndex.addRoster(d);send(res,200,d);return}
    if(url.pathname==='/api/match-detail'&&leagues.has(l)){
     const id=url.searchParams.get('id'),source=url.searchParams.get('source');
-    if(!/^\d{1,12}$/.test(id||'')||!['API-Football','football-data.org','TheSportsDB','SoccerData'].includes(source)){send(res,400,{error:'Origen o identificador no válido'});return}
+    if(!/^\d{1,12}$/.test(id||'')||!['API-Football','football-data.org','TheSportsDB','SoccerData','ESPN'].includes(source)){send(res,400,{error:'Origen o identificador no válido'});return}
+    if(source==='ESPN'){const d=await cache.retrieve('detail:espn:v1:'+l+':'+id,45000,()=>espn.summary(l,id));send(res,200,d);return}
     if(source==='SoccerData'){const local=soccerdata.match(l,id);if(!local){send(res,404,{error:'Partido importado no encontrado'});return}send(res,200,local);return}
     let d=await cache.retrieve(['fixture-detail-v15',l,source,id].join(':'),10*60_000,()=>source==='SoccerData'?Promise.resolve(soccerdata.match(l,id)).then(x=>{if(!x)throw Error('Partido importado no encontrado');return x}):providers.getMatchDetail(l,source,id));send(res,200,d);return;
    }

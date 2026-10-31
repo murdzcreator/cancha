@@ -32,6 +32,6 @@
   const selectedNext=next.slice(0,limit-recentCount);
   return {next:selectedNext,previous:previous.slice(0,limit-selectedNext.length)};
  }
- const statusLabel=(m,now=new Date())=>m.status==='PROGRAMADO'&&!upcoming(m,now)?'Horario vencido · estado sin actualizar':m.status||'SIN CONFIRMAR';
+ const statusLabel=(m,now=new Date())=>m.status==='PROGRAMADO'&&!upcoming(m,now)?'Horario vencido · estado sin actualizar':m.status==='EN VIVO'&&m.minute?'EN VIVO · '+m.minute:m.status||'SIN CONFIRMAR';
  globalThis.CANCHA_DATES={statusLabel,normalize,format,time,compare,upcoming,nearby,dayInPeru};
 })();

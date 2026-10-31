@@ -33,3 +33,8 @@
 .v14-related-match em{font-style:normal;color:#e0ff9a}.v14-related-match>span:last-child{color:#b0d9c4}
 .v14-related-match:hover{color:#deff84}
 @media(max-width:740px){.v14-related-grid{grid-template-columns:1fr}.v13-match-tabs button{padding:7px 9px}}
+/* Calendario por fecha de Perú y futbolistas suplentes del acta. */
+.v17-calendar-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:16px}
+.v17-calendar-controls .search-filter{min-width:0;max-width:100%}
+.v17-bench{margin:16px 0}.v17-bench-list{display:flex;flex-wrap:wrap;gap:8px;padding:16px}
+.v17-bench-list button{white-space:normal;text-align:left}.v17-bench-list small{display:block}
