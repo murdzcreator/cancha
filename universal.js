@@ -113,6 +113,9 @@ async function loadTeamFixtures(id){
  const datasets=loaded.filter(x=>x.status==='fulfilled').map(x=>x.value);
  const matches=datasets.flatMap(d=>(d.events||[]).filter(m=>m.home===id||m.away===id).map(m=>({...m,league:d.league,source:d.source})));
  const {next,previous}=window.CANCHA_DATES.nearby(matches,16);
+ const nextCount=document.getElementById('v17-team-next-count'),resultCount=document.getElementById('v17-team-results-count');
+ if(nextCount)nextCount.textContent=next.length+' mostrados · '+matches.filter(m=>window.CANCHA_DATES.upcoming(m)).length+' publicados';
+ if(resultCount)resultCount.textContent=previous.length+' mostrados · '+matches.filter(m=>m.status==='FINAL').length+' publicados';
  const rows=arr=>arr.map(m=>`<a class="v13-provider-row" href="#/evento/${encodeURIComponent(m.league)}/${encodeURIComponent(m.provider)}/${encodeURIComponent(m.id)}"><span>${esc(dateShort(m.date))}</span><strong>${esc(m.homeName)} ${esc(m.hs??'–')} : ${esc(m.as??'–')} ${esc(m.awayName)}</strong><span>${esc(window.CANCHA_DATES.statusLabel(m))} · ${esc(league(m.league)?.name)} ↗</span></a>`).join('');
  const note=`<div class="v13-provenance">${datasets.map(d=>esc(d.source)+' · '+esc(dateShort(d.updatedAt))).join('<br>')}${loaded.some(x=>x.status==='rejected')?'<br>Cobertura parcial: alguna competición no respondió.':''}</div>`;
  if(datasets.length){box.innerHTML=note+(next.length?rows(next):'<p class="v13-quiet">Sin próximos partidos con fecha vigente en las fuentes disponibles.</p>');

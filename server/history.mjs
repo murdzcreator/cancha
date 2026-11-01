@@ -4,9 +4,12 @@ import {normalize,compare} from './dates.mjs';
 const day=m=>m.date.length===10?m.date:new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Lima'}).format(new Date(m.date));
 const final=m=>m.status==='FINAL'&&Number.isInteger(m.hs)&&m.hs>=0&&m.hs<=99&&Number.isInteger(m.as)&&m.as>=0&&m.as<=99;
 const pair=(a,b)=>a.home===b.home&&a.away===b.away;
-export function combineFixtures(local=[],remote=[]){
- const result=local.map(x=>({...x,origins:[{provider:x.provider,id:x.id}]}));
- for(const m of remote){const candidates=result.filter(x=>pair(x,m)&&(x.provider===m.provider?String(x.id)===String(m.id):day(x)===day(m)));
+export function combineFixtures(local=[],remote=[],{singleRoundRobin=false}={}){
+ const result=local.map(x=>({...x,origins:x.origins?.map(o=>({...o}))||[{provider:x.provider,id:x.id}]}));
+ for(const m of remote){let candidates=result.filter(x=>pair(x,m)&&(x.provider===m.provider?String(x.id)===String(m.id):day(x)===day(m)));
+  // Premier y LaLiga: una sola localía por pareja en la temporada. ESPN puede
+  // mover el día provisional de OpenFootball (p. ej. del domingo al viernes).
+  if(!candidates.length&&singleRoundRobin){const samePair=result.filter(x=>pair(x,m));if(samePair.length===1&&samePair[0].provider!==m.provider)candidates=samePair;}
   if(candidates.length===1){const old=candidates[0],index=result.indexOf(old),winner=final(old)&&!final(m)?old:m;
    result[index]={...winner,origins:[...old.origins.filter(o=>!(o.provider===m.provider&&String(o.id)===String(m.id))),{provider:m.provider,id:m.id}],...(winner===m?{}:{alternate:{provider:m.provider,id:m.id}})};
   }else result.push({...m,origins:[{provider:m.provider,id:m.id}]});
@@ -26,7 +29,7 @@ export function createHistory(root,db){
  function save(){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file+'.tmp',JSON.stringify(data));fs.renameSync(file+'.tmp',file)}
  function observe(lid,d){if(d.stale||d.cache?.state==='stale'||d.season&&d.season!==league(lid).season)return;const rows=data.fixtures[key(lid)]||{};for(const m of d.events||[])if(valid(m,lid))rows[String(m.id)]=Object.fromEntries([...['id','home','away','homeName','awayName','date','status','hs','as','minute','provider'].map(k=>[k,m[k]]),['observedAt',d.updatedAt]]);data.fixtures[key(lid)]=rows;data.days[key(lid)]=[...new Set([...(data.days[key(lid)]||[]),...(d.coverage?.days||[])])];save()}
  function detail(lid,d){if(d.provider!=='ESPN'||!valid(d,lid)||d.stale||d.cache?.state==='stale')return;data.details[key(lid)]||={};data.details[key(lid)][d.id]=d;observe(lid,{events:[d],updatedAt:d.updatedAt})}
- function fixtures(lid,local){return combineFixtures(local?.events||[],Object.values(data.fixtures[key(lid)]||{}).filter(m=>valid(m,lid)))}
+ function fixtures(lid,local){return combineFixtures(local?.events||[],Object.values(data.fixtures[key(lid)]||{}).filter(m=>valid(m,lid)),{singleRoundRobin:['eng','esp'].includes(lid)})}
  function playerRows(lid){const players=new Map(),details=Object.values(data.details[key(lid)]||{}).filter(d=>valid(d,lid)&&final(d));
   for(const d of details){for(const lu of d.lineups||[]){const team=Object.keys(db.teams).find(id=>db.teams[id].name===lu.team);if(!team)continue;
    for(const p of [...(lu.starting||[]),...(lu.substitutes||[])]){if(!p.starter&&!p.subbedIn&&!lu.starting?.some(x=>x.id===p.id))continue;

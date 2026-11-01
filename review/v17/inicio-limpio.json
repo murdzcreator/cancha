@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "html": 200,
+  "invalidDate": 400,
+  "cacheInitiallyAbsent": true,
+  "checks": [
+    {
+      "league": "esp",
+      "day": 4,
+      "season": 380,
+      "duplicatePairs": 0
+    },
+    {
+      "league": "eng",
+      "day": 1,
+      "season": 380,
+      "duplicatePairs": 0
+    }
+  ]
+}

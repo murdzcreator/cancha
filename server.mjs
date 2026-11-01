@@ -11,7 +11,7 @@ import {readBranding} from './server/branding.mjs';
 import {createSoccerDataImports} from './server/soccerdata-import.mjs';
 import {createEspnProvider} from './server/espn.mjs';
 import {normalize} from './server/dates.mjs';
-import {createHistory} from './server/history.mjs';
+import {createHistory,combineFixtures} from './server/history.mjs';
 import {downloadOpenFootball} from './server/openfootball.mjs';
 // Node 24 utiliza el proxy administrado cuando está presente; Node 20 no lo necesita en uso local.
 if((process.env.HTTPS_PROXY||process.env.HTTP_PROXY)&&typeof http.setGlobalProxyFromEnv==='function')http.setGlobalProxyFromEnv();
@@ -46,15 +46,24 @@ async function standingsFor(l){
 }
 async function fixturesFor(l,date=null){
  const local=soccerdata.fixtures(l);let live=null,error=null;
- try{live=await espn.fixtures(l,date);history.observe(l,live)}catch(e){error=e}
- const events=history.fixtures(l,local).filter(m=>!date||(m.date.length===10?m.date:globalThis.CANCHA_DATES.dayInPeru(new Date(m.date)))===date);
+ try{
+  // En fechas actuales/futuras, la agenda permite corregir las fechas
+  // provisionales de OpenFootball antes de filtrar el día de Perú.
+  const needsAgenda=!!local?.events.length&&date&&date>=new Date(Date.now()-3*864e5).toISOString().slice(0,10);
+  const loaded=await Promise.allSettled([espn.fixtures(l,date),...(needsAgenda?[espn.fixtures(l)]:[])]);
+  const valid=loaded.filter(r=>r.status==='fulfilled').map(r=>r.value);
+  if(!valid.length)throw loaded[0].reason;
+  for(const d of valid)history.observe(l,d);
+  live=valid[0];if(valid[1])live={...live,events:combineFixtures(valid[1].events,live.events),coverage:{...valid[1].coverage,...live.coverage},stale:!!live.stale||!!valid[1].stale};
+ }catch(e){error=e}
+ const events=combineFixtures(history.fixtures(l,local),live?.events||[],{singleRoundRobin:['eng','esp'].includes(l)}).filter(m=>!date||(m.date.length===10?m.date:globalThis.CANCHA_DATES.dayInPeru(new Date(m.date)))===date);
  if(!live&&!events.length&&error)throw error;
  const hasLocal=!!local?.events.length;
  return {...(live||{}),league:l,season:db.leagues.find(x=>x.id===l).season,source:hasLocal?'OpenFootball + ESPN':live?'ESPN':'Archivo ESPN',
   updatedAt:live?.updatedAt||local?.updatedAt||events.map(m=>m.observedAt).filter(Boolean).sort().at(-1)||null,events,totalPublished:events.length,
   sources:[...(hasLocal?[{name:local.source,updatedAt:local.updatedAt}]:[]),...(live?[{name:'ESPN',updatedAt:live.updatedAt}]:[])],
   partial:true,stale:!!error||!!live?.stale,fallback:!!error,
-  notice:hasLocal?'Calendario OpenFootball combinado con las actualizaciones ESPN disponibles.':'Jornadas ESPN consultadas y guardadas; cobertura parcial.',
+  notice:hasLocal?'Calendario OpenFootball combinado con jornadas recientes y agenda ESPN por club.':'Jornadas y agenda ESPN por club; cobertura parcial según la fuente.',
   note:error?'No se pudo actualizar ESPN. Se conserva el archivo con su fecha.':live?.note};
 }
 async function rosterFor(t){
@@ -75,7 +84,7 @@ async function router(req,res){
  if(url.pathname==='/api/branding/status'){send(res,200,crestStatus);return}
  if(url.pathname==='/api/branding/manifest'){send(res,200,readBranding(ROOT));return}
  if(url.pathname.startsWith('/api/')){
-  if(url.pathname==='/api/health'){send(res,200,{version:'16.0',server:true,asOf:new Date().toISOString(),providers:{...providers.status,espn:espn.status().enabled},espn:espn.status(),liveCredentialsConfigured:dataKeysPresent,soccerdataImports:soccerdata.status(),hasImportedFixtures:soccerdata.status().some(x=>x.fixtures>0),calendarCoverage:db.leagues.map(l=>({league:l.id,count:history.fixtures(l.id,soccerdata.fixtures(l.id)).length})),playerCoverage:playerIndex.coverage(),snapshotFallbacks:['per','alianza-lima'],competitions:db.leagues.map(x=>({id:x.id,name:x.name,season:x.season}))});return}
+  if(url.pathname==='/api/health'){send(res,200,{version:'17.0',server:true,asOf:new Date().toISOString(),providers:{...providers.status,espn:espn.status().enabled},espn:espn.status(),liveCredentialsConfigured:dataKeysPresent,soccerdataImports:soccerdata.status(),hasImportedFixtures:soccerdata.status().some(x=>x.fixtures>0),calendarCoverage:db.leagues.map(l=>({league:l.id,count:history.fixtures(l.id,soccerdata.fixtures(l.id)).length})),playerCoverage:playerIndex.coverage(),snapshotFallbacks:['per','alianza-lima'],competitions:db.leagues.map(x=>({id:x.id,name:x.name,season:x.season}))});return}
   if(url.pathname==='/api/rosters/sync'){
    const current=playerIndex.coverage(),pending=Object.keys(db.teams).filter(t=>!current.some(r=>r.team===t&&r.source==='ESPN'&&Date.now()-Date.parse(r.updatedAt)<24*3600000)&&Date.now()-(rosterAttempts.get(t)||0)>1800000),batch=pending.slice(0,6);
    const results=await Promise.allSettled(batch.map(async t=>{rosterAttempts.set(t,Date.now());const d=await espn.roster(t);if(d.stale)throw Error('Copia antigua');playerIndex.addRoster(d);return t}));
@@ -110,7 +119,7 @@ async function router(req,res){
     const day=url.searchParams.get('date');if(day&&(day.length!==10||normalize(day)!==day)){send(res,400,{error:'Fecha no válida; utiliza AAAA-MM-DD'});return}
     if(day){send(res,200,await fixturesFor(l,day));return}
     if(process.env.CANCHA_ESPN==='0'){const local=soccerdata.fixtures(l);if(local?.events.length){send(res,200,local);return}send(res,200,await cache.retrieve('fixtures:v15:'+l,ttl('fixtures'),()=>providers.getFixtures(l),{force}));return}
-    const d=await cache.retrieve('fixtures:combined:v18:'+l,45000,()=>fixturesFor(l));send(res,200,d);return;
+    const d=await cache.retrieve('fixtures:combined:v17-agenda:'+l,45000,()=>fixturesFor(l));send(res,200,d);return;
    }
    if(url.pathname==='/api/roster'&&teams.has(t)){let d=await cache.retrieve('roster:v18:'+t,21600000,()=>rosterFor(t),{force});if(d.players?.length)playerIndex.addRoster(d);send(res,200,d);return}
    if(url.pathname==='/api/match-detail'&&leagues.has(l)){
@@ -139,7 +148,7 @@ async function router(req,res){
 }
 export function startServer(port=Number(process.env.PORT||4173),host=process.env.HOST||'127.0.0.1'){
  const server=http.createServer((req,res)=>{router(req,res).catch(()=>{if(!res.headersSent)send(res,500,{error:'Error interno'})})});
- server.listen(port,host,()=>console.log(`CANCHA V16: http://${host}:${server.address().port}`));
+ server.listen(port,host,()=>console.log(`CANCHA V17: http://${host}:${server.address().port}`));
   if(process.env.CANCHA_OPENFOOTBALL!=='0'){const sync=()=>downloadOpenFootball(ROOT,db,{timeoutMs:8000}).catch(()=>{});sync();const timer=setInterval(sync,6*3600000);timer.unref();server.on('close',()=>clearInterval(timer));}
   // Escudos locales empaquetados: sin descarga automática, ni cambios silenciosos.
   return server;

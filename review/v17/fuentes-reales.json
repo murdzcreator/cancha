@@ -1,0 +1,413 @@
+[
+  {
+    "league": "per",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 896,
+    "source": "ESPN",
+    "total": 29,
+    "next": 25,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02",
+        "2026-10-29",
+        "2026-10-31",
+        "2026-11-03"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 18,
+      "expectedClubs": 18,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401886124",
+      "home": "deportivo-moquegua",
+      "away": "los-chankas",
+      "homeName": "Deportivo Moquegua",
+      "awayName": "Los Chankas",
+      "date": "2026-11-01T16:00:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "ESPN",
+          "id": "401886124"
+        }
+      ]
+    }
+  },
+  {
+    "league": "ucl",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 1793,
+    "source": "ESPN",
+    "total": 90,
+    "next": 90,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 36,
+      "expectedClubs": 36,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401915310",
+      "home": "shakhtar-donetsk",
+      "away": "sporting-cp",
+      "homeName": "Shakhtar Donetsk",
+      "awayName": "Sporting CP",
+      "date": "2026-11-03T17:45:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "ESPN",
+          "id": "401915310"
+        }
+      ]
+    }
+  },
+  {
+    "league": "esp",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 83,
+    "source": "OpenFootball + ESPN",
+    "total": 380,
+    "next": 275,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-06"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 20,
+      "expectedClubs": 20,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401882821",
+      "home": "getafe",
+      "away": "sevilla",
+      "homeName": "Getafe",
+      "awayName": "Sevilla",
+      "date": "2026-11-01T13:00:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "SoccerData",
+          "id": "89778840780"
+        },
+        {
+          "provider": "ESPN",
+          "id": "401882821"
+        }
+      ]
+    }
+  },
+  {
+    "league": "eng",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 186,
+    "source": "OpenFootball + ESPN",
+    "total": 380,
+    "next": 292,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02",
+        "2026-10-25",
+        "2026-10-31",
+        "2026-11-06"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 20,
+      "expectedClubs": 20,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401879246",
+      "home": "liverpool",
+      "away": "arsenal",
+      "homeName": "Liverpool",
+      "awayName": "Arsenal",
+      "date": "2026-11-01T16:30:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "SoccerData",
+          "id": "27335126221"
+        },
+        {
+          "provider": "ESPN",
+          "id": "401879246"
+        }
+      ]
+    }
+  },
+  {
+    "league": "arg",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 2467,
+    "source": "ESPN",
+    "total": 30,
+    "next": 23,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-08"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 30,
+      "expectedClubs": 30,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401841658",
+      "home": "boca-juniors",
+      "away": "river-plate",
+      "homeName": "Boca Juniors",
+      "awayName": "River Plate",
+      "date": "2026-11-01T18:00:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "ESPN",
+          "id": "401841658"
+        }
+      ]
+    }
+  },
+  {
+    "league": "ita",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 3053,
+    "source": "ESPN",
+    "total": 292,
+    "next": 287,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02",
+        "2026-10-29",
+        "2026-10-31",
+        "2026-11-06"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 20,
+      "expectedClubs": 20,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401875002",
+      "home": "como",
+      "away": "venezia",
+      "homeName": "Como",
+      "awayName": "Venezia",
+      "date": "2026-11-01T11:30:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "ESPN",
+          "id": "401875002"
+        }
+      ]
+    }
+  },
+  {
+    "league": "fra",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 3510,
+    "source": "ESPN",
+    "total": 234,
+    "next": 230,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-06"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 18,
+      "expectedClubs": 18,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401876414",
+      "home": "strasbourg",
+      "away": "auxerre",
+      "homeName": "Strasbourg",
+      "awayName": "Auxerre",
+      "date": "2026-11-01T14:00:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "ESPN",
+          "id": "401876414"
+        }
+      ]
+    }
+  },
+  {
+    "league": "bra",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 3988,
+    "source": "ESPN",
+    "total": 52,
+    "next": 50,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-03"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 20,
+      "expectedClubs": 20,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401841299",
+      "home": "red-bull-bragantino",
+      "away": "santos",
+      "homeName": "Red Bull Bragantino",
+      "awayName": "Santos",
+      "date": "2026-11-02T23:00:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "ESPN",
+          "id": "401841299"
+        }
+      ]
+    }
+  },
+  {
+    "league": "mex",
+    "duplicatePairs": 0,
+    "status": 200,
+    "ms": 4434,
+    "source": "ESPN",
+    "total": 28,
+    "next": 21,
+    "coverage": {
+      "days": [
+        "2026-11-01",
+        "2026-11-02",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-06",
+        "2026-11-07"
+      ],
+      "failedDays": 0,
+      "rejected": 0,
+      "clubs": 18,
+      "expectedClubs": 18,
+      "failedClubs": 0,
+      "scoreboardAvailable": true,
+      "schedulesAvailable": true
+    },
+    "stale": false,
+    "first": {
+      "id": "401876912",
+      "home": "santos-laguna",
+      "away": "necaxa",
+      "homeName": "Santos Laguna",
+      "awayName": "Necaxa",
+      "date": "2026-11-01T23:00:00.000Z",
+      "status": "PROGRAMADO",
+      "hs": null,
+      "as": null,
+      "minute": null,
+      "provider": "ESPN",
+      "origins": [
+        {
+          "provider": "ESPN",
+          "id": "401876912"
+        }
+      ]
+    }
+  }
+]

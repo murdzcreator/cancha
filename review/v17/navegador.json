@@ -1,0 +1,86 @@
+[
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "home": {
+      "title": "Tu centro de fútbol · CANCHA V17",
+      "featured": true,
+      "rows": 23,
+      "overflow": false,
+      "bg": "rgb(16, 12, 26)",
+      "logo": "88px",
+      "heading": "sr-only"
+    },
+    "filtered": "true",
+    "standings": {
+      "rows": 20,
+      "overflow": false
+    },
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "home": {
+      "title": "Tu centro de fútbol · CANCHA V17",
+      "featured": true,
+      "rows": 23,
+      "overflow": false,
+      "bg": "rgb(16, 12, 26)",
+      "logo": "66px",
+      "heading": "sr-only"
+    },
+    "filtered": "true",
+    "standings": {
+      "rows": 20,
+      "overflow": false
+    },
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "home": {
+      "title": "Tu centro de fútbol · CANCHA V17",
+      "featured": true,
+      "rows": 23,
+      "overflow": false,
+      "bg": "rgb(16, 12, 26)",
+      "logo": "66px",
+      "heading": "sr-only"
+    },
+    "filtered": "true",
+    "standings": {
+      "rows": 20,
+      "overflow": false
+    },
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "home": {
+      "title": "Tu centro de fútbol · CANCHA V17",
+      "featured": true,
+      "rows": 23,
+      "overflow": false,
+      "bg": "rgb(16, 12, 26)",
+      "logo": "88px",
+      "heading": "sr-only"
+    },
+    "filtered": "true",
+    "standings": {
+      "rows": 20,
+      "overflow": false
+    },
+    "errors": []
+  }
+]

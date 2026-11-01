@@ -1,5 +1,5 @@
-CANCHA V13 · Centro universal de partidos
-Instalación: abre INICIAR_CANCHA_WINDOWS.bat después de extraer el ZIP.
-Guía y límites: INSTRUCCIONES_V13.md
-
-CANCHA V14.1: Premier League y LaLiga, importación CC0 desde OpenFootball; consulta README_V14_1.md.
+CANCHA V17 · Noche violeta
+Extrae todo el ZIP y abre INICIAR_CANCHA_WINDOWS.bat (Node.js 20+).
+En macOS/Linux: npm start.
+Abre http://127.0.0.1:4173/ y mantén la consola abierta.
+Guía: README.md. Novedades y verificación: NOVEDADES_V17.md.

@@ -1,0 +1,134 @@
+[
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "clubCount": "9 mostrados · 34 publicados",
+    "checks": [
+      {
+        "name": "competiciones",
+        "overflow": false
+      },
+      {
+        "name": "buscador de equipos",
+        "overflow": false
+      },
+      {
+        "name": "club y próximos partidos",
+        "overflow": false
+      },
+      {
+        "name": "plantilla de club",
+        "overflow": false
+      },
+      {
+        "name": "perfil de futbolista",
+        "overflow": false
+      },
+      {
+        "name": "directorio de jugadores",
+        "overflow": false
+      },
+      {
+        "name": "calendario: competición, club y próximos",
+        "overflow": false
+      },
+      {
+        "name": "ficha de partido",
+        "overflow": false
+      },
+      {
+        "name": "partido: alineaciones",
+        "overflow": false
+      },
+      {
+        "name": "partido: estadisticas",
+        "overflow": false
+      },
+      {
+        "name": "partido: historial",
+        "overflow": false
+      },
+      {
+        "name": "partido: informacion",
+        "overflow": false
+      },
+      {
+        "name": "partido: resumen",
+        "overflow": false
+      },
+      {
+        "name": "fuentes",
+        "overflow": false
+      }
+    ],
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "clubCount": "9 mostrados · 34 publicados",
+    "checks": [
+      {
+        "name": "competiciones",
+        "overflow": false
+      },
+      {
+        "name": "buscador de equipos",
+        "overflow": false
+      },
+      {
+        "name": "club y próximos partidos",
+        "overflow": false
+      },
+      {
+        "name": "plantilla de club",
+        "overflow": false
+      },
+      {
+        "name": "perfil de futbolista",
+        "overflow": false
+      },
+      {
+        "name": "directorio de jugadores",
+        "overflow": false
+      },
+      {
+        "name": "calendario: competición, club y próximos",
+        "overflow": false
+      },
+      {
+        "name": "ficha de partido",
+        "overflow": false
+      },
+      {
+        "name": "partido: alineaciones",
+        "overflow": false
+      },
+      {
+        "name": "partido: estadisticas",
+        "overflow": false
+      },
+      {
+        "name": "partido: historial",
+        "overflow": false
+      },
+      {
+        "name": "partido: informacion",
+        "overflow": false
+      },
+      {
+        "name": "partido: resumen",
+        "overflow": false
+      },
+      {
+        "name": "fuentes",
+        "overflow": false
+      }
+    ],
+    "errors": []
+  }
+]

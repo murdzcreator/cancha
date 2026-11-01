@@ -1,3 +1,5 @@
 .env
 data-cache/*.json
 node_modules/
+work/
+output/

@@ -35,6 +35,19 @@ export function normalizeEspnEvent(event,league,db){
   status:status==='FINAL'&&(hs===null||as===null)?'SIN CONFIRMAR':status,hs,as,
   minute:status==='EN VIVO'?text((c.status||event.status)?.displayClock):null,provider:'ESPN'};
 }
+// La agenda por club puede incluir otras copas: comprobar también la liga del evento.
+export function normalizeEspnSchedule(data,league,db,club){
+ const year=seasonStart(league);
+ if(String(data.team?.id)!==String(club)||Number(data.season?.year)!==year||
+    (data.requestedSeason&&Number(data.requestedSeason.year)!==year)||!Array.isArray(data.events))throw Error('Agenda de otro club o temporada');
+ const events=[];let rejected=0;
+ for(const event of data.events){
+  const belongs=event.league?.slug===league.espn&&event.competitions?.[0]?.competitors?.some(c=>String(c.team?.id)===String(club));
+  const match=belongs?normalizeEspnEvent({...event,season:event.season||data.season},league,db):null;
+  if(match)events.push(match);else rejected++;
+ }
+ return {events,rejected};
+}
 function playerStats(p){
  const s=statsMap(p.stats),has=(key)=>s[key]!==undefined&&s[key]!==null;
  const get=key=>has(key)?s[key]:null;
@@ -115,7 +128,7 @@ export function createEspnProvider({db,fetchFn=fetch,now=()=>new Date(),enabled=
   const data=await json(l.id+':'+day,BASE+l.espn+'/scoreboard?dates='+day.replaceAll('-',''),ttl,d=>Array.isArray(d.events)&&d.leagues?.[0]?.slug===l.espn);
   if(!Array.isArray(data.events)||data.leagues?.[0]?.slug!==l.espn)throw Error('Calendario ESPN de competición no verificable');return data;
  }
- async function fixtures(lid,day=null){
+ async function scoreboardFixtures(lid,day=null){
   const l=leagueFor(lid),today=peruDay(now()),focus=day||today;
   if(normalize(focus)!==focus||focus.length!==10)throw Error('Fecha incorrecta');
   const first=await daily(l,focus),calendar=[...new Set((first.leagues?.[0]?.calendar||[]).filter(d=>typeof d==='string').map(d=>d.slice(0,10)).filter(d=>normalize(d)))].sort();
@@ -132,6 +145,36 @@ export function createEspnProvider({db,fetchFn=fetch,now=()=>new Date(),enabled=
    coverage:{days:found.map(r=>r.value.day),failedDays:loaded.length-found.length,rejected:rejected.length},refreshSeconds:45,
    notice:day?'Partidos del día elegido en hora de Perú.':'Ventana de jornadas cercanas; no es el calendario completo de temporada.',
    ...(stale?{cache:{state:'stale'},note:'No se pudo actualizar ESPN; se conserva la última respuesta.'}:{note:'Actualización periódica; ESPN puede publicar datos con demora.'})};
+ }
+ async function clubSchedules(lid){
+  const l=leagueFor(lid),clubs=Object.entries(identities.leagues[lid]||{}).filter(([,team])=>l.teams.includes(team)).map(([id])=>id);
+  const loaded=await Promise.allSettled(clubs.map(async club=>{
+   const data=await json('schedule:'+lid+':'+seasonStart(l)+':'+club,
+    BASE+l.espn+'/teams/'+club+'/schedule?season='+seasonStart(l)+'&fixture=true',3600000,
+    d=>{normalizeEspnSchedule(d,l,db,club);return true});
+   return {...normalizeEspnSchedule(data,l,db,club),updatedAt:data._retrievedAt,stale:!!data._stale};
+  }));
+  const found=loaded.filter(r=>r.status==='fulfilled').map(r=>r.value);
+  if(!found.length)throw Error('No respondieron las agendas ESPN de los clubes');
+  const events=new Map();for(const d of found)for(const m of d.events)events.set(m.id,m);
+  return {events:[...events.values()],updatedAt:found.map(d=>d.updatedAt).sort()[0],stale:found.some(d=>d.stale),
+   coverage:{clubs:found.length,expectedClubs:clubs.length,failedClubs:clubs.length-found.length,rejected:found.reduce((n,d)=>n+d.rejected,0)}};
+ }
+ async function fixtures(lid,day=null){
+  if(day)return scoreboardFixtures(lid,day);
+  const l=leagueFor(lid),[scores,agenda]=await Promise.allSettled([scoreboardFixtures(lid),clubSchedules(lid)]);
+  if(scores.status==='rejected'&&agenda.status==='rejected')throw scores.reason;
+  const daily=scores.status==='fulfilled'?scores.value:null,future=agenda.status==='fulfilled'?agenda.value:null;
+  // El marcador reciente tiene prioridad sobre una agenda reutilizada hasta una hora.
+  const events=new Map();for(const m of [...(future?.events||[]),...(daily?.events||[])])events.set(m.id,m);
+  const stale=!!daily?.stale||!!future?.stale;
+  return {...(daily||{}),league:lid,season:l.season,source:'ESPN',
+   sourceUrl:'https://www.espn.com/soccer/scoreboard/_/league/'+l.espn,
+   updatedAt:[daily?.updatedAt,future?.updatedAt].filter(Boolean).sort()[0],events:[...events.values()].sort(compare),
+   totalPublished:events.size,partial:true,stale,refreshSeconds:45,
+   coverage:{...daily?.coverage,...future?.coverage,scoreboardAvailable:!!daily,schedulesAvailable:!!future},
+   notice:'Jornadas recientes y agenda por club (fixture=true); cobertura según ESPN.',
+   note:stale?'Hay respuestas guardadas pendientes de actualizar.':!daily||!future||future.coverage.failedClubs?'Cobertura parcial: algunas consultas ESPN no respondieron.':'Actualización periódica; ESPN puede publicar cambios de fecha y hora.'};
  }
  async function summary(lid,id){const l=leagueFor(lid);if(!/^\d{1,12}$/.test(String(id)))throw Error('Partido no válido');const data=await json('summary:'+lid+':'+id,BASE+l.espn+'/summary?event='+id,45000,d=>{normalizeEspnSummary(d,l,db,id);return true});const result=normalizeEspnSummary(data,l,db,id);return {...result,updatedAt:data._retrievedAt,...(data._stale?{cache:{state:'stale'},stale:true}:{}),refreshSeconds:45};}
  async function standings(lid){const l=leagueFor(lid),url='https://site.api.espn.com/apis/v2/sports/soccer/'+l.espn+'/standings?season='+seasonStart(l);

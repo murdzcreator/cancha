@@ -1,37 +1,21 @@
-# CANCHA: conexión ESPN de la entrega anterior
+# CANCHA V17: conexión pública ESPN
 
-> La versión V15 amplía esta conexión con tablas, plantillas e historial. Consulta [MEJORAS_V15.md](MEJORAS_V15.md) para el comportamiento actual.
+La agenda futura se consulta por club con:
 
-Esta entrega añade una lectura directa del mismo origen público que utiliza el conector ESPN de SoccerData. No se instaló Python ni SoccerData: su consulta `read_schedule` omite los marcadores, y el servidor de CANCHA puede aprovechar directamente los campos de la respuesta JSON. La documentación de Read the Docs sigue devolviendo 403; el repositorio oficial permite consultar el funcionamiento del conector.
+```text
+https://site.api.espn.com/apis/site/v2/sports/soccer/{liga}/teams/{id}/schedule?season={año}&fixture=true
+```
 
-## Cómo usarlo
+La respuesta se valida por club, temporada y competición de cada evento. Se eliminan duplicados por ID entre las agendas de los dos rivales. Las jornadas recientes de `scoreboard` tienen prioridad para el estado y marcador del mismo partido; una agenda se reutiliza hasta una hora y el marcador reciente se vuelve a consultar cada 45 segundos. Se comparten peticiones simultáneas, se limitan a cuatro conexiones y se conservan respuestas fechadas ante fallos.
 
-Ejecuta `INICIAR_CANCHA_WINDOWS.bat` con Node.js 20 o superior. Abre **Partidos**, selecciona la competición y una fecha en hora de Perú. **Hoy en Perú** consulta el día actual; **Jornadas cercanas** usa los días cercanos publicados por ESPN, sin afirmar que sea una temporada completa. En competiciones cuyo calendario está organizado por fases, la ventana inicial puede contener solo hoy y mañana; utiliza el selector de fecha para otras jornadas.
+Premier League y LaLiga se combinan con sus 380 partidos OpenFootball CC0. Como esas ligas juegan una vez por cada localía de una pareja en la temporada, ESPN puede sustituir la fecha provisional de OpenFootball aunque haya cambiado el día. Esa regla no se aplica a otras copas o ligas con posibles repeticiones. La jornada se filtra al final por la fecha de Perú; una fecha sin hora sigue siendo una fecha civil.
 
-Ejemplo probado: Perú, 25/10/2026, Comerciantes Unidos–Cienciano: 3–1. La ficha incluye 22 titulares, suplentes, eventos y estadísticas comparativas. Pulsa una camiseta o un suplente para consultar sus métricas del encuentro. Las ubicaciones en cancha son esquemáticas. Las métricas ausentes quedan con «—»: no se inventan minutos, pases ni valoraciones. Los ceros publicados se conservan.
+En **Partidos**, selecciona **Próximos** y **Jornadas cercanas** para consultar la agenda disponible, o fija una fecha. Las fichas de club muestran sus próximos encuentros de las competiciones del catálogo. La cobertura sigue siendo parcial: no se promete una temporada completa para todas las ligas ni estadísticas de cada partido.
 
-## Actualización y fallos
+No requiere claves de pago, dependencias npm ni SoccerData. Los escudos se sirven desde la biblioteca local. Las tablas, plantillas, fichas y fuentes existentes se conservan. Las métricas ausentes no se convierten en cero.
 
-- Inicio, calendarios y fichas ESPN consultan cada 45 segundos mientras están visibles. El minuto y estado proceden de ESPN, no de un reloj generado por CANCHA.
-- Las consultas se comparten en el servidor; las peticiones simultáneas no multiplican una misma consulta. Se limitan a cuatro conexiones de origen simultáneas y existe una pausa de reintento ante fallos.
-- El día elegido se cruza con el día siguiente del origen para incluir encuentros nocturnos; el filtro final usa la fecha de Perú. Las fechas sin hora conservan su día civil.
-- Si falla la fuente, se conserva la última respuesta con su fecha y aviso de falta de actualización. Sin copia disponible se muestra el error; los archivos existentes se conservan como alternativa fechada para las consultas de jornadas cercanas.
-- Las temporadas, identificadores y clubes se validan antes de abrir una ficha. No se mezclan alineaciones ni estadísticas local/visitante por orden de las filas.
+ESPN es un origen público, sin disponibilidad o latencia garantizadas; OpenFootball es CC0. No se verificó la latencia de un partido en vivo real. Para desactivar las consultas, usa `CANCHA_ESPN=0`; para desactivar la sincronización OpenFootball, `CANCHA_OPENFOOTBALL=0`.
 
-Las identidades de las nueve competiciones se comprobaron con el listado público de equipos: 200 inscripciones correspondientes a los 183 clubes únicos del catálogo. Esto valida las correspondencias, no demuestra que cada jugador ni cada partido tenga estadísticas completas.
+En entornos con proxy, Node 24 utiliza la configuración heredada mediante `http.setGlobalProxyFromEnv`, manteniendo TLS. Fuera de ese entorno, Node 20 o superior puede consultar directamente.
 
-ESPN es un origen público consultado sin clave, no un servicio contratado con disponibilidad o latencia garantizadas. La cobertura depende del partido y las condiciones de reutilización corresponden al origen. Esta implementación no incorpora datos de elNine.
-
-## Alcance pendiente
-
-Esta entrega no completa las estadísticas individuales por temporada, rankings ni nuevas clasificaciones de ESPN. Las tablas existentes mantienen su procedencia. No se comprobó la demora durante un partido real en curso: se verificó la consulta periódica en navegador y los estados en pruebas automatizadas.
-
-Para desactivar ESPN, configura `CANCHA_ESPN=0` en `.env` y reinicia. El servidor vuelve a los archivos y proveedores previos. No se requieren dependencias npm adicionales.
-
-En entornos que necesitan proxy, Node 24 utiliza la configuración heredada mediante `http.setGlobalProxyFromEnv`; no se desactiva la verificación TLS. Fuera de este entorno, Node 20 o superior puede consultar normalmente sin proxy. Los dominios necesarios son `site.api.espn.com` para los datos y, opcionalmente, `soccerdata.readthedocs.io` para documentación.
-
-## Verificación
-
-`npm test` ejecuta la suite existente y pruebas de identidades, localía, ceros, fechas, temporadas, titulares/suplentes, campos ausentes, caché compartida y conservación de la copia al fallar. La evidencia de consultas de las nueve competiciones y de navegador se guarda en `review/espn/`.
-
-Fuentes técnicas: https://github.com/probberechts/soccerdata/blob/master/soccerdata/espn.py y https://soccerdata.readthedocs.io/en/latest/.
+Pruebas y cobertura real del 1 de noviembre de 2026: [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`.
