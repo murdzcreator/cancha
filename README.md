@@ -1,4 +1,4 @@
-# CANCHA V17
+# CANCHA V17.2
 
 Centro de fútbol con nueve competiciones y 183 clubes del catálogo. Combina calendarios abiertos de OpenFootball con clasificaciones, plantillas y actualizaciones de partidos de ESPN, sin claves de pago.
 
@@ -13,7 +13,7 @@ También puedes ejecutar `npm start`. No se necesitan dependencias npm adicional
 ## Qué puedes consultar
 
 - **Inicio:** partidos del día en hora de Perú, fecha elegible, filtros de estado y competición, destacado de esa jornada y grupos por liga.
-- **Diseño V17:** fondo morado oscuro, superficies violeta y acentos lavanda. Portada sin título grande, logo lateral, destacado con escudos de 88 px en escritorio y 66 px en móvil, paneles compactos y navegación inferior en teléfono. Se conservan las pestañas y apartados anteriores.
+- **Diseño V17.2:** fondo morado oscuro, superficies violeta y acentos lavanda. Portada sin título grande, logo lateral, destacado con escudos de 88 px en escritorio y 66 px en móvil, paneles compactos y navegación inferior en teléfono. La cabecera de cada partido tiene ancho máximo de 920 px y escudos de 96 px en escritorio. Las fichas de club muestran filas de próximos/resultados con escudos, fechas breves, filtro por competición y paginación. Se conservan las pestañas y apartados anteriores.
 
 - **Competiciones → Clasificación:** tablas ESPN con fase/grupo, puntos y orden publicados por la fuente. Buscador de equipo; en teléfono, tabla resumida con puntos/PJ/DG y opción **Vista detallada** con todas las columnas.
 - **Partidos:** fecha de Perú, competición, equipo y filtro En vivo. Premier League y LaLiga conservan sus 380 partidos de OpenFootball y reciben los horarios y marcadores de ESPN. Las fechas reprogramadas sustituyen al horario provisional sin duplicar el encuentro.
@@ -37,4 +37,4 @@ Los archivos personales de caché e historial están en `data-cache/`, que no se
 
 ## Validación
 
-Ejecuta `npm test` (75 pruebas). Las novedades y la evidencia de escritorio/móvil están en [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`. El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.
+Ejecuta `npm test` (80 pruebas). La corrección de las fichas de club y del marcador está en [CORRECCION_PARTIDOS_17_2.md](CORRECCION_PARTIDOS_17_2.md) y `review/partidos-17-2/`. Las novedades anteriores y su evidencia están en [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`. El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.

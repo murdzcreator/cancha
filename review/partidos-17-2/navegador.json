@@ -1,0 +1,134 @@
+[
+  {
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "summary": {
+      "next": 5,
+      "results": 1,
+      "count": "1–5 de 30 disponibles",
+      "teamFont": 16,
+      "crest": 34,
+      "oldRows": 0,
+      "overflow": false
+    },
+    "calendar": {
+      "total": 30,
+      "accessible": 30,
+      "overflow": false
+    },
+    "match": {
+      "banner": 920,
+      "height": 178,
+      "logos": [
+        96,
+        96
+      ],
+      "nameFont": 22,
+      "score": "1 – 5",
+      "overflow": false,
+      "version": "CANCHA · CANCHA V17.2"
+    },
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "summary": {
+      "next": 5,
+      "results": 1,
+      "count": "1–5 de 30 disponibles",
+      "teamFont": 16,
+      "crest": 34,
+      "oldRows": 0,
+      "overflow": false
+    },
+    "calendar": {
+      "total": 30,
+      "accessible": 30,
+      "overflow": false
+    },
+    "match": {
+      "banner": 920,
+      "height": 178,
+      "logos": [
+        96,
+        96
+      ],
+      "nameFont": 22,
+      "score": "1 – 5",
+      "overflow": false,
+      "version": "CANCHA · CANCHA V17.2"
+    },
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "summary": {
+      "next": 5,
+      "results": 1,
+      "count": "1–5 de 30 disponibles",
+      "teamFont": 15,
+      "crest": 28,
+      "oldRows": 0,
+      "overflow": false
+    },
+    "calendar": {
+      "total": 30,
+      "accessible": 30,
+      "overflow": false
+    },
+    "match": {
+      "banner": 362,
+      "height": 166,
+      "logos": [
+        64,
+        64
+      ],
+      "nameFont": 16,
+      "score": "1 – 5",
+      "overflow": false,
+      "version": "CANCHA · CANCHA V17.2"
+    },
+    "errors": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "summary": {
+      "next": 5,
+      "results": 1,
+      "count": "1–5 de 30 disponibles",
+      "teamFont": 15,
+      "crest": 28,
+      "oldRows": 0,
+      "overflow": false
+    },
+    "calendar": {
+      "total": 30,
+      "accessible": 30,
+      "overflow": false
+    },
+    "match": {
+      "banner": 292,
+      "height": 166,
+      "logos": [
+        60,
+        60
+      ],
+      "nameFont": 15,
+      "score": "1 – 5",
+      "overflow": false,
+      "version": "CANCHA · CANCHA V17.2"
+    },
+    "errors": []
+  }
+]

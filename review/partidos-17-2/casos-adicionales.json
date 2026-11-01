@@ -1,0 +1,13 @@
+{
+  "checks": [
+    {
+      "case": "Alianza 320: hora pendiente, datos de club y avatares",
+      "ok": true
+    },
+    {
+      "case": "Una competición falla: se conservan los encuentros disponibles",
+      "ok": true
+    }
+  ],
+  "errors": []
+}

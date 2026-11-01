@@ -102,28 +102,39 @@ async function loadClub(id){const boxes=[...document.querySelectorAll('.v13-live
  }catch{ /* el usuario conserva los hechos documentados */ }
 }
 function factsGlobal(id){return facts[id]||{}}
-async function loadTeamFixtures(id){
- const box=document.getElementById('v13-team-schedule'),results=document.getElementById('v15-team-results');
- if(!box||location.protocol==='file:')return;
- const loaded=await Promise.allSettled((team(id)?.leagues||[]).map(async l=>{
-  const r=await fetch('/api/fixtures?league='+encodeURIComponent(l));if(!r.ok)throw Error('Sin calendario');
-  const data=await r.json();return {...data,league:l};
- }));
- if(!document.contains(box))return;
- const datasets=loaded.filter(x=>x.status==='fulfilled').map(x=>x.value);
- const matches=datasets.flatMap(d=>(d.events||[]).filter(m=>m.home===id||m.away===id).map(m=>({...m,league:d.league,source:d.source})));
- const {next,previous}=window.CANCHA_DATES.nearby(matches,16);
- const nextCount=document.getElementById('v17-team-next-count'),resultCount=document.getElementById('v17-team-results-count');
- if(nextCount)nextCount.textContent=next.length+' mostrados · '+matches.filter(m=>window.CANCHA_DATES.upcoming(m)).length+' publicados';
- if(resultCount)resultCount.textContent=previous.length+' mostrados · '+matches.filter(m=>m.status==='FINAL').length+' publicados';
- const rows=arr=>arr.map(m=>`<a class="v13-provider-row" href="#/evento/${encodeURIComponent(m.league)}/${encodeURIComponent(m.provider)}/${encodeURIComponent(m.id)}"><span>${esc(dateShort(m.date))}</span><strong>${esc(m.homeName)} ${esc(m.hs??'–')} : ${esc(m.as??'–')} ${esc(m.awayName)}</strong><span>${esc(window.CANCHA_DATES.statusLabel(m))} · ${esc(league(m.league)?.name)} ↗</span></a>`).join('');
- const note=`<div class="v13-provenance">${datasets.map(d=>esc(d.source)+' · '+esc(dateShort(d.updatedAt))).join('<br>')}${loaded.some(x=>x.status==='rejected')?'<br>Cobertura parcial: alguna competición no respondió.':''}</div>`;
- if(datasets.length){box.innerHTML=note+(next.length?rows(next):'<p class="v13-quiet">Sin próximos partidos con fecha vigente en las fuentes disponibles.</p>');
- if(results)results.innerHTML=previous.length?rows(previous):'<p class="v13-quiet">Sin resultados en las fuentes disponibles.</p>';
- }else box.insertAdjacentHTML('afterbegin','<p class="v13-quiet">No se pudo actualizar el calendario. Se conserva el catálogo fechado.</p>');
+const clubFixtures={id:null,datasets:[],failed:0,league:'todos',nextPage:0,resultsPage:0,token:0};
+function renderTeamFixtures(){
+ const box=document.getElementById('v13-team-schedule'),results=document.getElementById('v15-team-results'),tools=document.getElementById('c-club-fixture-tools');if(!box||!tools)return;
+ const C=window.CANCHA_CLUB_MATCHES,id=clubFixtures.id,summary=tools.dataset.clubView==='resumen',size=summary?5:8;
+ const matches=clubFixtures.datasets.flatMap(d=>(d.events||[]).map(m=>({...m,league:d.league,stale:!!d.stale||d.cache?.state==='stale'||!!d.fallback}))),all=C.partition(matches,id,clubFixtures.league);
+ const next=C.paginate(all.next,clubFixtures.nextPage,size),past=C.paginate(all.results,clubFixtures.resultsPage,size);clubFixtures.nextPage=next.page;clubFixtures.resultsPage=past.page;
+ document.getElementById('v17-team-next-count').textContent=next.total===1?'1 disponible':next.total?`${next.start}–${next.end} de ${next.total} disponibles`:'Sin próximos publicados';
+ document.getElementById('v17-team-results-count').textContent=past.total===1?'1 disponible':past.total?`${past.start}–${past.end} de ${past.total} disponibles`:'Sin resultados disponibles';
+ document.getElementById('c-club-next-title').textContent=all.next.some(m=>m.status==='EN VIVO'&&!m.stale)?'En vivo y próximos':'Próximos partidos';
+ const more=p=>summary&&p.total>size?'<button type="button" class="c-club-more" data-team-tab="partidos">Ver todos los partidos →</button>':'';
+ box.innerHTML=next.items.length?next.items.map(m=>C.row(m,id)).join('')+(summary?more(next):C.navigation(next,'next')):'<p class="c-club-empty">No hay próximos con fecha vigente en las fuentes disponibles.</p>';
+ if(results)results.innerHTML=past.items.length?past.items.map(m=>C.row(m,id)).join('')+(summary?more(past):C.navigation(past,'results')):'<p class="c-club-empty">Todavía no hay resultados disponibles para este filtro.</p>';
 }
+function teamFixtureTools(){
+ const el=document.getElementById('c-club-fixture-tools');if(!el)return;const included=(team(clubFixtures.id)?.leagues||[]).map(league).filter(Boolean),providers=[...new Set(clubFixtures.datasets.map(d=>d.source||'Archivo local'))];
+ el.innerHTML=`<div class="c-club-tools"><div><strong>Calendario del club</strong><small>Horarios de Perú · resultados disponibles en el archivo</small></div><label>Competición<select id="c-club-competition" aria-label="Competición de los partidos del club"><option value="todos">Todas las competiciones</option>${included.map(l=>`<option value="${esc(l.id)}" ${clubFixtures.league===l.id?'selected':''}>${esc(l.name)}</option>`).join('')}</select></label></div><details class="c-club-coverage"><summary>Fuentes y actualización · ${esc(providers.join(' · '))}${clubFixtures.failed?' · Respuesta parcial':''}</summary>${clubFixtures.datasets.map(d=>`<p><b>${esc(league(d.league)?.name)}</b> · ${esc(d.source||'Archivo local')} · ${esc(d.updatedAt?dateShort(d.updatedAt):'Referencia histórica')}${d.stale||d.cache?.state==='stale'?' · Sin actualizar':''}</p>`).join('')}<p>${clubFixtures.failed?'Algunas fuentes no respondieron. ':''}El historial muestra los resultados disponibles; puede ser parcial. No representa necesariamente todos los encuentros jugados por el club.</p></details>`;
+}
+async function loadTeamFixtures(id){
+ const box=document.getElementById('v13-team-schedule');if(!box)return;
+ if(clubFixtures.id!==id){clubFixtures.id=id;clubFixtures.league='todos'}clubFixtures.nextPage=0;clubFixtures.resultsPage=0;
+ const token=++clubFixtures.token;
+ const loaded=location.protocol==='file:'?[]:await Promise.allSettled((team(id)?.leagues||[]).map(async l=>{
+  const r=await fetch('/api/fixtures?league='+encodeURIComponent(l),{signal:AbortSignal.timeout(22000)});if(!r.ok)throw Error('Sin calendario');const data=await r.json();return {...data,league:l};
+ }));
+ if(token!==clubFixtures.token||!document.contains(box))return;
+ clubFixtures.datasets=loaded.filter(x=>x.status==='fulfilled').map(x=>x.value);clubFixtures.failed=loaded.filter(x=>x.status==='rejected').length;
+ if(!clubFixtures.datasets.length){clubFixtures.datasets=(team(id)?.leagues||[]).map(l=>({league:l,source:'Catálogo histórico local',stale:true,events:D.matches.filter(m=>m.league===l).map(m=>({...m,provider:'Catalogo',homeName:tn(m.home),awayName:tn(m.away)}))}));clubFixtures.failed=Math.max(1,clubFixtures.failed)}
+ teamFixtureTools();renderTeamFixtures();
+}
+document.addEventListener('change',e=>{if(e.target.id!=='c-club-competition')return;clubFixtures.league=e.target.value;clubFixtures.nextPage=0;clubFixtures.resultsPage=0;renderTeamFixtures()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-club-page]');if(!b||b.disabled)return;const index=Number(b.dataset.clubIndex);if(!Number.isInteger(index)||index<0)return;if(b.dataset.clubPage==='next')clubFixtures.nextPage=index;else if(b.dataset.clubPage==='results')clubFixtures.resultsPage=index;else return;renderTeamFixtures();document.querySelector(`[data-club-page="${b.dataset.clubPage}"][data-club-index="${index+1}"]`)?.focus({preventScroll:true})});
 
-function afterDraw(route,id,params){state.selected=null;state.tab='resumen';state.token++;if(sheet?.open)sheet.close();if(state.poll){clearInterval(state.poll);state.poll=null}
+function afterDraw(route,id,params){clubFixtures.token++;state.selected=null;state.tab='resumen';state.token++;if(sheet?.open)sheet.close();if(state.poll){clearInterval(state.poll);state.poll=null}
  if(route==='evento'){hydrateRemote(id,params[0],params[1]);if(params[0]==='ESPN')state.poll=setInterval(()=>{if(document.visibilityState!=='hidden')hydrateRemote(id,params[0],params[1]);},45000);}
  if(route==='equipo'){loadClub(id);if(document.getElementById('v13-team-schedule'))loadTeamFixtures(id)};
 }

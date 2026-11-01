@@ -1,5 +1,6 @@
-CANCHA V17 · Noche violeta
+CANCHA V17.2 · Noche violeta
 Extrae todo el ZIP y abre INICIAR_CANCHA_WINDOWS.bat (Node.js 20+).
 En macOS/Linux: npm start.
 Abre http://127.0.0.1:4173/ y mantén la consola abierta.
 Guía: README.md. Novedades y verificación: NOVEDADES_V17.md.
+Corrección del marcador y las listas del club: CORRECCION_PARTIDOS_17_2.md.
