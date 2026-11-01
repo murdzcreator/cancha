@@ -17,7 +17,7 @@ También puedes ejecutar `npm start`. No se necesitan dependencias npm adicional
 
 - **Competiciones → Clasificación:** tablas ESPN con fase/grupo, puntos y orden publicados por la fuente. Buscador de equipo; en teléfono, tabla resumida con puntos/PJ/DG y opción **Vista detallada** con todas las columnas.
 - **Partidos:** fecha de Perú, competición, equipo y filtro En vivo. Premier League y LaLiga conservan sus 380 partidos de OpenFootball y reciben los horarios y marcadores de ESPN. Las fechas reprogramadas sustituyen al horario provisional sin duplicar el encuentro.
-- **Equipo → Plantilla:** jugadores de temporada consultados desde ESPN. Cada jugador abre su perfil.
+- **Equipo → Plantilla:** jugadores de temporada consultados desde ESPN. Avatares ilustrados uniformes con colores, patrón y escudo de cada club; dorsal publicado o iniciales. Cada jugador abre su perfil. El mismo diseño se utiliza en el directorio y las fichas; consulta [AVATARES_CLUBES.md](AVATARES_CLUBES.md).
 - **Equipo → Estadísticas:** resultados, G/E/P, goles, promedios, vallas invictas, local/visitante, forma y rivales, dentro de la muestra disponible.
 - **Competiciones → Estadísticas:** comparación de equipos y rankings de goles, asistencias y tarjetas de las actas analizadas.
 - **Jugadores:** búsqueda, selección de club y opción **Ampliar directorio de clubes**. Las plantillas se recuperan de forma progresiva, no se presentan todas como precargadas.
@@ -37,4 +37,4 @@ Los archivos personales de caché e historial están en `data-cache/`, que no se
 
 ## Validación
 
-Ejecuta `npm test` (71 pruebas). Las novedades y la evidencia de escritorio/móvil están en [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`. El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.
+Ejecuta `npm test` (75 pruebas). Las novedades y la evidencia de escritorio/móvil están en [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`. El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.

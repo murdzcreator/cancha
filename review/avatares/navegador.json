@@ -1,0 +1,242 @@
+[
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "team": "paris-saint-germain",
+    "roster": {
+      "avatars": 26,
+      "players": 26,
+      "teams": [
+        "paris-saint-germain"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 64
+    },
+    "profile": "paris-saint-germain"
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "team": "alianza-lima",
+    "roster": {
+      "avatars": 31,
+      "players": 31,
+      "teams": [
+        "alianza-lima"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 64
+    },
+    "profile": "alianza-lima"
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "team": "manchester-united",
+    "roster": {
+      "avatars": 33,
+      "players": 33,
+      "teams": [
+        "manchester-united"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 64
+    },
+    "profile": "manchester-united"
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "team": "real-madrid",
+    "roster": {
+      "avatars": 36,
+      "players": 36,
+      "teams": [
+        "real-madrid"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 64
+    },
+    "profile": "real-madrid"
+  },
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "errors": [],
+    "externalHeadshots": []
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "team": "paris-saint-germain",
+    "roster": {
+      "avatars": 26,
+      "players": 26,
+      "teams": [
+        "paris-saint-germain"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 58
+    },
+    "profile": "paris-saint-germain"
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "team": "alianza-lima",
+    "roster": {
+      "avatars": 31,
+      "players": 31,
+      "teams": [
+        "alianza-lima"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 58
+    },
+    "profile": "alianza-lima"
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "team": "manchester-united",
+    "roster": {
+      "avatars": 33,
+      "players": 33,
+      "teams": [
+        "manchester-united"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 58
+    },
+    "profile": "manchester-united"
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "team": "real-madrid",
+    "roster": {
+      "avatars": 36,
+      "players": 36,
+      "teams": [
+        "real-madrid"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 58
+    },
+    "profile": "real-madrid"
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "errors": [],
+    "externalHeadshots": []
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "team": "paris-saint-germain",
+    "roster": {
+      "avatars": 26,
+      "players": 26,
+      "teams": [
+        "paris-saint-germain"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 58
+    },
+    "profile": "paris-saint-germain"
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "team": "alianza-lima",
+    "roster": {
+      "avatars": 31,
+      "players": 31,
+      "teams": [
+        "alianza-lima"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 58
+    },
+    "profile": "alianza-lima"
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "team": "manchester-united",
+    "roster": {
+      "avatars": 33,
+      "players": 33,
+      "teams": [
+        "manchester-united"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 58
+    },
+    "profile": "manchester-united"
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "team": "real-madrid",
+    "roster": {
+      "avatars": 36,
+      "players": 36,
+      "teams": [
+        "real-madrid"
+      ],
+      "overflow": false,
+      "photoImages": 0,
+      "width": 58
+    },
+    "profile": "real-madrid"
+  },
+  {
+    "viewport": {
+      "width": 320,
+      "height": 740
+    },
+    "errors": [],
+    "externalHeadshots": []
+  }
+]
