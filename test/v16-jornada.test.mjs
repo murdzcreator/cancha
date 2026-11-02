@@ -48,3 +48,10 @@ test('filas compartidas: escapan nombres, preservan el cero y no rompen ante fec
  assert.match(row,/#\/evento\/per\/ESPN\/id%2F%3C/);
  assert.match(M.row(event(1,null),'per'),/Por confirmar/);
 });
+
+test('cabecera del marcador: una copia antigua no se anuncia como directo aunque conserve minuto y goles',()=>{
+ const live=event('vivo','2026-10-31T16:00:00Z','EN VIVO',{minute:'67',hs:1,as:0});
+ assert.equal(globalThis.CANCHA_DATES.statusLabel(live,now),'EN VIVO · 67');
+ for(const flags of [{stale:true},{cache:{state:'stale'}},{status:'FINAL',stale:true}])assert.equal(globalThis.CANCHA_DATES.statusLabel({...live,...flags},now),'Sin actualizar');
+ assert.equal(globalThis.CANCHA_DATES.statusLabel({...live,status:'FINAL',minute:null},now),'FINAL');
+});

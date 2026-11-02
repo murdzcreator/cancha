@@ -1,4 +1,4 @@
-# CANCHA V18.1 · Inicio local
+# CANCHA V18.2 · Inicio local
 
 1. Instala Node.js 20 o superior desde https://nodejs.org/.
 2. Extrae todo el ZIP en una carpeta nueva.
@@ -11,6 +11,6 @@ No hay dependencias npm que instalar. Los archivos deben abrirse a través del s
 
 ESPN se consulta por internet, sin clave de pago. OpenFootball sincroniza sus calendarios en segundo plano; puedes forzar su actualización con `ACTUALIZAR_DATOS_WINDOWS.bat`. Las copias personales se guardan en `data-cache/` y no se incluyen en esta entrega.
 
-Guía y novedades: `README.md` y `AJUSTE_VISUAL_V18_1.md`. Capturas y pruebas: `review/v18-1/`.
+Guía y novedades: `README.md` y `AUDITORIA_V18_2.md`. Capturas y pruebas: `review/v18-2/`.
 
-Para esta actualización, extrae el ZIP en una carpeta nueva, cierra el servidor anterior e inicia el de esa carpeta. El pie de página y el lateral deben indicar **V18.1**.
+Para esta actualización, extrae el ZIP en una carpeta nueva, cierra el servidor anterior e inicia el de esa carpeta. El pie de página y el lateral deben indicar **V18.2**.

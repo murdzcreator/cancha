@@ -26,17 +26,21 @@
   const name=team(r.teamId)?.name||r.name||'Equipo',avatar=r.teamId&&team(r.teamId)?window.CANCHA_BRAND.teamHTML(r.teamId):'';
   const link=r.teamId?`<a class="team-link" href="#/equipo/${encodeURIComponent(r.teamId)}">${avatar}<span>${esc(name)}</span></a>`:`<span class="team-link">${esc(name)}</span>`;
   const n=v=>v===null||v===undefined?'—':esc(v),dg=r.dg==null?(r.gf!=null&&r.gc!=null?r.gf-r.gc:null):r.dg,z=isRank?window.CANCHA_COMPETITION.zone(r,activeLeague):null;
-  return `<tr ${standingsSearch&&!name.toLocaleLowerCase().includes(standingsSearch)?'hidden':''}><td>${isRank&&pos!=null?`<span class="position ${z?'c-zone c-zone--'+z.key:''}" ${z?`title="${esc(z.label)}"`:''}>${pos}</span>`:'—'}</td><td class="teamcol">${link}<div class="c-mobile-form">${window.CANCHA_COMPETITION.form(r.teamId,activeLeague)}</div></td><td class="pts">${n(r.pts)}</td><td>${n(r.pj)}</td><td>${dg>0?'+':''}${n(dg)}</td>${[r.g,r.e,r.p,r.gf,r.gc].map(v=>`<td class="m16-detail-col">${n(v)}</td>`).join('')}<td class="m16-detail-col c-table-form">${window.CANCHA_COMPETITION.form(r.teamId,activeLeague)}</td></tr>`;
+  return `<tr ${standingsSearch&&!window.CANCHA_VIEW.normalize(name).includes(window.CANCHA_VIEW.normalize(standingsSearch))?'hidden':''}><td>${isRank&&pos!=null?`<span class="position ${z?'c-zone c-zone--'+z.key:''}" ${z?`title="${esc(z.label)}"`:''}>${pos}</span>`:'—'}</td><td class="teamcol">${link}<div class="c-mobile-form">${window.CANCHA_COMPETITION.form(r.teamId,activeLeague)}</div></td><td class="pts">${n(r.pts)}</td><td>${n(r.pj)}</td><td>${dg>0?'+':''}${n(dg)}</td>${[r.g,r.e,r.p,r.gf,r.gc].map(v=>`<td class="m16-detail-col">${n(v)}</td>`).join('')}<td class="m16-detail-col c-table-form">${window.CANCHA_COMPETITION.form(r.teamId,activeLeague)}</td></tr>`;
  }
  function wrapStandings(group,result){
   const l=league(activeLeague);if(!l)return '';const rs=group?.rows||[],found=new Set(rs.map(r=>r.teamId).filter(Boolean)),complete=(result.quality?.complete??found.size===l.teams.length)&&rs.every(r=>r.position!=null&&r.pts!=null),byTeam=new Map(rs.filter(r=>r.teamId).map(r=>[r.teamId,r]));
-  const rows=complete?rs.slice().sort((a,b)=>a.position-b.position):l.teams.slice().sort((a,b)=>team(a).name.localeCompare(team(b).name,'es')).map(id=>byTeam.get(id)||{teamId:id,name:team(id).name});
+  const rows=complete?rs.slice().sort((a,b)=>a.position-b.position):result.groups.length>1?rs.slice().sort((a,b)=>String(a.name||team(a.teamId)?.name||'').localeCompare(String(b.name||team(b.teamId)?.name||''),'es')):l.teams.slice().sort((a,b)=>team(a).name.localeCompare(team(b).name,'es')).map(id=>byTeam.get(id)||{teamId:id,name:team(id).name});
   const meta=`<div class="c-table-phase"><div><span>CLASIFICACIÓN ${result.snapshot?'HISTÓRICA':result.calculated?'CALCULADA':'ACTUAL'}</span><h2>${esc(window.CANCHA_COMPETITION.phase(activeLeague,group?.label))}</h2></div><button class="btn btn-outline" data-fetch-standings="${esc(activeLeague)}">↻ Actualizar</button></div><details class="c-table-source"><summary>${esc(result.source)} · ${esc(date(result.updatedAt||result.retrievedOn))}${result.stale||result.cache?.state==='stale'?' · Sin actualizar':''}</summary><p>${esc(group.details||result.note||'Orden y puntos publicados por la fuente.')}</p>${result.snapshot||result.calculated?'<p>Referencia fechada; no representa una clasificación en directo.</p>':''}</details>`;
   const groupsNav=result.groups.length>1?`<div class="v11-grouptabs">${result.groups.map((g,i)=>`<button class="v11-group-btn ${groupSelected===i?'is-active':''}" data-v11-group="${i}">${esc(g.label)}</button>`).join('')}</div>`:'';
-  const note=(!complete?banner('warning','Cobertura parcial: '+found.size+' de '+l.teams.length+' clubes con datos. Los guiones indican cifras ausentes.'):'')+(result.stale||result.cache?.state==='stale'?banner('warning','Se muestra la última clasificación guardada con su fecha original.'):'')+(result.warnings||[]).map(w=>banner('warning',esc(w))).join('');
+  const note=(!complete?banner('warning',result.groups.length>1?'Cobertura parcial de esta fase: '+found.size+' clubes publicados. Se conservan los grupos separados.':'Cobertura parcial: '+found.size+' de '+l.teams.length+' clubes con datos. Los guiones indican cifras ausentes.'):'')+(result.stale||result.cache?.state==='stale'?banner('warning','Se muestra la última clasificación guardada con su fecha original.'):'')+(result.warnings||[]).map(w=>banner('warning',esc(w))).join('');
   return `${meta}${groupsNav}${note}<div class="m16-table-tools"><label class="v18-table-search"><span class="sr-only">Buscar equipo</span><input type="search" id="v18-standings-filter" placeholder="Buscar equipo" value="${esc(standingsSearch)}"></label><button type="button" class="btn btn-outline" data-standings-detail aria-pressed="${standingsDetailed}">${standingsDetailed?'Vista resumida':'Vista detallada'}</button></div><p class="c-table-help" role="status" hidden></p>${tableHead()}${rows.map((r,i)=>rowHtml(r,complete?r.position??i+1:null,complete)).join('')}</tbody></table></div>${window.CANCHA_COMPETITION.legend(rows,activeLeague,complete)}<p class="c-form-caption">V Victoria · E Empate · D Derrota · Más reciente →<br>${esc(window.CANCHA_COMPETITION.formCoverage(activeLeague))}</p>`;
  }
- document.addEventListener('cancha:competition',e=>{if(e.detail.league===activeLeague&&activeStandings){const el=document.getElementById('v11-standings');if(el)el.innerHTML=wrapStandings(activeStandings.groups[groupSelected],activeStandings)}});
+ function paintStandings(el,html){
+  const input=el.querySelector('#v18-standings-filter'),focused=input&&document.activeElement===input,selection=focused?[input.selectionStart,input.selectionEnd]:null,wrap=el.querySelector('.m16-table-wrap'),scrollLeft=wrap?.scrollLeft||0,sourceOpen=el.querySelector('.c-table-source')?.open,help=el.querySelector('.c-table-help'),helpText=help&&!help.hidden?help.textContent:'';
+  el.innerHTML=html;const next=el.querySelector('#v18-standings-filter');if(focused&&next){next.focus({preventScroll:true});next.setSelectionRange(...selection)}const newWrap=el.querySelector('.m16-table-wrap');if(newWrap)newWrap.scrollLeft=scrollLeft;const source=el.querySelector('.c-table-source');if(source&&sourceOpen)source.open=true;const newHelp=el.querySelector('.c-table-help');if(newHelp&&helpText){newHelp.hidden=false;newHelp.textContent=helpText}
+ }
+ document.addEventListener('cancha:competition',e=>{if(e.detail.league===activeLeague&&activeStandings){const el=document.getElementById('v11-standings');if(el)paintStandings(el,wrapStandings(activeStandings.groups[groupSelected],activeStandings))}});
  document.addEventListener('click',e=>{const b=e.target.closest('[data-table-help]');if(b){const p=document.querySelector('.c-table-help');if(p){p.hidden=false;p.textContent=b.dataset.tableHelp}}});
  function updateFixtureCounters(lid,d){
   const qty=Array.isArray(d?.events)?d.events.length:0;
@@ -56,11 +60,11 @@
   groups=d.groups;groupSelected=Math.min(groupSelected,groups.length-1);
   // Retain the historical verified Champions table if the external source provides only a subset.
   if(d.partial&&activeLeague==='ucl'&&old){el.innerHTML=banner('warning','Fuente gratuita parcial. Se conserva la última tabla histórica fechada de Champions.')+old;return}
-  el.innerHTML=wrapStandings(groups[groupSelected],d);
+  paintStandings(el,wrapStandings(groups[groupSelected],d));
  }
  async function loadStandings(lid,force=false){let el=document.getElementById('v11-standings');if(!el)return;
   el.querySelector('[data-v12-error]')?.remove();let old=el.innerHTML,gen=routeGeneration; if(activeLeague!==lid)groupSelected=0;activeLeague=lid;
-  let saved=read('standings',lid);if(saved?.groups)renderStandings(saved,old);
+  let saved=read('standings',lid);if(!activeStandings&&saved?.groups?.length)renderStandings(saved,old);
   if(offline){if(!saved)el.insertAdjacentHTML('afterbegin',banner('warning','Abre CANCHA mediante el servidor incluido para consultar APIs. El archivo local conserva el catálogo histórico.'));return}
   try{let d=await get(`/api/standings?league=${encodeURIComponent(lid)}${force?'&refresh=1':''}`);if(gen!==routeGeneration||activeLeague!==lid)return;
    if(d.groups?.length){write('standings',lid,d);renderStandings(d,old);}else if(!saved)el.insertAdjacentHTML('afterbegin',banner('warning','No hay clasificación disponible en las fuentes configuradas.'));
@@ -162,7 +166,7 @@
   // El cliente consulta el caché compartido del servidor; NO solicita una API por visitante.
   if(route==='liga'||route==='partidos')periodic=setInterval(()=>{
    if(document.visibilityState==='hidden')return;
-   if(route==='liga'){if(document.getElementById('v11-standings'))loadStandings(id);if(document.getElementById('v11-fixtures'))loadFixtures(id)}
+   if(route==='liga'){if(document.getElementById('v11-standings'))loadStandings(id);if(document.getElementById('v11-fixtures'))loadFixtures(id);window.CANCHA_COMPETITION?.refreshDay?.()}
    if(route==='partidos'&&document.getElementById('c-calendar-results'))loadCalendar();
   },45000);
  }
@@ -172,7 +176,7 @@
   if(route==='fuentes'||route==='inicio'||!healthLoaded)loadHealth();if(route==='equipo'&&document.getElementById('v11-team-current'))loadTeamSummary(id);if(route==='partidos')loadCalendar();if(route==='perfil')loadPlayerProfile(id,params[0]);
   if(route==='evento-v12')loadMatch(id,params[0],params[1]);autoRefresh(route,id);
  }
- let searchTimer=null;document.addEventListener('input',e=>{if(e.target.id==='v18-standings-filter'){const q=e.target.value.toLocaleLowerCase();standingsSearch=q;document.querySelectorAll('.v11-table tbody tr').forEach(r=>r.hidden=!r.querySelector('.teamcol')?.textContent.toLocaleLowerCase().includes(q));return}});
+ let searchTimer=null;document.addEventListener('input',e=>{if(e.target.id==='v18-standings-filter'){const q=window.CANCHA_VIEW.normalize(e.target.value);standingsSearch=e.target.value;document.querySelectorAll('.v11-table tbody tr').forEach(r=>r.hidden=!window.CANCHA_VIEW.normalize(r.querySelector('.teamcol')?.textContent).includes(q));return}});
  document.addEventListener('click',async e=>{
   let b=e.target.closest('[data-standings-detail]');if(b){standingsDetailed=!standingsDetailed;document.querySelector('.m16-table-wrap')?.classList.toggle('is-detailed',standingsDetailed);b.setAttribute('aria-pressed',String(standingsDetailed));b.textContent=standingsDetailed?'Vista resumida':'Vista detallada';return}b=e.target.closest('[data-v11-group]');if(b){groupSelected=Number(b.dataset.v11Group);if(activeStandings){let el=document.getElementById('v11-standings');if(el)el.innerHTML=wrapStandings(activeStandings.groups[groupSelected],activeStandings)}return}
   b=e.target.closest('[data-v11-player]');if(b){loadPlayer(b);return}

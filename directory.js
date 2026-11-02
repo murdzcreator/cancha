@@ -13,8 +13,9 @@
  function playerShell(){return `<div class="eyebrow">DIRECTORIO</div><div class="page-head"><div><h1>Jugadores</h1><p>Busca futbolistas por nombre, club o competición.</p></div></div><section class="panel"><div class="panel-title">Explorar futbolistas <small>25 por página</small></div><div class="pad"><div class="c-directory-filters c-player-filters"><label>Competición<select id="c-player-league">${options(players.league)}</select></label><label>Club<input type="search" id="c-player-club" list="c-player-clubs" value="${E(players.club)}" placeholder="Escribe o elige un club" autocomplete="off"><datalist id="c-player-clubs">${clubs().map(t=>`<option value="${E(t.name)}"></option>`).join('')}</datalist></label><label>Nombre<input type="search" id="c-player-query" value="${E(players.query)}" placeholder="Busca un futbolista" autocomplete="off"></label></div><div class="c-directory-actions"><button type="button" class="btn btn-outline" data-directory-clear>Limpiar filtros</button><button type="button" class="btn btn-outline" data-directory-sync>Consultar más clubes</button><span id="c-directory-message" role="status"></span></div><div id="c-player-directory"><p class="v11-loading">Consultando jugadores…</p></div></div></section>`;}
  async function json(url){const r=await fetch(url,{signal:AbortSignal.timeout(25000)}),d=await r.json();if(!r.ok)throw Error(d.error||'Consulta no disponible');return d;}
  async function loadPlayers(roster=false){
-  const root=document.getElementById('c-player-directory');if(!root)return;const mark=++players.token;
-  const msg=document.getElementById('c-directory-message');if(roster&&players.team){if(msg)msg.textContent='Consultando plantilla del club…';try{await json('/api/roster?team='+encodeURIComponent(players.team))}catch{if(msg)msg.textContent='No se pudo actualizar la plantilla. Se muestran los registros disponibles.'}}
+  const root=document.getElementById('c-player-directory');if(!root)return;const mark=++players.token;if(players.club&&!players.team){root.innerHTML='<p class="c-directory-empty">Elige un club de las sugerencias para consultar su plantilla.</p>';return}
+  const msg=document.getElementById('c-directory-message');if(roster&&players.team){if(msg)msg.textContent='Consultando plantilla del club…';try{await json('/api/roster?team='+encodeURIComponent(players.team))}catch{if(mark===players.token&&document.contains(root)&&msg)msg.textContent='No se pudo actualizar la plantilla. Se muestran los registros disponibles.'}}
+  if(mark!==players.token||!document.contains(root))return;
   try{const q=new URLSearchParams({q:players.query,team:players.team,league:players.league==='todos'?'':players.league,limit:'25',offset:String(players.page*25)}),d=await json('/api/players?'+q);if(mark!==players.token||!document.contains(root))return;
    const p={index:players.page,pages:Math.max(1,Math.ceil(d.total/25)),start:d.total?players.page*25+1:0,end:Math.min(d.total,(players.page+1)*25),total:d.total};
    if(players.page>=p.pages){players.page=p.pages-1;loadPlayers();return}
@@ -22,11 +23,11 @@
    if(roster&&msg&&msg.textContent==='Consultando plantilla del club…')msg.textContent='Plantilla consultada';
   }catch{if(mark===players.token&&document.contains(root))root.innerHTML='<p class="c-directory-empty">No se pudo consultar el directorio. Vuelve a elegir un club para reintentar.</p>'}
  }
- function chooseClub(value){players.club=value;const exact=clubs().find(t=>V.normalize(t.name)===V.normalize(value));players.team=exact?.id||'';players.page=0;const msg=document.getElementById('c-directory-message');if(value&&!exact){if(msg)msg.textContent='Elige un club de las sugerencias para consultar su plantilla.';return}if(msg)msg.textContent='';loadPlayers(!!exact)}
+ function chooseClub(value){players.token++;clearTimeout(timer);players.club=value;const exact=clubs().find(t=>V.normalize(t.name)===V.normalize(value));players.team=exact?.id||'';players.page=0;const msg=document.getElementById('c-directory-message');if(msg)msg.textContent='';loadPlayers(!!exact)}
  document.addEventListener('input',e=>{
   if(e.target.id==='c-team-query'){teams.query=e.target.value;teams.page=0;renderTeams()}
   if(e.target.id==='c-player-query'){players.query=e.target.value;players.page=0;clearTimeout(timer);timer=setTimeout(()=>loadPlayers(),250)}
-  if(e.target.id==='c-player-club'&&!e.target.value)chooseClub('');
+  if(e.target.id==='c-player-club'){players.token++;clearTimeout(timer);players.club=e.target.value;players.team='';players.page=0;if(!e.target.value)chooseClub('');else loadPlayers();}
  });
  document.addEventListener('change',e=>{
   if(e.target.id==='c-team-league'){teams.league=e.target.value;teams.page=0;renderTeams()}

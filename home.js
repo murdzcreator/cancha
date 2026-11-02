@@ -1,7 +1,7 @@
 /* Portada de la jornada. Nunca rellena el día con partidos de otra fecha. */
 (()=>{'use strict';
  const D=window.CANCHA_DB,M=window.CANCHA_MATCHES,E=M.esc,dates=window.CANCHA_DATES;
- const state={day:dates.dayInPeru(),followToday:true,filter:'todos',league:'todos',datasets:new Map(),failed:new Set(),pending:new Set(),collapsed:new Set(),token:0,timer:null,controllers:new Set(),tableToken:0};
+ const state={day:dates.dayInPeru(),loadedDay:null,followToday:true,filter:'todos',league:'todos',datasets:new Map(),failed:new Set(),pending:new Set(),collapsed:new Set(),token:0,timer:null,controllers:new Set(),tableToken:0};
  const shift=(day,by)=>new Date(Date.parse(day+'T12:00:00Z')+by*864e5).toISOString().slice(0,10);
  const dateTitle=day=>new Intl.DateTimeFormat('es-PE',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long'}).format(new Date(day+'T12:00:00Z'));
  const leg=id=>D.leagues.find(l=>l.id===id),badge=id=>window.CANCHA_BRAND.leagueHTML(id),logo=id=>window.CANCHA_BRAND.teamHTML(id);
@@ -28,20 +28,21 @@
   const group=d.groups?.[0],ranked=d.quality?.complete!==false&&group?.rows?.every(r=>r.position!=null),rows=(group?.rows||[]).slice().sort((a,b)=>ranked?a.position-b.position:a.name.localeCompare(b.name)).slice(0,5);
   box.innerHTML=`<div class="m16-context-title">${badge(lid)}<div><strong>${E(leg(lid)?.name)}</strong><small>${E(group?.label||'Tabla disponible')}</small></div></div>${rows.length?rows.map(r=>`<a class="m16-mini-rank" href="${r.teamId?'#/equipo/'+encodeURIComponent(r.teamId):'#/liga/'+lid}"><span>${ranked?r.position:'—'}</span>${r.teamId?logo(r.teamId):''}<strong>${E(r.name)}</strong><b>${E(r.pts??'—')}</b></a>`).join(''):'<p>No hay una tabla publicada.</p>'}<p class="m16-context-source">${E(d.source)}${d.calculated?' · Calculada, no oficial':d.snapshot?' · Referencia histórica':''}${d.stale||d.cache?.state==='stale'?' · Sin actualizar':''} · ${E(d.updatedAt?dates.format(d.updatedAt):'Fecha de referencia')}</p><a href="#/liga/${lid}" class="m16-context-more">Ver clasificación completa →</a>`;
  }catch{if(token===state.token&&marker===state.tableToken&&document.contains(box))box.innerHTML='<p class="m16-context-source">La clasificación no respondió. Puedes consultar las competiciones.</p><a href="#/competiciones" class="m16-context-more">Ver competiciones →</a>';}}
- async function load(){const box=document.getElementById('m16-home-matches');if(!box)return;const token=++state.token,day=state.day;state.failed.clear();state.pending=new Set(D.leagues.map(l=>l.id));state.datasets.clear();
-  for(const l of D.leagues){const old=cached(l.id);if(old)state.datasets.set(l.id,{...old,stale:true});}render();
+ async function load(){const box=document.getElementById('m16-home-matches');if(!box)return;const token=++state.token,day=state.day;state.failed.clear();state.pending=new Set(D.leagues.map(l=>l.id));
+  if(state.loadedDay!==day){state.datasets.clear();state.loadedDay=day;for(const l of D.leagues){const old=cached(l.id);if(old)state.datasets.set(l.id,{...old,stale:true});}}render();
   await Promise.allSettled(D.leagues.map(async l=>{try{let d;
    if(location.protocol==='file:')d={events:D.matches.filter(m=>m.league===l.id).map(m=>({...m,homeName:D.teams[m.home].name,awayName:D.teams[m.away].name,provider:'Catalogo'})),source:'Catálogo histórico local',stale:true};
    else d=await json('/api/fixtures?league='+l.id+'&date='+day);
    if(token!==state.token||!document.contains(box))return;state.datasets.set(l.id,d);save(l.id,d);
-  }catch{if(token!==state.token)return;state.failed.add(l.id);}finally{if(token===state.token){state.pending.delete(l.id);render();}}}));
+  }catch{if(token!==state.token)return;state.failed.add(l.id);const old=state.datasets.get(l.id);if(old)state.datasets.set(l.id,{...old,stale:true});}finally{if(token===state.token){state.pending.delete(l.id);render();}}}));
   if(token===state.token&&document.contains(box)){const first=M.featured(selected());table(state.league==='todos'?(first?.league||'per'):state.league,token);}
  }
- function chooseDay(day,follow=false){if(dates.normalize(day)!==day||day.length!==10)return;state.day=day;state.followToday=follow;const input=document.getElementById('m16-home-date');if(input)input.value=day;state.controllers.forEach(c=>c.abort());load();}
+ function chooseDay(day,follow=false){const input=document.getElementById('m16-home-date');if(dates.normalize(day)!==day||day.length!==10){if(input)input.value=state.day;return}state.day=day;state.followToday=follow;if(input)input.value=day;state.controllers.forEach(c=>c.abort());load();}
  function afterDraw(route){if(state.timer)clearInterval(state.timer);state.controllers.forEach(c=>c.abort());state.controllers.clear();state.token++;
-  if(route!=='inicio')return;if(state.followToday)state.day=dates.dayInPeru();document.getElementById('m16-home-date').value=state.day;load();state.timer=setInterval(()=>{if(document.visibilityState==='hidden')return;const today=dates.dayInPeru();if(state.followToday&&today!==state.day)chooseDay(today,true);else load()},45000);
+  if(route!=='inicio')return;state.loadedDay=null;if(state.followToday)state.day=dates.dayInPeru();document.getElementById('m16-home-date').value=state.day;load();state.timer=setInterval(()=>{if(document.visibilityState==='hidden')return;const today=dates.dayInPeru();if(state.followToday&&today!==state.day)chooseDay(today,true);else load()},45000);
  }
  document.addEventListener('change',e=>{if(e.target.id==='m16-home-date')chooseDay(e.target.value);if(e.target.id==='m16-home-league'){state.league=e.target.value;render();const first=M.featured(selected());table(state.league==='todos'?(first?.league||'per'):state.league,state.token)}});
  document.addEventListener('click',e=>{const filter=e.target.closest('[data-home-filter]');if(filter){state.filter=filter.dataset.homeFilter;render();return}const collapse=e.target.closest('[data-home-collapse]');if(collapse){const id=collapse.dataset.homeCollapse;state.collapsed.has(id)?state.collapsed.delete(id):state.collapsed.add(id);render();return}const shiftButton=e.target.closest('[data-home-shift]');if(shiftButton)chooseDay(shift(state.day,Number(shiftButton.dataset.homeShift)));if(e.target.closest('[data-home-today]'))chooseDay(dates.dayInPeru(),true)});
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&document.getElementById('m16-home-matches')){state.loadedDay=null;load()}});
  window.CANCHA_HOME={shell,afterDraw};
 })();
