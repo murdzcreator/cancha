@@ -25,9 +25,9 @@ export function createPlayerIndex(dir,{db,snapshots}){
    addRoster({team,season:d.season||db.leagues.find(l=>l.id===d.league)?.season,source:old?.source==='ESPN'?'ESPN':'ESPN · jugadores observados, plantilla parcial',updatedAt:d.updatedAt,players});
   }
  }
- function listing({q='',team='',limit=80,offset=0}={}){
+ function listing({q='',team='',league='',limit=80,offset=0}={}){
   const list=Object.values(state).flatMap(r=>(r.players||[]).map(p=>({...p,team:r.team,season:r.season,source:r.source,updatedAt:r.updatedAt,snapshot:r.snapshot})));
-  const match= list.filter(p=>(!team||p.team===team)&&(!q||clean(p.name).includes(clean(q))));
+  const match= list.filter(p=>(!team||p.team===team)&&(!league||db.teams[p.team]?.leagues?.includes(league))&&(!q||clean(p.name).includes(clean(q))));
   return {total:match.length,teamsIndexed:Object.keys(state).length,coverage:'Sólo plantillas consultadas o instantáneas incorporadas; no es un directorio exhaustivo',players:match.slice(offset,offset+limit)};
  }
  function one(team,id){return listing({team,limit:1000}).players.find(p=>p.id===id)||null}

@@ -2002,13 +2002,14 @@
       "license": "derechos no verificados para publicación externa"
     },
     "eng": {
-      "curatedLocal": "assets/competiciones/eng.webp",
+      "curatedLocal": "assets/competiciones/eng.svg",
       "sourceName": "Premier League",
-      "sourceFile": "02_Logos_de_ligas_y_copas/Premier_League_2d1202b2d91c.webp",
-      "sourceOriginalUrl": "https://cdn.elnine.com.ar/leagues/2kwbbcootiqqgmrzs6o5inle5.webp",
-      "sourcePage": "https://elnine.com.ar/tabla/england-premier-league",
-      "sha256": "90a5274b5d16680482bb9ea0c02389961ce9d7dd4385c97a60cc82c8cff5c32f",
-      "license": "derechos no verificados para publicación externa"
+      "sourceFile": "simple-icons/icons/premierleague.svg",
+      "sourceOriginalUrl": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/premierleague.svg",
+      "sourcePage": "https://github.com/simple-icons/simple-icons",
+      "sha256": "13e1251f6dafc6f372c6d6642729c920cad6fc4954731d8a88ad5146abf85bfe",
+      "license": "Simple Icons · CC0; marca Premier League",
+      "visualTreatment": "Símbolo monocromo con color morado #37003c"
     },
     "arg": {
       "curatedLocal": "assets/competiciones/arg.webp",

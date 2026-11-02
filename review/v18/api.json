@@ -1,0 +1,23 @@
+{
+  "version": "18.0",
+  "verifiedAt": "2026-11-02T03:23:35.402617+00:00",
+  "checks": [
+    {
+      "name": "Rangos mayores de siete días, incompletos, invertidos y fechas imposibles",
+      "expectedStatus": 400,
+      "passed": true
+    },
+    {
+      "name": "Rango válido 1–7 noviembre: cada evento conserva el día de Perú",
+      "events": 7,
+      "passed": true
+    },
+    {
+      "name": "Ampliar actas mantiene el resumen y analytics coherentes aunque exista caché",
+      "detailsBefore": 12,
+      "added": 4,
+      "detailsAfter": 16,
+      "passed": true
+    }
+  ]
+}
