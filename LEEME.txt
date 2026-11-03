@@ -1,12 +1,14 @@
-CANCHA V19.1 · Edicion completa de desarrollo
+CANCHA V19.1 · EDICION LIGERA
 
-Windows: extrae todo el ZIP y abre INICIAR_CANCHA_WINDOWS.bat (Node.js 20+).
-Mac/Linux: npm start. No hay dependencias npm que instalar.
-Abre http://127.0.0.1:4173/ y manten la consola abierta.
+Extrae todo el ZIP en una carpeta nueva.
+Windows: instala Node.js 20+ y abre INICIAR_CANCHA_WINDOWS.bat.
+Mac/Linux: npm start. No hay paquetes npm que instalar.
+Abre http://127.0.0.1:4173/ y mantén la consola abierta.
 
-La edicion ligera se entrega por separado: conserva las funciones y omite
-capturas, pruebas e informes antiguos. Para generarla: npm run package:runtime.
+Para que tus amigos entren solo con un enlace hay que alojar el servidor.
+Consulta PUBLICAR_WEB.md. La dirección 127.0.0.1 solo sirve en tu PC.
 
-Para compartir CANCHA mediante un enlace publico, consulta PUBLICAR_WEB.md.
-La direccion 127.0.0.1 solo funciona en tu propio ordenador.
-Guia: README.md. Novedades: NOVEDADES_V19_1.md.
+Esta edición conserva todas las secciones, escudos y fuentes.
+Omite capturas, pruebas, informes antiguos y fuentes de desarrollo duplicadas.
+Los datos personales de uso se crean en data-cache/ al iniciar.
+El repositorio completo conserva el código para continuar desarrollando.

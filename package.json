@@ -2,17 +2,10 @@
   "name": "cancha",
   "version": "19.1.0",
   "private": true,
-  "description": "CANCHA: clasificaciones, calendarios ESPN y OpenFootball, plantillas e historial con estadísticas",
   "type": "module",
+  "description": "CANCHA · edición ligera para uso y alojamiento",
   "scripts": {
-    "start": "node server.mjs",
-    "test": "node --test test/*.test.mjs",
-    "logos:audit": "node scripts/auditar-escudos.mjs",
-    "soccerdata:help": "python scripts/soccerdata_export.py --help",
-    "test:browser": "node scripts/revisar-interfaz.mjs",
-    "build": "node scripts/build.mjs",
-    "build:check": "node scripts/build.mjs --check",
-    "package:runtime": "node scripts/package-runtime.mjs"
+    "start": "node server.mjs"
   },
   "engines": {
     "node": ">=20"
