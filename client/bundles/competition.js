@@ -40,9 +40,10 @@
   const el=document.getElementById('c-round-matches');if(!el||!current)return;
   const ordered=(current.events||[]).slice().sort(globalThis.CANCHA_DATES.compare),rows=globalThis.CANCHA_MATCHES.onDay(ordered,current.day).map(m=>current.roundFailed?{...m,stale:true}:m);
   const next=ordered.find(m=>globalThis.CANCHA_DATES.upcoming(m)&&globalThis.CANCHA_MATCHES.dayKey(m.date)>current.day);
-  el.innerHTML=rows.length?rows.slice(0,10).map(m=>`<a class="c-round-match" href="${globalThis.CANCHA_MATCHES.href(m,current.league)}"><small>${E(m.date.length===10?'Por confirmar':globalThis.CANCHA_MATCHES.clock(m.date))} · ${E(globalThis.CANCHA_MATCHES.status(m))}</small><span>${globalThis.CANCHA_BRAND.teamHTML(m.home)}<strong>${E(m.homeName)}</strong><b>${E(m.hs??'–')}</b></span><span>${globalThis.CANCHA_BRAND.teamHTML(m.away)}<strong>${E(m.awayName)}</strong><b>${E(m.as??'–')}</b></span></a>`).join(''):`<p class="c-mini-empty">${current.roundLoading?'Consultando esta fecha…':current.roundFailed?'La fuente no respondió para esta fecha.':'No hay partidos publicados para esta fecha.'}</p>`+(next?`<button type="button" class="c-mini-more" data-round-day="${globalThis.CANCHA_MATCHES.dayKey(next.date)}">Ir a la próxima fecha →</button>`:'');
-  if(current.roundFailed&&rows.length)el.innerHTML+='<p class="c-mini-empty">No se pudo actualizar esta fecha. Se conserva la última consulta.</p>';
-  el.innerHTML+='<button type="button" class="c-mini-more" data-league-tab="calendario">Ver calendario →</button>';
+  let html=rows.length?rows.slice(0,10).map(m=>`<a class="c-round-match" href="${globalThis.CANCHA_MATCHES.href(m,current.league)}"><small>${E(m.date.length===10?'Por confirmar':globalThis.CANCHA_MATCHES.clock(m.date))} · ${E(globalThis.CANCHA_MATCHES.status(m))}</small><span>${globalThis.CANCHA_BRAND.teamHTML(m.home)}<strong>${E(m.homeName)}</strong><b>${E(m.hs??'–')}</b></span><span>${globalThis.CANCHA_BRAND.teamHTML(m.away)}<strong>${E(m.awayName)}</strong><b>${E(m.as??'–')}</b></span></a>`).join(''):`<p class="c-mini-empty">${current.roundLoading?'Consultando esta fecha…':current.roundFailed?'La fuente no respondió para esta fecha.':'No hay partidos publicados para esta fecha.'}</p>`+(next?`<button type="button" class="c-mini-more" data-round-day="${globalThis.CANCHA_MATCHES.dayKey(next.date)}">Ir a la próxima fecha →</button>`:'');
+  if(current.roundFailed&&rows.length)html+='<p class="c-mini-empty">No se pudo actualizar esta fecha. Se conserva la última consulta.</p>';
+  html+='<button type="button" class="c-mini-more" data-league-tab="calendario">Ver calendario →</button>';
+  globalThis.CANCHA_UI.patch(el,html);
  }
  const json=url=>globalThis.CANCHA_API.get(url);
  function apply(lid,d,mark){
@@ -83,10 +84,10 @@
  async function selectDay(day){
   if(!current)return;const input=document.getElementById('c-round-date');if(day.length!==10||globalThis.CANCHA_DATES.normalize(day)!==day){if(input)input.value=current.day;return}
   const lid=current.league,mark=token;if(current.day!==day)current.roundFailed=false;current.day=day;current.roundLoading=true;if(input)input.value=day;renderRound();
-  try{const d=await json('/api/fixtures?league='+lid+'&date='+day);if(mark===token&&current?.league===lid&&current.day===day){const existing=new Map(current.events.map(m=>[m.provider+':'+m.id,m]));for(const m of d.events||[])existing.set(m.provider+':'+m.id,m);current.dayEvents=d.events||[];current.events=[...existing.values()];current.roundLoading=false;current.roundFailed=!!d.stale||d.cache?.state==='stale';renderRound()}}
+  try{const d=await json('/api/fixtures?league='+lid+'&date='+day);if(mark===token&&current?.league===lid&&current.day===day){const existing=new Map(current.events.map(m=>[m.provider+':'+m.id,m]));for(const m of d.events||[])existing.set(m.provider+':'+m.id,m);current.dayEvents=d.events||[];current.events=[...existing.values()];current.roundLoading=false;current.roundFailed=!!d.stale||d.cache?.state==='stale';renderRound();document.dispatchEvent(new CustomEvent('cancha:competition-day',{detail:{league:lid,events:current.events}}))}}
   catch{if(mark===token&&current?.league===lid&&current.day===day){current.roundLoading=false;current.roundFailed=true;renderRound()}}
  }
  document.addEventListener('change',e=>{if(e.target.id==='c-round-date')selectDay(e.target.value)});
  window.addEventListener('hashchange',()=>{token++;observer?.disconnect();dialog?.close()});
- globalThis.CANCHA_COMPETITION={data,zone,phase,legend,form,formCoverage,contextShell,load,refreshDay:()=>{if(current&&document.querySelector('[data-competition-context]'))return selectDay(current.day)}};
+ globalThis.CANCHA_COMPETITION={data,currentEvents:()=>current?globalThis.CANCHA_MATCHES.onDay(current.events||[],current.day):undefined,zone,phase,legend,form,formCoverage,contextShell,load,refreshDay:()=>{if(current&&document.querySelector('[data-competition-context]'))return selectDay(current.day)}};
 })();

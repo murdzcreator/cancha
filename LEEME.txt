@@ -1,4 +1,4 @@
-CANCHA V19.1 · EDICION LIGERA
+CANCHA V19.2 · EDICION LIGERA
 
 Extrae todo el ZIP en una carpeta nueva.
 Windows: instala Node.js 20+ y abre INICIAR_CANCHA_WINDOWS.bat.

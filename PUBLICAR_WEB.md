@@ -2,7 +2,7 @@
 
 Esta entrega deja preparado el alojamiento; descargar o ejecutar el ZIP no publica la web. `127.0.0.1` sirve únicamente dentro del ordenador que lo abre.
 
-Una vez alojada, cualquier visitante abre la dirección HTTPS desde el móvil o el ordenador. No instala Node.js, no descarga el ZIP y no depende de que el PC del creador esté encendido. El servidor alojado consulta ESPN y los visitantes reciben las actualizaciones cada 45 segundos mientras la página está visible, según lo que publique la fuente.
+Una vez alojada, cualquier visitante abre la dirección HTTPS desde el móvil o el ordenador. No instala Node.js, no descarga el ZIP y no depende de que el PC del creador esté encendido. El servidor alojado consulta ESPN y las fichas activas comparten consultas cada 10 segundos y reciben avisos al cambiar los datos. Inicio y calendario consultan cada 10 segundos si muestran partidos en juego y cada 30 segundos en los demás casos. La actividad se pausa cuando la página está oculta; el ritmo y los detalles siguen sujetos a lo que publique ESPN.
 
 ## Acceso rápido para publicarla
 
@@ -49,9 +49,11 @@ Ese ejemplo verifica el contenedor localmente. Para compartirlo por internet, de
 
 ## Qué comprobar antes de compartir
 
-- La web muestra V19.1 y elige el día actual en hora de Perú.
+- La web muestra V19.2 y elige el día actual en hora de Perú.
 - En Partidos, selecciona Champions League y la fecha que quieras consultar.
 - Los marcadores indican fuente y estado; una copia sin actualizar no se anuncia como directo.
 - El alojamiento puede contactar con `site.api.espn.com` y `raw.githubusercontent.com`.
 
 Las alineaciones, minuto, tarjetas, sustituciones y estadísticas dependen de la cobertura de ESPN. La consulta periódica no garantiza una transmisión instantánea. Si se duerme o reinicia el servidor, la primera visita puede necesitar más tiempo para recuperar los datos.
+
+Si ya tienes un servicio creado, esta configuración desactiva los despliegues automáticos: usa **Manual Deploy → Deploy latest commit** para cargar V19.2. No hace falta desplegar de nuevo cada día para recibir partidos nuevos.
