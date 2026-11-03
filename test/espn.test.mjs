@@ -49,7 +49,7 @@ test('las consultas simultáneas comparten respuesta, caducan y conservan fecha 
  let clock=new Date('2026-10-25T17:00Z'),calls=0,fail=false;
  const p=createEspnProvider({db,now:()=>clock,fetchFn:async()=>{calls++;await Promise.resolve();if(fail)throw Error('sin red');return response(summary())}});
  const [a,b]=await Promise.all([p.summary('per','401886158'),p.summary('per','401886158')]);assert.equal(calls,1);assert.equal(a.updatedAt,b.updatedAt);
- clock=new Date(+clock+46000);fail=true;const stale=await p.summary('per','401886158');assert.equal(calls,2);assert.equal(stale.stale,true);assert.equal(stale.updatedAt,a.updatedAt);
+ clock=new Date(+clock+301000);fail=true;const stale=await p.summary('per','401886158');assert.equal(calls,2);assert.equal(stale.stale,true);assert.equal(stale.updatedAt,a.updatedAt);
  await p.summary('per','401886158');assert.equal(calls,2);
 });
 test('errores en frío tienen espera de reintento y una respuesta inválida no se guarda como éxito',async()=>{

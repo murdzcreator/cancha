@@ -19,8 +19,8 @@
   el.innerHTML=V.pagination(p,'calendar')+[...groups].map(([day,leagues])=>`<section class="c-calendar-day"><h2>${E(new Intl.DateTimeFormat('es-PE',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long'}).format(new Date(day+'T12:00:00Z')))}</h2>${[...leagues].map(([lid,rows])=>`<section class="panel m16-day-league"><div class="m16-league-heading"><a href="#/liga/${lid}">${globalThis.CANCHA_BRAND.leagueHTML(lid)}<h3>${E(D().leagues.find(l=>l.id===lid)?.name)}</h3></a><span>${rows.length} partidos</span></div>${rows.map(m=>M.row(m,lid,{showDate:false})).join('')}</section>`).join('')}</section>`).join('')+(!events.length?(state.loading?'<p class="v11-loading">Consultando partidos de este rango…</p>':`<p class="c-directory-empty">${failures&&!state.datasets.length?'No se pudo consultar el calendario. Vuelve a elegir la fecha para reintentar.':'No hay partidos publicados con este rango y estos filtros. Prueba otra fecha o competición.'}</p>`):'')+V.pagination(p,'calendar')+`<details class="c-calendar-sources"><summary>Fuentes y cobertura del rango</summary>${state.datasets.map(d=>`<p><b>${E(D().leagues.find(l=>l.id===d.league)?.name)}</b> · ${E(d.source)} · ${E(d.updatedAt?globalThis.CANCHA_DATES.format(d.updatedAt):'Sin actualización verificable')}${d.stale?' · Sin actualizar':''}</p>`).join('')}<p>Los encuentros y sus horarios dependen de lo publicado por las fuentes. Una fecha sin hora conserva su día civil.</p></details>`;
  }
  async function mount(){
-  if(!document.getElementById('c-calendar-results'))return;const mark=++state.token,r=V.range(state.mode,state.selected),selected=D().leagues.filter(l=>state.league==='todos'||l.id===state.league);
-  const key=[state.league,r.from,r.to].join(':');if(state.dataKey!==key){state.dataKey=key;state.events=[];state.datasets=[];state.failed=0;}
+  if(!document.getElementById('c-calendar-results'))return;const r=V.range(state.mode,state.selected),selected=D().leagues.filter(l=>state.league==='todos'||l.id===state.league);
+  const key=[state.league,r.from,r.to].join(':');if(state.loading&&state.dataKey===key)return;const mark=++state.token;if(state.dataKey!==key){state.dataKey=key;state.events=[];state.datasets=[];state.failed=0;}
   if(state.loadedAt&&Date.now()-state.loadedAt>90000){state.datasets=state.datasets.map(d=>({...d,stale:true}));state.events=state.events.map(m=>({...m,stale:true}));}
   const input=document.getElementById('c-calendar-date');if(input)input.value=r.from;state.loading=true;render();
   const previous=new Map(state.datasets.map(d=>[d.league,d]));
@@ -40,5 +40,5 @@
   if(e.target.id==='c-calendar-league'){state.league=e.target.value;state.team='';state.page=0;state.events=[];globalThis.CANCHA_REDRAW()}
   if(e.target.id==='c-calendar-team'){state.team=e.target.value;state.page=0;render()}
  });
- window.addEventListener('hashchange',()=>{state.token++});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&document.getElementById('c-calendar-results'))mount()});globalThis.CANCHA_CALENDAR={shell,mount};
+ window.addEventListener('hashchange',()=>{state.token++});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&document.getElementById('c-calendar-results'))mount()});globalThis.CANCHA_CALENDAR={shell,mount,refreshInterval:()=>globalThis.CANCHA_LIVE_POLICY.eventsInterval(state.events)};
 })();

@@ -1,0 +1,11 @@
+{
+  "controlledData": true,
+  "errors": [],
+  "initialCallsForTwoVisitors": 1,
+  "goalDeliveryMs": 8918,
+  "focusAndPlayerPreserved": true,
+  "callsAfterGoal": 2,
+  "heartbeatWithoutMatchChange": true,
+  "failurePreservesScore": true,
+  "finalStopsRequests": true
+}

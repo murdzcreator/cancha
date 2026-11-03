@@ -10,7 +10,7 @@ export async function packageRuntime({out=null}={}){
  const directory=out?path.resolve(out):await fs.mkdtemp(path.join(base,'CANCHA_LIGERA-'));
  if(directory===ROOT||!path.relative(directory,ROOT).startsWith('..'))throw Error('La salida no puede contener el proyecto de origen');
  await fs.mkdir(directory,{recursive:true});if((await fs.readdir(directory)).length)throw Error('Elige una carpeta de salida vacía; no se sobrescriben datos personales');
- const files=['index.html','cancha.css','server.mjs','db.js','dates.js','INICIAR_CANCHA_WINDOWS.bat','.env.example','PUBLICAR_WEB.md'];
+ const files=['index.html','cancha.css','server.mjs','db.js','dates.js','live-policy.js','INICIAR_CANCHA_WINDOWS.bat','.env.example','PUBLICAR_WEB.md'];
  const copy=async(relative,target=relative)=>{const dest=path.join(directory,target);await fs.mkdir(path.dirname(dest),{recursive:true});await fs.copyFile(path.join(ROOT,relative),dest)};
  for(const file of files)await copy(file);
  await copy('client/bootstrap.js');

@@ -1073,3 +1073,6 @@ body[data-route=jugadores] .v12-athlete-grid{display:grid;grid-template-columns:
 /* Reservar la tabla evita saltos y que los rankings parezcan visibles durante la carga. */
 .c-classification:has(.v11-loading):not(:has(.v11-table)){min-height:calc(var(--table-rows,20)*38.4px + 200px)}
 @media(max-width:600px){.c-classification:has(.v11-loading):not(:has(.v11-table)){min-height:calc(var(--table-rows,20)*61px + 200px)}}
+.c-sync-status{font-size:12px;line-height:1.5;color:var(--muted);padding:5px 0 9px;min-height:30px}
+.c-sync-status.is-stale{color:#f0c7b3}
+@media(max-width:600px){.c-sync-status{font-size:11px;padding:4px 0 8px}}

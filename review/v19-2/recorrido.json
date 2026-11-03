@@ -1,0 +1,102 @@
+{
+  "checks": [
+    {
+      "width": 1440,
+      "route": "inicio"
+    },
+    {
+      "width": 1440,
+      "route": "competiciones"
+    },
+    {
+      "width": 1440,
+      "route": "liga/ucl"
+    },
+    {
+      "width": 1440,
+      "route": "equipo/arsenal"
+    },
+    {
+      "width": 1440,
+      "route": "jugadores"
+    },
+    {
+      "width": 1440,
+      "route": "partidos?liga=ucl"
+    },
+    {
+      "width": 1440,
+      "route": "partido/psg-barca"
+    },
+    {
+      "width": 1440,
+      "route": "fuentes"
+    },
+    {
+      "width": 390,
+      "route": "inicio"
+    },
+    {
+      "width": 390,
+      "route": "competiciones"
+    },
+    {
+      "width": 390,
+      "route": "liga/ucl"
+    },
+    {
+      "width": 390,
+      "route": "equipo/arsenal"
+    },
+    {
+      "width": 390,
+      "route": "jugadores"
+    },
+    {
+      "width": 390,
+      "route": "partidos?liga=ucl"
+    },
+    {
+      "width": 390,
+      "route": "partido/psg-barca"
+    },
+    {
+      "width": 390,
+      "route": "fuentes"
+    },
+    {
+      "width": 320,
+      "route": "inicio"
+    },
+    {
+      "width": 320,
+      "route": "competiciones"
+    },
+    {
+      "width": 320,
+      "route": "liga/ucl"
+    },
+    {
+      "width": 320,
+      "route": "equipo/arsenal"
+    },
+    {
+      "width": 320,
+      "route": "jugadores"
+    },
+    {
+      "width": 320,
+      "route": "partidos?liga=ucl"
+    },
+    {
+      "width": 320,
+      "route": "partido/psg-barca"
+    },
+    {
+      "width": 320,
+      "route": "fuentes"
+    }
+  ],
+  "errors": [],
+  "missingLocalAssets": []
+}

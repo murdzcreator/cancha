@@ -1,4 +1,4 @@
-CANCHA V19.1 · Edicion completa de desarrollo
+CANCHA V19.2 · Edicion completa de desarrollo
 
 Windows: extrae todo el ZIP y abre INICIAR_CANCHA_WINDOWS.bat (Node.js 20+).
 Mac/Linux: npm start. No hay dependencias npm que instalar.
@@ -9,4 +9,4 @@ capturas, pruebas e informes antiguos. Para generarla: npm run package:runtime.
 
 Para compartir CANCHA mediante un enlace publico, consulta PUBLICAR_WEB.md.
 La direccion 127.0.0.1 solo funciona en tu propio ordenador.
-Guia: README.md. Novedades: NOVEDADES_V19_1.md.
+Guia: README.md. Novedades: NOVEDADES_V19_2.md.

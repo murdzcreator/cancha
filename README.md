@@ -1,4 +1,4 @@
-# CANCHA V19.1
+# CANCHA V19.2
 
 Centro de fútbol con nueve competiciones y 183 clubes del catálogo. Combina calendarios abiertos de OpenFootball con clasificaciones, plantillas y actualizaciones de partidos de ESPN, sin claves de pago.
 
@@ -6,7 +6,7 @@ Centro de fútbol con nueve competiciones y 183 clubes del catálogo. Combina ca
 
 Para usar y enviar por ZIP, descarga la edición ligera de la rama `cancha-ligera`. Conserva las funciones, escudos y fuentes; deja las capturas, pruebas, informes históricos y fuentes duplicadas en la rama de desarrollo. Generador: `npm run package:runtime`; la salida se crea en una carpeta nueva dentro de `output/`.
 
-Para que los visitantes entren solo con un enlace, el servidor debe estar alojado. La configuración Node/Docker y la guía están en [PUBLICAR_WEB.md](PUBLICAR_WEB.md). [Publicar la prueba gratuita en Render](https://render.com/deploy?repo=https://github.com/murdzcreator/cancha/tree/cancha-ligera). `render.yaml` prepara ese servicio; descargar este proyecto no crea ni publica un servicio. Las novedades de empaquetado y la verificación están en [NOVEDADES_V19_1.md](NOVEDADES_V19_1.md).
+Para que los visitantes entren solo con un enlace, el servidor debe estar alojado. La configuración Node/Docker y la guía están en [PUBLICAR_WEB.md](PUBLICAR_WEB.md). [Publicar la prueba gratuita en Render](https://render.com/deploy?repo=https://github.com/murdzcreator/cancha/tree/cancha-ligera). `render.yaml` prepara ese servicio; descargar este proyecto no crea ni publica un servicio. El modo rápido y su verificación están en [NOVEDADES_V19_2.md](NOVEDADES_V19_2.md). Las novedades de empaquetado están en [NOVEDADES_V19_1.md](NOVEDADES_V19_1.md).
 
 ## Descargar y ejecutar
 
@@ -37,7 +37,7 @@ Prueba: Partidos → Perú → 25/10/2026 → Comerciantes Unidos–Cienciano. D
 
 ## Actualizaciones y límites
 
-Los marcadores se consultan cada 45 segundos mientras la página está visible. Los próximos combinan las jornadas recientes con la agenda ESPN por club (`schedule?season=…&fixture=true`), reutilizada durante una hora; se validan el club, la liga y la temporada antes de combinar los datos. Los resultados por club (`fixture=false`) se reutilizan hasta seis horas para construir las rachas de cada competición. Las tablas se reutilizan hasta cinco minutos y las plantillas hasta seis horas. OpenFootball se sincroniza en segundo plano al arrancar y se comprueba periódicamente, con un intervalo mínimo de un día entre descargas.
+En las fichas en juego, el modo rápido comparte una consulta cada 10 segundos y envía avisos al navegador al detectar cambios. La caché de directo se limita a 5 segundos. Si los avisos no están disponibles, se usan consultas de respaldo. Las previas se consultan cada 30–60 segundos y el final confirmado detiene el seguimiento. Inicio y calendario usan 10 segundos con partidos en juego y 30 segundos en los demás casos, con la página visible. Los próximos combinan las jornadas recientes con la agenda ESPN por club (`schedule?season=…&fixture=true`), reutilizada durante una hora; se validan el club, la liga y la temporada antes de combinar los datos. Los resultados por club (`fixture=false`) se reutilizan hasta seis horas para construir las rachas de cada competición. Las tablas se reutilizan hasta cinco minutos y las plantillas hasta seis horas. OpenFootball se sincroniza en segundo plano al arrancar y se comprueba periódicamente, con un intervalo mínimo de un día entre descargas.
 
 La cobertura de resultados, actas y métricas depende del origen. No se garantiza latencia de transmisión en vivo. La interfaz usa las temporadas del catálogo actual; no incorpora todas las temporadas históricas ni mapas de calor o valoraciones inventadas.
 
@@ -45,7 +45,7 @@ Los archivos personales de caché e historial están en `data-cache/`, que no se
 
 ## Validación
 
-Ejecuta `npm test` (110 pruebas). La validación de V19 está en [NOVEDADES_V19.md](NOVEDADES_V19.md) y `review/v19/`. La auditoría anterior de V18.2 está en [AUDITORIA_V18_2.md](AUDITORIA_V18_2.md) y `review/v18-2/`, con 23 regresiones de navegador y 180 comprobaciones de navegación. El ajuste visual y su validación están en [AJUSTE_VISUAL_V18_1.md](AJUSTE_VISUAL_V18_1.md) y `review/v18-1/`. Las novedades de base están en [NOVEDADES_V18.md](NOVEDADES_V18.md) y `review/v18/`. La corrección de las fichas de club y del marcador está en [CORRECCION_PARTIDOS_17_2.md](CORRECCION_PARTIDOS_17_2.md) y `review/partidos-17-2/`. Las novedades anteriores y su evidencia están en [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`. El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.
+Ejecuta `npm test` (118 pruebas). La validación de V19 está en [NOVEDADES_V19.md](NOVEDADES_V19.md) y `review/v19/`. La auditoría anterior de V18.2 está en [AUDITORIA_V18_2.md](AUDITORIA_V18_2.md) y `review/v18-2/`, con 23 regresiones de navegador y 180 comprobaciones de navegación. El ajuste visual y su validación están en [AJUSTE_VISUAL_V18_1.md](AJUSTE_VISUAL_V18_1.md) y `review/v18-1/`. Las novedades de base están en [NOVEDADES_V18.md](NOVEDADES_V18.md) y `review/v18/`. La corrección de las fichas de club y del marcador está en [CORRECCION_PARTIDOS_17_2.md](CORRECCION_PARTIDOS_17_2.md) y `review/partidos-17-2/`. Las novedades anteriores y su evidencia están en [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`. El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.
 
 ## Desarrollo
 

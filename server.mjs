@@ -1,4 +1,4 @@
-// CANCHA V19.1 · Node.js 20+ · sin dependencias externas
+// CANCHA V19.2 · Node.js 20+ · sin dependencias externas
 import http from 'node:http';
 import {reconcileStandings} from './server/standings.mjs';
 import fs from 'node:fs';
@@ -13,6 +13,7 @@ import {createEspnProvider} from './server/espn.mjs';
 import {normalize} from './server/dates.mjs';
 import {createHistory} from './server/history.mjs';
 import {createFootballService} from './server/football-service.mjs';
+import {createLiveChannel,serveMatchStream} from './server/live-channel.mjs';
 import {respond,serveFile} from './server/http-response.mjs';
 import {downloadOpenFootball} from './server/openfootball.mjs';
 // Node 24 utiliza el proxy administrado cuando está presente; Node 20 no lo necesita en uso local.
@@ -35,6 +36,7 @@ const dataKeysPresent=Boolean(process.env.FOOTBALL_DATA_KEY||process.env.API_FOO
 const rosterAttempts=new Map();
 const playerIndex=createPlayerIndex(path.join(ROOT,'data-cache'),{db,snapshots:verifiedSnapshots});
 const football=createFootballService({db,espn,soccerdata,history,cache,playerIndex});
+const liveChannel=createLiveChannel({load:key=>{const [lid,id]=key.split(':');return football.detail(lid,id)}});
 async function standingsFor(l){
  try{return await espn.standings(l)}catch{}
  const local=soccerdata.standings(l);
@@ -66,7 +68,7 @@ async function router(req,res){
  if(url.pathname==='/api/branding/status'){send(res,200,crestStatus);return}
  if(url.pathname==='/api/branding/manifest'){send(res,200,readBranding(ROOT));return}
  if(url.pathname.startsWith('/api/')){
-  if(url.pathname==='/api/health'){send(res,200,{version:'19.1',server:true,asOf:new Date().toISOString(),providers:{...providers.status,espn:espn.status().enabled},espn:espn.status(),liveCredentialsConfigured:dataKeysPresent,soccerdataImports:soccerdata.status(),hasImportedFixtures:soccerdata.status().some(x=>x.fixtures>0),calendarCoverage:db.leagues.map(l=>({league:l.id,count:history.fixtures(l.id,soccerdata.fixtures(l.id)).length})),playerCoverage:playerIndex.coverage(),snapshotFallbacks:['per','alianza-lima'],competitions:db.leagues.map(x=>({id:x.id,name:x.name,season:x.season}))});return}
+  if(url.pathname==='/api/health'){send(res,200,{version:'19.2',server:true,asOf:new Date().toISOString(),providers:{...providers.status,espn:espn.status().enabled},espn:espn.status(),liveCredentialsConfigured:dataKeysPresent,soccerdataImports:soccerdata.status(),hasImportedFixtures:soccerdata.status().some(x=>x.fixtures>0),calendarCoverage:db.leagues.map(l=>({league:l.id,count:history.fixtures(l.id,soccerdata.fixtures(l.id)).length})),playerCoverage:playerIndex.coverage(),snapshotFallbacks:['per','alianza-lima'],competitions:db.leagues.map(x=>({id:x.id,name:x.name,season:x.season}))});return}
   if(url.pathname==='/api/rosters/sync'){
    const current=playerIndex.coverage(),pending=Object.keys(db.teams).filter(t=>!current.some(r=>r.team===t&&r.rosterSource==='ESPN'&&Date.now()-Date.parse(r.rosterFetchedAt)<24*3600000)&&Date.now()-(rosterAttempts.get(t)||0)>1800000),batch=pending.slice(0,6);
    const results=await Promise.allSettled(batch.map(async t=>{rosterAttempts.set(t,Date.now());const d=await espn.roster(t);if(d.stale)throw Error('Copia antigua');playerIndex.addRoster(d);return t}));
@@ -77,6 +79,7 @@ async function router(req,res){
   if(url.pathname==='/api/player-profile'){const t=url.searchParams.get('team')||'',id=url.searchParams.get('id')||'';if(!teams.has(t)){send(res,404,{error:'Club desconocido'});return}const p=playerIndex.one(t,id);if(!p){send(res,404,{error:'Jugador no documentado en el índice local'});return}send(res,200,p);return}
   const l=url.searchParams.get('league'),t=url.searchParams.get('team'),force=url.searchParams.get('refresh')==='1';
   try{
+   if(url.pathname==='/api/match-stream'){const id=url.searchParams.get('id');if(!leagues.has(l)||!/^\d{1,12}$/.test(id||'')){send(res,400,{error:'Partido no válido'});return}serveMatchStream(req,res,liveChannel,l+':'+id);return}
    if(['/api/analytics','/api/enrich','/api/head-to-head','/api/history/load'].includes(url.pathname)){
     if(!leagues.has(l)){send(res,400,{error:'Competición no válida'});return}
     const local=soccerdata.fixtures(l);
@@ -99,13 +102,13 @@ async function router(req,res){
     if(t){if(!db.leagues.find(x=>x.id===l).teams.includes(t)){send(res,400,{error:'Equipo no válido'});return}send(res,200,await fixturesFor(l,null,t));return}
     const from=url.searchParams.get('from'),to=url.searchParams.get('to');
     if(from||to){if(!from||!to||from.length!==10||to.length!==10||normalize(from)!==from||normalize(to)!==to||to<from||Date.parse(to)-Date.parse(from)>6*864e5){send(res,400,{error:'Rango no válido; elige hasta siete días'});return}
-     const d=await cache.retrieve('fixtures:combined:v17-agenda:'+l,45000,()=>fixturesFor(l));
+     const d=await cache.retrieve('fixtures:combined:v19-fast:'+l,d=>globalThis.CANCHA_LIVE_POLICY.eventsInterval(d?.events)===10000?5000:20000,()=>fixturesFor(l));
      send(res,200,{...d,events:d.events.filter(m=>{const day=m.date.length===10?m.date:globalThis.CANCHA_DATES.dayInPeru(new Date(m.date));return day>=from&&day<=to}),range:{from,to}});return;
     }
     const day=url.searchParams.get('date');if(day&&(day.length!==10||normalize(day)!==day)){send(res,400,{error:'Fecha no válida; utiliza AAAA-MM-DD'});return}
     if(day){send(res,200,await fixturesFor(l,day));return}
     if(process.env.CANCHA_ESPN==='0'){const local=soccerdata.fixtures(l);if(local?.events.length){send(res,200,local);return}send(res,200,await cache.retrieve('fixtures:v15:'+l,ttl('fixtures'),()=>providers.getFixtures(l),{force}));return}
-    const d=await cache.retrieve('fixtures:combined:v17-agenda:'+l,45000,()=>fixturesFor(l));send(res,200,d);return;
+    const d=await cache.retrieve('fixtures:combined:v19-fast:'+l,d=>globalThis.CANCHA_LIVE_POLICY.eventsInterval(d?.events)===10000?5000:20000,()=>fixturesFor(l));send(res,200,d);return;
    }
    if(url.pathname==='/api/roster'&&teams.has(t)){let d=await cache.retrieve('roster:v18:'+t,21600000,()=>rosterFor(t),{force});if(d.players?.length)playerIndex.addRoster(d);send(res,200,d);return}
    if(url.pathname==='/api/match-detail'&&leagues.has(l)){
@@ -134,10 +137,10 @@ async function router(req,res){
 }
 export function startServer(port=Number(process.env.PORT||4173),host=process.env.HOST||'127.0.0.1'){
  const server=http.createServer((req,res)=>{router(req,res).catch(()=>{if(!res.headersSent)send(res,500,{error:'Error interno'})})});
- server.on('close',()=>{Promise.all([history.flush(),playerIndex.flush()]).catch(()=>{})});
- server.listen(port,host,()=>console.log(`CANCHA V19.1: http://${host}:${server.address().port}`));
+ server.on('close',()=>{liveChannel.close();Promise.all([history.flush(),playerIndex.flush()]).catch(()=>{})});
+ server.listen(port,host,()=>console.log(`CANCHA V19.2: http://${host}:${server.address().port}`));
   if(process.env.CANCHA_OPENFOOTBALL!=='0'){const sync=()=>downloadOpenFootball(ROOT,db,{timeoutMs:8000}).catch(()=>{});sync();const timer=setInterval(sync,6*3600000);timer.unref();server.on('close',()=>clearInterval(timer));}
   // Escudos locales empaquetados: sin descarga automática, ni cambios silenciosos.
   return server;
 }
-if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){const server=startServer();const close=async()=>{server.close();await Promise.all([history.flush(),playerIndex.flush()]);};process.once('SIGINT',()=>close().catch(()=>{}));process.once('SIGTERM',()=>close().catch(()=>{}));}
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){const server=startServer();const close=async()=>{liveChannel.close();server.close();await Promise.all([history.flush(),playerIndex.flush()]);};process.once('SIGINT',()=>close().catch(()=>{}));process.once('SIGTERM',()=>close().catch(()=>{}));}
