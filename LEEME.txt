@@ -1,6 +1,12 @@
-CANCHA V17.2 · Noche violeta
-Extrae todo el ZIP y abre INICIAR_CANCHA_WINDOWS.bat (Node.js 20+).
-En macOS/Linux: npm start.
-Abre http://127.0.0.1:4173/ y mantén la consola abierta.
-Guía: README.md. Novedades y verificación: NOVEDADES_V17.md.
-Corrección del marcador y las listas del club: CORRECCION_PARTIDOS_17_2.md.
+CANCHA V19.1 · Edicion completa de desarrollo
+
+Windows: extrae todo el ZIP y abre INICIAR_CANCHA_WINDOWS.bat (Node.js 20+).
+Mac/Linux: npm start. No hay dependencias npm que instalar.
+Abre http://127.0.0.1:4173/ y manten la consola abierta.
+
+La edicion ligera se entrega por separado: conserva las funciones y omite
+capturas, pruebas e informes antiguos. Para generarla: npm run package:runtime.
+
+Para compartir CANCHA mediante un enlace publico, consulta PUBLICAR_WEB.md.
+La direccion 127.0.0.1 solo funciona en tu propio ordenador.
+Guia: README.md. Novedades: NOVEDADES_V19_1.md.

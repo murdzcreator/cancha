@@ -1,0 +1,10 @@
+.git/
+.env
+.env.*
+!.env.example
+data-cache/
+node_modules/
+work/
+output/
+review/
+test/

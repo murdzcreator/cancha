@@ -1,6 +1,12 @@
-# CANCHA V19
+# CANCHA V19.1
 
 Centro de fútbol con nueve competiciones y 183 clubes del catálogo. Combina calendarios abiertos de OpenFootball con clasificaciones, plantillas y actualizaciones de partidos de ESPN, sin claves de pago.
+
+## Edición ligera y web compartible
+
+Para usar y enviar por ZIP, descarga la edición ligera de la rama `cancha-ligera`. Conserva las funciones, escudos y fuentes; deja las capturas, pruebas, informes históricos y fuentes duplicadas en la rama de desarrollo. Generador: `npm run package:runtime`; la salida se crea en una carpeta nueva dentro de `output/`.
+
+Para que los visitantes entren solo con un enlace, el servidor debe estar alojado. La configuración Node/Docker y la guía están en [PUBLICAR_WEB.md](PUBLICAR_WEB.md). [Publicar la prueba gratuita en Render](https://render.com/deploy?repo=https://github.com/murdzcreator/cancha/tree/cancha-ligera). `render.yaml` prepara ese servicio; descargar este proyecto no crea ni publica un servicio. Las novedades de empaquetado y la verificación están en [NOVEDADES_V19_1.md](NOVEDADES_V19_1.md).
 
 ## Descargar y ejecutar
 
@@ -39,7 +45,7 @@ Los archivos personales de caché e historial están en `data-cache/`, que no se
 
 ## Validación
 
-Ejecuta `npm test` (108 pruebas). La validación de V19 está en [NOVEDADES_V19.md](NOVEDADES_V19.md) y `review/v19/`. La auditoría anterior de V18.2 está en [AUDITORIA_V18_2.md](AUDITORIA_V18_2.md) y `review/v18-2/`, con 23 regresiones de navegador y 180 comprobaciones de navegación. El ajuste visual y su validación están en [AJUSTE_VISUAL_V18_1.md](AJUSTE_VISUAL_V18_1.md) y `review/v18-1/`. Las novedades de base están en [NOVEDADES_V18.md](NOVEDADES_V18.md) y `review/v18/`. La corrección de las fichas de club y del marcador está en [CORRECCION_PARTIDOS_17_2.md](CORRECCION_PARTIDOS_17_2.md) y `review/partidos-17-2/`. Las novedades anteriores y su evidencia están en [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`. El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.
+Ejecuta `npm test` (110 pruebas). La validación de V19 está en [NOVEDADES_V19.md](NOVEDADES_V19.md) y `review/v19/`. La auditoría anterior de V18.2 está en [AUDITORIA_V18_2.md](AUDITORIA_V18_2.md) y `review/v18-2/`, con 23 regresiones de navegador y 180 comprobaciones de navegación. El ajuste visual y su validación están en [AJUSTE_VISUAL_V18_1.md](AJUSTE_VISUAL_V18_1.md) y `review/v18-1/`. Las novedades de base están en [NOVEDADES_V18.md](NOVEDADES_V18.md) y `review/v18/`. La corrección de las fichas de club y del marcador está en [CORRECCION_PARTIDOS_17_2.md](CORRECCION_PARTIDOS_17_2.md) y `review/partidos-17-2/`. Las novedades anteriores y su evidencia están en [NOVEDADES_V17.md](NOVEDADES_V17.md) y `review/v17/`. El rediseño, sus límites y los recorridos de navegador están en [REDISENO_V16.md](REDISENO_V16.md) y `review/v16/`. Los detalles de las correcciones, verificación de las nueve tablas, plantillas de muestra y recorridos de escritorio/móvil están en [MEJORAS_V15.md](MEJORAS_V15.md) y `review/v15/`.
 
 ## Desarrollo
 

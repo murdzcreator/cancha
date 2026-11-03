@@ -1,0 +1,21 @@
+# Configuración preparada; crear el servicio requiere una cuenta de Render.
+services:
+  - type: web
+    name: cancha
+    runtime: node
+    plan: free
+    repo: https://github.com/murdzcreator/cancha
+    branch: cancha-ligera
+    buildCommand: node --version
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: 'off'
+    envVars:
+      - key: NODE_VERSION
+        value: '22'
+      - key: HOST
+        value: 0.0.0.0
+      - key: CANCHA_ESPN
+        value: '1'
+      - key: CANCHA_OPENFOOTBALL
+        value: '1'
