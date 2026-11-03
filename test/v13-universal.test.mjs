@@ -39,7 +39,7 @@ test('búsqueda de ficha pública valida país y evita clubes homónimos',async(
  assert.equal(r.city,'Lima');assert.equal(r.stadium,'Monumental');assert.equal(requests,1);
 });
 test('página contiene plantilla universal y fuente estática local',()=>{
- const h=fs.readFileSync(path.join(root,'index.html'),'utf8');for(const x of ['universal.js','club-facts.js','v13.css'])assert.ok(h.includes(x));
+ const h=fs.readFileSync(path.join(root,'index.html'),'utf8');assert.match(h,/type="module" src="client\/bootstrap.js/);assert.match(h,/href="cancha.css/);const bundle=fs.readFileSync(path.join(root,'client/bundles/universal.js'),'utf8');for(const x of ['clubInfoRows','CANCHA_CLUB_FACTS'])assert.ok(bundle.includes(x));
  for(const f of ['centro.html','partido-psg-barcelona-2026.html'])assert.ok(fs.readFileSync(path.join(root,f),'utf8').includes('index.html'));
  const u=fs.readFileSync(path.join(root,'universal.js'),'utf8');assert.ok(u.includes('function matchHTML(data)'));assert.ok(u.includes('remoteMatchShell'));assert.ok(u.includes('Sin dato contrastado'));
 });

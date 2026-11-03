@@ -18,13 +18,13 @@ test('elige tabla completa antes que fragmentos gratuitos sin mezclar puntos de 
  const r=selectStandings([{source:'TSD',quality:{complete:false,found:5},groups:[{rows:Array(5).fill({})}]},{source:'A',quality:{complete:true,found:18},groups:[{rows:Array(18).fill({})}]}],l);
  assert.equal(r.source,'A');assert.equal(r.partial,false);assert.equal(r.alternatives.length,1);
 });
-test('índice persiste futbolistas de plantillas consultadas y permite buscar',()=>{
+test('índice persiste futbolistas de plantillas consultadas y permite buscar',async()=>{
  let dir=fs.mkdtempSync(path.join(os.tmpdir(),'cancha12-'));
  try {let s=createPlayerIndex(dir,{db,snapshots:{roster:{team:'alianza-lima',season:'2026',source:'Referencia',players:[{id:'12',name:'Jugador de prueba',position:'Portero'}]}}});
  assert.equal(s.listing({q:'jugador'}).total,1);
  assert.equal(s.one('alianza-lima','12').name,'Jugador de prueba');
  s.addRoster({team:'alianza-lima',season:'2026',source:'API',players:[{id:'23',name:'Jugador oficial',position:'Defensa'}]});
- const again=createPlayerIndex(dir,{db,snapshots:{}});assert.equal(again.one('alianza-lima','23').name,'Jugador oficial');
+ await s.flush();const again=createPlayerIndex(dir,{db,snapshots:{}});assert.equal(again.one('alianza-lima','23').name,'Jugador oficial');
  } finally {fs.rmSync(dir,{recursive:true,force:true})}
 });
 test('encuentro de API-Football consulta eventos y estadísticas por endpoints separados',async()=>{

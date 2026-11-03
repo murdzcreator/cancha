@@ -55,16 +55,16 @@ test('V18: Hoy/Mañana/siete días usan el día de Perú y cruzan mes y año',()
 test('V18: paginación permite recorrer los 183 clubes y ajusta índices tras filtrar',()=>{
  const rows=Array.from({length:183},(_,i)=>i),seen=[];for(let i=0;i<8;i++)seen.push(...V.page(rows,i,24).items);assert.deepEqual(seen,rows);assert.equal(V.page([1,2],7,25).index,0);assert.equal(V.page([],4).start,0);assert.equal(V.page(rows,-1,24).index,0);assert.equal(V.normalize('  Atlético  '),'atletico');
 });
-test('V18: el filtro de jugadores por liga intersecta club y nombre sin perder clubes compartidos',()=>{
+test('V18: el filtro de jugadores por liga intersecta club y nombre sin perder clubes compartidos',async()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'cancha-directory-'));
  try{const index=createPlayerIndex(root,{db:{...db,matchPlayers:{}},snapshots:{}});index.addRoster({team:'arsenal',players:[{id:'1',name:'Jugador Inglés'}]});index.addRoster({team:'alianza-lima',players:[{id:'2',name:'Jugador Perú'}]});
-  assert.deepEqual(index.listing({league:'eng'}).players.map(p=>p.team),['arsenal']);assert.equal(index.listing({league:'eng',team:'alianza-lima'}).total,0);assert.equal(index.listing({league:'eng',q:'ingles'}).total,1);assert.equal(index.listing({league:'ucl'}).total,Number(db.teams.arsenal.leagues.includes('ucl')));
+  assert.deepEqual(index.listing({league:'eng'}).players.map(p=>p.team),['arsenal']);assert.equal(index.listing({league:'eng',team:'alianza-lima'}).total,0);assert.equal(index.listing({league:'eng',q:'ingles'}).total,1);assert.equal(index.listing({league:'ucl'}).total,Number(db.teams.arsenal.leagues.includes('ucl')));await index.flush();
  }finally{fs.rmSync(root,{recursive:true,force:true})}
 });
-test('V18: la cobertura de club y jugador no reutiliza el total de la competición',()=>{
+test('V18: la cobertura de club y jugador no reutiliza el total de la competición',async()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'cancha-coverage-'));
  try{const h=createHistory(root,db);h.observe('per',{season:'2026',events:[game('1'),game('2',{home:'alianza-lima',away:'universitario'})]});const d={...game('1'),league:'per',season:'2026',lineups:[{team:'Cienciano',starting:[{id:'9',name:'Jugador',starter:true,statistics:[{goals:{total:0}}]}],substitutes:[]}]};h.detail('per',d);
   const a=h.analytics('per',null);assert.equal(a.coverage.results,2);assert.deepEqual(a.teamCoverage.cienciano,{results:1,details:1});assert.deepEqual(a.teamCoverage['alianza-lima'],{results:1,details:0});assert.deepEqual(a.teamCoverage['sporting-cristal'],{results:0,details:0});
-  assert.equal(V.coverage(a,'team','cienciano').label,'1 resultado del club · 1 acta');assert.equal(V.coverage(a,'player','cienciano','9').label,'1 partido · goles publicados en 1');assert.equal(a.players[0].goals,0);assert.equal(a.players[0].assists,null);
+  assert.equal(V.coverage(a,'team','cienciano').label,'1 resultado del club · 1 acta');assert.equal(V.coverage(a,'player','cienciano','9').label,'1 partido · goles publicados en 1');assert.equal(a.players[0].goals,0);assert.equal(a.players[0].assists,null);await h.flush();
  }finally{fs.rmSync(root,{recursive:true,force:true})}
 });
