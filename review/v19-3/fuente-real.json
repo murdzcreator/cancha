@@ -1,0 +1,45 @@
+{
+  "errors": [],
+  "checks": [
+    {
+      "width": 1920,
+      "version": "19.3",
+      "goals": 6,
+      "scorer": "David Boly",
+      "assist": "João Neves",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "version": "19.3",
+      "goals": 6,
+      "scorer": "David Boly",
+      "assist": "João Neves",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "version": "19.3",
+      "goals": 6,
+      "scorer": "David Boly",
+      "assist": "João Neves",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "version": "19.3",
+      "goals": 6,
+      "scorer": "David Boly",
+      "assist": "João Neves",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "version": "19.3",
+      "goals": 6,
+      "scorer": "David Boly",
+      "assist": "João Neves",
+      "overflow": false
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# CANCHA V19.2 · Inicio local
+# CANCHA V19.3 · Inicio local
 
 1. Instala Node.js 20 o superior desde https://nodejs.org/.
 2. Extrae todo el ZIP en una carpeta nueva.
@@ -13,6 +13,6 @@ ESPN se consulta por internet, sin clave de pago. OpenFootball sincroniza sus ca
 
 Guía y novedades: `README.md` y `NOVEDADES_V19.md`. Capturas y pruebas: `review/v19/`.
 
-Para esta actualización, extrae el ZIP en una carpeta nueva, cierra el servidor anterior e inicia el de esa carpeta. El pie de página y el lateral deben indicar **V19.2**.
+Para esta actualización, extrae el ZIP en una carpeta nueva, cierra el servidor anterior e inicia el de esa carpeta. El pie de página y el lateral deben indicar **V19.3**.
 
 La edición ligera incluye una guía breve en `LEEME.txt` y la configuración de alojamiento en `PUBLICAR_WEB.md`. El repositorio de desarrollo conserva los informes y pruebas anteriores.
