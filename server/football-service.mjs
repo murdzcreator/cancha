@@ -37,7 +37,7 @@ export function createFootballService({db,espn,soccerdata,history,cache,playerIn
  function analytics(lid,options={}){return analyticsView(history.analytics(lid,soccerdata.fixtures(lid)),options);}
  function synced(data){return {...data,sync:{checkedAt:new Date().toISOString(),sourceUpdatedAt:data.updatedAt||null,stale:!!data.stale||data.cache?.state==='stale',intervalSeconds:P.interval(data)/1000}};}
  async function detail(lid,id){
-  const known=history.match(lid,id),key=['detail:v19',lid,league(lid).season,id].join(':');
+  const known=history.match(lid,id),key=['detail:v19.3-events',lid,league(lid).season,id].join(':');
   const d=await cache.retrieve(key,saved=>P.ttl(saved||known),()=>espn.summary(lid,id));
   const canonical=history.fixture(lid,id);if(canonical&&preferMatch(canonical,d)===canonical&&['status','hs','as'].some(k=>canonical[k]!==d[k])){if(known&&known.status===canonical.status&&known.hs===canonical.hs&&known.as===canonical.as)return synced({...known,stale:true});throw Error('El acta recibida es anterior al marcador verificado; reintento pendiente');}
   history.detail(lid,d);playerIndex.addMatch(d);const stored=history.match(lid,id)||d;return synced({...stored,cache:d.cache,stale:!!d.stale||d.cache?.state==='stale'});

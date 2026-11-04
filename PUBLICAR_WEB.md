@@ -49,11 +49,11 @@ Ese ejemplo verifica el contenedor localmente. Para compartirlo por internet, de
 
 ## Qué comprobar antes de compartir
 
-- La web muestra V19.2 y elige el día actual en hora de Perú.
+- La web muestra V19.3 y elige el día actual en hora de Perú.
 - En Partidos, selecciona Champions League y la fecha que quieras consultar.
 - Los marcadores indican fuente y estado; una copia sin actualizar no se anuncia como directo.
 - El alojamiento puede contactar con `site.api.espn.com` y `raw.githubusercontent.com`.
 
 Las alineaciones, minuto, tarjetas, sustituciones y estadísticas dependen de la cobertura de ESPN. La consulta periódica no garantiza una transmisión instantánea. Si se duerme o reinicia el servidor, la primera visita puede necesitar más tiempo para recuperar los datos.
 
-Si ya tienes un servicio creado, esta configuración desactiva los despliegues automáticos: usa **Manual Deploy → Deploy latest commit** para cargar V19.2. No hace falta desplegar de nuevo cada día para recibir partidos nuevos.
+Si ya tienes un servicio creado, esta configuración desactiva los despliegues automáticos: usa **Manual Deploy → Deploy latest commit** para cargar V19.3. No hace falta desplegar de nuevo cada día para recibir partidos nuevos.

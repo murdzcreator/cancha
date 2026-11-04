@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import '../live-policy.js';
 const P=globalThis.CANCHA_LIVE_POLICY;
+import {normalizeMatchEvents} from './match-events.mjs';
 import {qualification} from './competition.mjs';
 import {normalize,compare} from './dates.mjs';
 import {safeInt,seasonStart} from './identity.mjs';
@@ -74,10 +75,7 @@ export function normalizeEspnSummary(data,league,db,id){
   const players=(row.roster||[]).filter(p=>p.athlete?.id&&p.athlete?.displayName).map(p=>({id:String(p.athlete.id),name:text(p.athlete.displayName),number:safeInt(p.jersey),position:text(p.position?.displayName),grid:null,starter:p.starter===true,subbedIn:p.subbedIn===true,subbedOut:p.subbedOut===true,statistics:p.stats?.length?[playerStats(p)]:[]}));
   lineups.push({team:db.teams[club].name,formation:text(row.formation),starting:players.filter(p=>p.starter),substitutes:players.filter(p=>!p.starter)});
  }
- const events=(data.keyEvents||[]).filter(e=>['goal','own-goal','penalty---scored','yellow-card','red-card','yellow-red-card','substitution'].includes(e.type?.type)||e.scoringPlay).map(e=>({
-  id:text(e.id),minute:text(e.clock?.displayValue).replace(/'/g,''),type:/goal|penalty/.test(e.type?.type)?'Goal':e.type?.type==='substitution'?'subst':'Card',
-  detail:({'goal':'Gol','own-goal':'Autogol','penalty---scored':'Gol de penal','yellow-card':'Amarilla','red-card':'Roja','yellow-red-card':'Segunda amarilla','substitution':'Cambio'})[e.type?.type]||text(e.type?.text),
-  team:db.teams[teamId(e.team,league)]?.name||'',player:(e.participants||[]).map(x=>text(x.athlete?.displayName)).filter(Boolean).join(' / ')}));
+ const events=normalizeMatchEvents(data.keyEvents,{match,teams:[{id:match.home,sourceId:home.team.id,name:db.teams[match.home].name,names:[db.teams[match.home].name,home.team.displayName,home.team.name,home.team.shortDisplayName].filter(Boolean)},{id:match.away,sourceId:away.team.id,name:db.teams[match.away].name,names:[db.teams[match.away].name,away.team.displayName,away.team.name,away.team.shortDisplayName].filter(Boolean)}]});
  return {...match,league:league.id,season:league.season,source:'ESPN',updatedAt:new Date().toISOString(),lineups,events,stats,
   stadium:text(data.gameInfo?.venue?.fullName),lineupWarning:'Posiciones en cancha esquemáticas. Solo se muestran métricas publicadas; no se calculan minutos ni valoraciones ausentes.',
   note:'Consulta periódica a ESPN; cobertura y demora dependen de la fuente. Las estadísticas de esta ficha corresponden a este partido.'};

@@ -1076,3 +1076,49 @@ body[data-route=jugadores] .v12-athlete-grid{display:grid;grid-template-columns:
 .c-sync-status{font-size:12px;line-height:1.5;color:var(--muted);padding:5px 0 9px;min-height:30px}
 .c-sync-status.is-stale{color:#f0c7b3}
 @media(max-width:600px){.c-sync-status{font-size:11px;padding:4px 0 8px}}
+/* V19.3 · identidad de cada lado y goles destacados. */
+.c-stat-teams,.c-match-event{--home-accent:#ceb2f4;--away-accent:#78cfbd}
+.c-stat-teams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding:10px 14px;background:var(--panel2);border-bottom:1px solid var(--line)}
+.c-stat-team{display:flex;align-items:center;gap:8px;min-width:0;color:var(--text);padding-bottom:5px;border-bottom:2px solid var(--home-accent)}
+.c-stat-team.is-away{justify-content:flex-end;text-align:right;border-color:var(--away-accent)}
+.c-stat-team>img{width:25px;height:25px;object-fit:contain;flex:none}
+.c-stat-team>span{min-width:0;display:grid;gap:2px}
+.c-stat-team small{font-size:10px;color:var(--muted);line-height:1.2}
+.c-stat-team b{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.c-stat-home,.m16-comparison .c-stat-home{color:#ceb2f4}
+.c-stat-away,.m16-comparison .c-stat-away{color:#78cfbd}
+.m16-comparison-bar i:first-child{background:#ceb2f4}.m16-comparison-bar i+i{background:#78cfbd}
+.c-moment-filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--line)}
+.c-moment-filters button{min-height:32px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--deep);color:var(--muted);font-size:12px}
+.c-moment-filters button[aria-pressed=true]{background:var(--panel2);color:var(--lime);border-color:#79618f}
+.c-moment-filters button>b{font-size:10px;border-radius:4px;padding:1px 5px;margin-left:4px;background:#ffffff12;color:var(--text)}
+.c-moment-filters small{margin-left:auto;color:var(--muted);font-size:10px}
+.v13-event.c-match-event{display:grid;grid-template-columns:42px 25px minmax(0,1fr);gap:9px;align-items:center;padding:10px 12px;font-size:13px;min-width:0}
+.c-match-event .v13-event-minute{font-size:13px;min-width:0;white-space:nowrap;align-self:center}
+.c-match-event .c-event-icon{display:grid;place-items:center;min-width:0;grid-column:auto}
+.c-event-icon>img{height:24px;width:24px;object-fit:contain}
+.c-match-event .c-event-body{min-width:0;display:grid;gap:4px}
+.c-match-event .c-event-heading{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;min-width:0;line-height:1.35}
+.c-match-event .c-event-heading>a,.c-match-event .c-event-heading>span:not(.c-event-kind){font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.c-match-event .c-event-kind{font-size:10px;color:var(--text);display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.c-event-kind .c-icon{height:13px;width:13px}
+.c-match-event .c-event-player{font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.c-match-event .c-event-detail{color:var(--muted);font-size:11px;line-height:1.4;overflow-wrap:anywhere}
+.v13-event.c-match-event.is-goal{border-left:3px solid var(--event-accent,#ceb2f4);background:#2b213a;grid-template-columns:39px 25px minmax(0,1fr) auto;animation:c-goal-reveal .45s ease-out}
+.c-match-event.is-goal.is-away{--event-accent:#78cfbd;background:#203133}
+.c-match-event.is-goal .c-event-kind{font-weight:800;color:var(--event-accent,#ceb2f4);text-transform:uppercase;letter-spacing:.06em}
+.c-match-event.is-goal .c-event-heading>a{color:var(--text);font-weight:600}
+.c-match-event .c-event-score{display:grid;justify-items:center;gap:3px;min-width:60px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#100c1a66}
+.c-event-score small{font-size:9px;color:var(--muted)}
+.c-match-event .c-event-score>span{display:flex;align-items:center;gap:5px;font-size:18px;line-height:1.3;font-weight:800;white-space:nowrap}
+.c-event-score i{font-style:normal;color:var(--muted);font-weight:400}
+@keyframes c-goal-reveal{from{box-shadow:inset 0 0 0 40px #ceb2f418}to{box-shadow:inset 0 0 0 0 transparent}}
+@media(max-width:600px){
+ .c-stat-teams{gap:14px;padding:9px 12px}.c-stat-team{gap:6px}.c-stat-team>img{width:23px;height:23px}.c-stat-team b{font-size:11px}
+ .c-moment-filters{padding:7px 10px}.c-moment-filters small{flex-basis:100%;margin:0;padding-top:2px}
+ .v13-event.c-match-event{gap:7px;padding:9px 10px;grid-template-columns:40px 22px minmax(0,1fr)}
+ .c-match-event .v13-event-minute{font-size:12px}
+ .v13-event.c-match-event.is-goal{grid-template-columns:37px 22px minmax(0,1fr) auto}
+ .c-event-icon>img{width:22px;height:22px}.c-match-event .c-event-score{min-width:52px;padding:5px}.c-match-event .c-event-score>span{font-size:16px;gap:4px}
+}
+@media(prefers-reduced-motion:reduce){.v13-event.c-match-event.is-goal{animation:none}}
