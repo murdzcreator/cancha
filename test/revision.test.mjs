@@ -25,8 +25,8 @@ test('selección de partidos: evita los primeros ocho antiguos y programados ven
 test('enteros: cero válido; fracciones, booleanos y blancos no se vuelven estadísticas',()=>{
  assert.equal(safeInt(0),0);for(const x of [true,' ',1.5])assert.equal(safeInt(x),null);
 });
-test('las nueve competiciones tienen clubes únicos y partidos ligados a equipos de la competición',()=>{
- assert.equal(db.leagues.length,9);
+test('las diez competiciones tienen clubes únicos y partidos ligados a equipos de la competición',()=>{
+ assert.equal(db.leagues.length,10);
  for(const l of db.leagues){assert.equal(new Set(l.teams).size,l.teams.length);for(const t of l.teams)assert.ok(db.teams[t]);for(const m of db.matches.filter(m=>m.league===l.id)){assert.ok(l.teams.includes(m.home));assert.ok(l.teams.includes(m.away));assert.ok(normalize(m.date));}}
 });
 test('OpenFootball conserva el día si falta hora; convierte horario de verano e invierno',()=>{

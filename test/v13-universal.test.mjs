@@ -6,11 +6,11 @@ import {makeProviders} from '../server/providers.mjs';
 const root=path.resolve(import.meta.dirname,'..');
 const db=JSON.parse(fs.readFileSync(path.join(root,'db.js'),'utf8').split(' = ')[1].trim().replace(/;$/,''));
 const facts=JSON.parse(fs.readFileSync(path.join(root,'club-facts.js'),'utf8').split('=')[1].trim().replace(/;$/,''));
-test('183 clubes conservados y escudos locales de V12.4',()=>{
- assert.equal(Object.keys(db.teams).length,183);
+test('197 clubes con escudos locales',()=>{
+ assert.equal(Object.keys(db.teams).length,197);
  const manifest=JSON.parse(fs.readFileSync(path.join(root,'assets/branding-manifest.json'),'utf8'));
  assert.ok(Object.keys(manifest.teams||{}).length>=170);
- assert.equal(Object.keys(manifest.leagues||{}).length,9);
+ assert.equal(Object.keys(manifest.leagues||{}).length,10);
 });
 test('cada uno de los 37 partidos históricos tiene identificador y equipos',()=>{
  assert.equal(db.matches.length,37);

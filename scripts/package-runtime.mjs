@@ -18,8 +18,8 @@ export async function packageRuntime({out=null}={}){
  for(const file of await fs.readdir(path.join(ROOT,'server')))if(/\.(mjs|json)$/.test(file))await copy('server/'+file);
  await copy('assets/branding-manifest.json');await copy('assets/cancha-mark.svg');
  for(const folder of ['escudos','competiciones'])for(const file of await fs.readdir(path.join(ROOT,'assets',folder)))if(/\.(webp|svg|png)$/.test(file))await copy('assets/'+folder+'/'+file);
- // Solo las cuatro tablas y calendarios públicos previstos; no se copian otros archivos importados.
- for(const lid of ['eng','esp'])for(const kind of ['fixtures','standings']){
+ // Solo las tablas y calendarios públicos previstos; no se copian otros archivos importados.
+ for(const lid of ['eng','esp','ger'])for(const kind of ['fixtures','standings']){
   const relative='data-imports/soccerdata/'+lid+'-'+kind+'.json';const d=JSON.parse(await fs.readFile(path.join(ROOT,relative),'utf8'));
   if(d.provider!=='OpenFootball (CC0)'||d.league!==lid||d.kind!==kind)throw Error('La importación '+relative+' no corresponde al calendario público esperado');await copy(relative);
  }

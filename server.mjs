@@ -1,4 +1,4 @@
-// CANCHA V19.4 · Node.js 20+ · sin dependencias externas
+// CANCHA V19.5 · Node.js 20+ · sin dependencias externas
 import http from 'node:http';
 import { reconcileStandings } from './server/standings.mjs';
 import fs from 'node:fs';
@@ -174,7 +174,7 @@ async function router(req, res) {
   if (url.pathname.startsWith('/api/')) {
     if (url.pathname === '/api/health') {
       send(res, 200, {
-        version: '19.4',
+        version: '19.5',
         server: true,
         asOf: new Date().toISOString(),
         providers: { ...providers.status, espn: espn.status().enabled },
@@ -391,7 +391,7 @@ export function startServer(
     Promise.all([history.flush(), playerIndex.flush()]).catch(() => {});
   });
   server.listen(port, host, () =>
-    console.log(`CANCHA V19.4: http://${host}:${server.address().port}`),
+    console.log(`CANCHA V19.5: http://${host}:${server.address().port}`),
   );
   if (process.env.CANCHA_OPENFOOTBALL !== '0') {
     const sync = () => downloadOpenFootball(ROOT, db, { timeoutMs: 8000 }).catch(() => {});

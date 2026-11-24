@@ -36,6 +36,11 @@
     {
       "liga": "Liga MX",
       "fuente": "https://depor.com/resultados/torneo/liga-mx-primera-division-futbo-mexico/clubes/"
+    },
+    {
+      "liga": "Bundesliga",
+      "fuente": "https://www.espn.com/soccer/standings/_/league/ger.1/season/2026",
+      "fecha": "2026-11-23"
     }
   ],
   "tablaChampions": "https://sport.sky.it/calcio/champions-league/classifica",

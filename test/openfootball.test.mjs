@@ -9,3 +9,17 @@ test('rechaza una entrada duplicada para no falsear puntos',()=>{const x=fullFix
 test('sin conexión conserva la última importación válida',async()=>{const root=fs.mkdtempSync(path.join(os.tmpdir(),'cancha-of-'));const dir=path.join(root,'data-imports','soccerdata');try{let d=convertOpenFootball(fullFixture('eng'),'eng',db,{retrievedAt:'2026-10-27T10:00:00.000Z'});fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'eng-fixtures.json'),JSON.stringify(d.fixtures));const a=await downloadOpenFootball(root,db,{leagues:['eng'],force:true,fetchFn:async()=>{throw Error('sin red')}});assert.equal(a[0].previousDataKept,true);assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'eng-fixtures.json'))).records.length,380)}finally{fs.rmSync(root,{recursive:true,force:true})}});
 test('respuesta remota válida se importa y la URL de origen es inalterable',async()=>{const root=fs.mkdtempSync(path.join(os.tmpdir(),'cancha-of-'));try{const a=await downloadOpenFootball(root,db,{leagues:['eng'],force:true,fetchFn:async url=>{assert.equal(url,'https://raw.githubusercontent.com/openfootball/football.json/master/2026-27/en.1.json');return {ok:true,text:async()=>JSON.stringify(fullFixture('eng'))}}});assert.equal(a[0].matches,380);const imp=createSoccerDataImports(root,db);assert.equal(imp.fixtures('eng').events.length,380);assert.equal(imp.standings('eng').groups[0].rows.length,20);assert.match(imp.standings('eng').groups[0].details,/NO es la clasificación oficial/)}finally{fs.rmSync(root,{recursive:true,force:true})}});
 test('importaciones empaquetadas conservan cobertura y resultados coherentes tras actualizar',()=>{const root=path.resolve(new URL('..',import.meta.url).pathname);const imp=createSoccerDataImports(root,db);for(const l of ['eng','esp']){const f=imp.fixtures(l),s=imp.standings(l);assert.ok(f.events.length>=10);assert.equal(s.groups[0].rows.length,20);const finals=f.events.filter(x=>x.status==='FINAL');assert.ok(finals.length>=10);assert.equal(s.groups[0].rows.reduce((n,r)=>n+r.pj,0),2*finals.length)}});
+
+test('Bundesliga combina las cuatro fichas de Champions con 14 clubes y un calendario de ida y vuelta', () => {
+ const league = db.leagues.find(l => l.id === 'ger');
+ const clubs = league.teams;
+ assert.equal(clubs.length, 18);
+ assert.deepEqual(clubs.filter(id => db.teams[id].leagues.includes('ucl')).sort(),
+  ['bayern-munich','borussia-dortmund','rb-leipzig','vfb-stuttgart']);
+ const season = createSoccerDataImports(path.resolve(import.meta.dirname,'..'), db).fixtures('ger');
+ const pairs = new Set(season.events.map(m => m.home + '/' + m.away));
+ assert.equal(season.events.length,306);
+ for (const home of clubs) for (const away of clubs) {
+  if (home !== away) assert.ok(pairs.has(home + '/' + away), home + ' contra ' + away);
+ }
+});

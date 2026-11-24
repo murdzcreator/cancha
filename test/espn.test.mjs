@@ -10,7 +10,7 @@ const final={type:{name:'STATUS_FULL_TIME',state:'post',completed:true}};
 function event(overrides={}){return {id:'401886158',season:{year:2026},competitions:[{date:'2026-10-25T16:00Z',status:final,competitors:[{homeAway:'away',team:{id:'3372'},score:'0'},{homeAway:'home',team:{id:'18153'},score:'3'}]}],...overrides}}
 function summary(){return {header:{...event(),league:{slug:'per.1'}},boxscore:{teams:[{team:{id:'3372'},statistics:[{name:'totalShots',displayValue:'0'}]},{team:{id:'18153'},statistics:[{name:'totalShots',displayValue:'15'}]}]},rosters:[{team:{id:'18153'},formation:'4-2-3-1',roster:[{athlete:{id:'123',displayName:'Jugador'},starter:true,jersey:'9',stats:[{name:'totalGoals',value:0},{name:'goalAssists',value:1}]},{athlete:{id:'124',displayName:'Suplente'},starter:false,subbedIn:true}]}],keyEvents:[]};}
 const response=data=>({ok:true,json:async()=>data});
-test('identidades ESPN cubren exactamente los participantes de las nueve competiciones',()=>{
+test('identidades ESPN cubren exactamente los participantes de las diez competiciones',()=>{
  for(const l of db.leagues)assert.deepEqual(Object.values(ids[l.id]).sort(),[...l.teams].sort());
 });
 test('marcador y localía se asignan por homeAway, conservando el cero',()=>{

@@ -1971,6 +1971,118 @@
       "status": "identidad asociada por competición/nombre",
       "license": "derechos no verificados para publicación externa",
       "visualAudit": "revisión por mosaico; confirmar vigencia del diseño antes de publicación comercial"
+    },
+    "1-fc-union-berlin": {
+      "curatedLocal": "assets/escudos/1-fc-union-berlin.webp",
+      "sourceName": "1. FC Union Berlin",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Union_Berlin.svg",
+      "sourceFile": "logos/germany/Union_Berlin.svg",
+      "sha256": "5c747b40bc30bd67b2ff561b3a48dd1ab4dee001904051c007ce5db9e9a16727",
+      "license": "Marca de su titular"
+    },
+    "bayer-leverkusen": {
+      "curatedLocal": "assets/escudos/bayer-leverkusen.webp",
+      "sourceName": "Bayer Leverkusen",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Bayer_Leverkusen.svg",
+      "sourceFile": "logos/germany/Bayer_Leverkusen.svg",
+      "sha256": "79433183c2f715f57a3f74c61fd2006501965ddf6fc60340c35c1eb8671b3081",
+      "license": "Marca de su titular"
+    },
+    "borussia-monchengladbach": {
+      "curatedLocal": "assets/escudos/borussia-monchengladbach.webp",
+      "sourceName": "Borussia Mönchengladbach",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Borussia_M%C3%B6nchengladbach.svg",
+      "sourceFile": "logos/germany/Borussia_Mönchengladbach.svg",
+      "sha256": "3f88aa5711b53ec4dbae080e94e34e2d7ea84e0c58828319f47c5aaefbb5986c",
+      "license": "Marca de su titular"
+    },
+    "eintracht-frankfurt": {
+      "curatedLocal": "assets/escudos/eintracht-frankfurt.webp",
+      "sourceName": "Eintracht Frankfurt",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Eintracht_Frankfurt.svg",
+      "sourceFile": "logos/germany/Eintracht_Frankfurt.svg",
+      "sha256": "d0ef7a81674395d6b2980b8104861dbf254542ca88b5314eeb351c46d4097bd3",
+      "license": "Marca de su titular"
+    },
+    "fc-augsburg": {
+      "curatedLocal": "assets/escudos/fc-augsburg.webp",
+      "sourceName": "FC Augsburg",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Augsburg.svg",
+      "sourceFile": "logos/germany/Augsburg.svg",
+      "sha256": "0deaedf4fa794775611a4a22f8df1d8bbbaf53aac300f80875c4bda9a32199e0",
+      "license": "Marca de su titular"
+    },
+    "1-fc-koln": {
+      "curatedLocal": "assets/escudos/1-fc-koln.webp",
+      "sourceName": "1. FC Köln",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Cologne.svg",
+      "sourceFile": "logos/germany/Cologne.svg",
+      "sha256": "4476a71b6467e5d0c9cb02733a2ff62896b7a5f893266c50d985cd2c1433378d",
+      "license": "Marca de su titular"
+    },
+    "hamburger-sv": {
+      "curatedLocal": "assets/escudos/hamburger-sv.webp",
+      "sourceName": "Hamburger SV",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Hamburger_SV.svg",
+      "sourceFile": "logos/germany/Hamburger_SV.svg",
+      "sha256": "de897db733f6eb78fdd135d8de5d420de216921c0065ca4e915fb02091f42ba7",
+      "license": "Marca de su titular"
+    },
+    "mainz-05": {
+      "curatedLocal": "assets/escudos/mainz-05.webp",
+      "sourceName": "Mainz 05",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Mainz_05.svg",
+      "sourceFile": "logos/germany/Mainz_05.svg",
+      "sha256": "5bb18870840d6033b20327d1f470af3b2edfe65f166bc50a6331bcac619e1614",
+      "license": "Marca de su titular"
+    },
+    "sc-freiburg": {
+      "curatedLocal": "assets/escudos/sc-freiburg.webp",
+      "sourceName": "SC Freiburg",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Freiburg.svg",
+      "sourceFile": "logos/germany/Freiburg.svg",
+      "sha256": "7529cc517a41fe9c8ccd569a46a5d58ac2539b12a11ce9a357f8128cd912c1f2",
+      "license": "Marca de su titular"
+    },
+    "sc-paderborn-07": {
+      "curatedLocal": "assets/escudos/sc-paderborn-07.webp",
+      "sourceName": "SC Paderborn 07",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/SC_Paderborn.svg",
+      "sourceFile": "logos/germany/SC_Paderborn.svg",
+      "sha256": "209452ca2058d48078f8028912c58334b480c2c8f23fc63d24a1d516d888eec9",
+      "license": "Marca de su titular"
+    },
+    "sv-elversberg": {
+      "curatedLocal": "assets/escudos/sv-elversberg.webp",
+      "sourceName": "SV Elversberg",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/SV_Elversberg.svg",
+      "sourceFile": "logos/germany/SV_Elversberg.svg",
+      "sha256": "455dd84bf36349a1ff14c4092f686d0fcb19f8ab96233be8974ce516ce045353",
+      "license": "Marca de su titular"
+    },
+    "schalke-04": {
+      "curatedLocal": "assets/escudos/schalke-04.webp",
+      "sourceName": "Schalke 04",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Schalke_04.svg",
+      "sourceFile": "logos/germany/Schalke_04.svg",
+      "sha256": "3ea22c46340352d45e6237f9efa6585a7741f15f906b13ac9afe8fab62df8e4f",
+      "license": "Marca de su titular"
+    },
+    "tsg-hoffenheim": {
+      "curatedLocal": "assets/escudos/tsg-hoffenheim.webp",
+      "sourceName": "TSG Hoffenheim",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Hoffenheim.svg",
+      "sourceFile": "logos/germany/Hoffenheim.svg",
+      "sha256": "de81b882bc749837df5adcd7432fc13f953de1d37317fce962bc9fddfaede9e8",
+      "license": "Marca de su titular"
+    },
+    "werder-bremen": {
+      "curatedLocal": "assets/escudos/werder-bremen.webp",
+      "sourceName": "Werder Bremen",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Werder_Bremen.svg",
+      "sourceFile": "logos/germany/Werder_Bremen.svg",
+      "sha256": "0327bbeb3528be632fd2df85521caebfbbcb327a1f51e9a6ca0881a2852aac68",
+      "license": "Marca de su titular"
     }
   },
   "leagues": {
@@ -2055,6 +2167,14 @@
       "sourcePage": "https://elnine.com.ar/tabla/mexico-liga-mx",
       "sha256": "b2cc19a6dd6ad5595f04e3054ffa07fe226b4b327ed2600efd4a717a21b40b64",
       "license": "derechos no verificados para publicación externa"
+    },
+    "ger": {
+      "curatedLocal": "assets/competiciones/ger.webp",
+      "sourceName": "Bundesliga",
+      "sourcePage": "https://github.com/JoseArroyave/football-logos/blob/5ab11fed47427b3003f4b276554491fe683387b1/logos/germany/Bundesliga.svg",
+      "sourceFile": "logos/germany/Bundesliga.svg",
+      "sha256": "b924a272f35f263b4d22e673f60051f8d7bdd999e28206d5ba8259ee1247dd3b",
+      "license": "Marca de su titular"
     }
   },
   "pending": {
