@@ -219,6 +219,26 @@
       "10125": "tijuana",
       "15720": "atletico-san-luis",
       "17851": "juarez"
+    },
+    "ger": {
+      "598": "1-fc-union-berlin",
+      "131": "bayer-leverkusen",
+      "132": "bayern-munich",
+      "124": "borussia-dortmund",
+      "268": "borussia-monchengladbach",
+      "125": "eintracht-frankfurt",
+      "3841": "fc-augsburg",
+      "122": "1-fc-koln",
+      "127": "hamburger-sv",
+      "2950": "mainz-05",
+      "11420": "rb-leipzig",
+      "126": "sc-freiburg",
+      "3307": "sc-paderborn-07",
+      "10388": "sv-elversberg",
+      "133": "schalke-04",
+      "7911": "tsg-hoffenheim",
+      "134": "vfb-stuttgart",
+      "137": "werder-bremen"
     }
   }
 }

@@ -5,6 +5,7 @@ import {normalize,compare} from './dates.mjs';
 import {mergeRosters,selectStandings} from './merge.mjs';
 
 const CONFIG={
+ ger:{af:78,fd:'BL1',tsLeague:'4331',tsCountry:'Germany',match:['German Bundesliga']},
  per:{af:281, tsCountry:'Peru',match:['primera division','liga 1','peruvian primera']},
  ucl:{af:2,fd:'CL',tsCountry:'Europe',match:['uefa champions league','champions league']},
  esp:{af:140,fd:'PD',tsCountry:'Spain',match:['spanish la liga','primera division','la liga']},
@@ -76,6 +77,7 @@ export function makeProviders({fetchFn=fetch,env=process.env, db}){
  async function ts(path,params={}){let url=new URL(`https://www.thesportsdb.com/api/v1/json/${encodeURIComponent(keys.ts)}/${path}`);Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,String(v)));return json(url);}
  const tsIds=new Map();
  async function findTSLeague(l){if(tsIds.has(l.id))return tsIds.get(l.id); let cfg=CONFIG[l.id];if(!cfg)return null;
+  if(cfg.tsLeague)return cfg.tsLeague;
   let d=await ts('search_all_leagues.php',{c:cfg.tsCountry,s:'Soccer'});
   let list=d.countrys||d.leagues||[];
   let candidates=list.filter(x=>cfg.match.some(m=>clean(x.strLeague).includes(clean(m)) || clean(m).includes(clean(x.strLeague))));
@@ -225,7 +227,7 @@ export function makeProviders({fetchFn=fetch,env=process.env, db}){
  async function getClubProfile(teamId){
   const t=db.teams[teamId]; if(!t)throw Error('Club no registrado');
   const tried=[];
-  const countries={'Perú':['peru'],'Inglaterra':['england','united kingdom'],'Francia':['france'],'España':['spain'],'Italia':['italy'],'Argentina':['argentina'],'Brasil':['brazil'],'México':['mexico']};
+  const countries={'Alemania':['germany'],'Perú':['peru'],'Inglaterra':['england','united kingdom'],'Francia':['france'],'España':['spain'],'Italia':['italy'],'Argentina':['argentina'],'Brasil':['brazil'],'México':['mexico']};
   const nameCheck=val=>matchTeam(val,db.teams,t.leagues.flatMap(id=>leagues[id]?.teams||[]))===teamId;
   // Public data, but matches must be unique and compatible with country. No blind name-based assignment.
   try{

@@ -1098,6 +1098,90 @@ globalThis.CANCHA_AVATAR_THEMES={
   "#ffffff",
   "#e6d8f3",
   "plain"
+ ],
+ "1-fc-union-berlin": [
+  "#da0308",
+  "#d4d4d4",
+  "#dddddd",
+  "trim"
+ ],
+ "bayer-leverkusen": [
+  "#da0308",
+  "#f9fbfc",
+  "#dddddd",
+  "trim"
+ ],
+ "borussia-monchengladbach": [
+  "#ffffff",
+  "#03915c",
+  "#dddddd",
+  "trim"
+ ],
+ "eintracht-frankfurt": [
+  "#ffffff",
+  "#272726",
+  "#dddddd",
+  "trim"
+ ],
+ "fc-augsburg": [
+  "#ffffff",
+  "#03915c",
+  "#dddddd",
+  "trim"
+ ],
+ "1-fc-koln": [
+  "#ffffff",
+  "#da0308",
+  "#dddddd",
+  "trim"
+ ],
+ "hamburger-sv": [
+  "#1a26af",
+  "#1a1a1a",
+  "#dddddd",
+  "trim"
+ ],
+ "mainz-05": [
+  "#da0308",
+  "#000055",
+  "#dddddd",
+  "trim"
+ ],
+ "sc-freiburg": [
+  "#da0308",
+  "#ffffff",
+  "#dddddd",
+  "trim"
+ ],
+ "sc-paderborn-07": [
+  "#0000dd",
+  "#ffffff",
+  "#dddddd",
+  "trim"
+ ],
+ "sv-elversberg": [
+  "#000000",
+  "#ffffff",
+  "#dddddd",
+  "trim"
+ ],
+ "schalke-04": [
+  "#0000dd",
+  "#ffffff",
+  "#dddddd",
+  "trim"
+ ],
+ "tsg-hoffenheim": [
+  "#003399",
+  "#000055",
+  "#dddddd",
+  "trim"
+ ],
+ "werder-bremen": [
+  "#03915c",
+  "#ffffff",
+  "#dddddd",
+  "trim"
  ]
 };
 

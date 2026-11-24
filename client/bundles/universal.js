@@ -49,7 +49,7 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
 (()=>{'use strict';
  const D=()=>globalThis.CANCHA_DB||{teams:{},leagues:[]},dates=()=>globalThis.CANCHA_DATES,M=()=>globalThis.CANCHA_MATCHES;
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const shortNames={ucl:'Champions League',esp:'LaLiga',eng:'Premier League',per:'Liga 1 Perú',arg:'Liga Argentina',ita:'Serie A',fra:'Ligue 1',bra:'Brasileirão',mex:'Liga MX'};
+ const shortNames={ger:'Bundesliga',ucl:'Champions League',esp:'LaLiga',eng:'Premier League',per:'Liga 1 Perú',arg:'Liga Argentina',ita:'Serie A',fra:'Ligue 1',bra:'Brasileirão',mex:'Liga MX'};
  function partition(events,club,league='todos',now=new Date()){
   const seen=new Set(),matches=events.filter(m=>{
    if(!m.home||!m.away||m.home===m.away||![m.home,m.away].includes(club)||!dates().normalize(m.date)||(league!=='todos'&&m.league!==league))return false;

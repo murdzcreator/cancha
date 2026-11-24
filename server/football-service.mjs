@@ -18,7 +18,7 @@ export function createFootballService({db,espn,soccerdata,history,cache,playerIn
   for(const d of valid)history.observe(lid,d);
   if(!valid.length)error=loaded.find(r=>r.status==='rejected')?.reason;
   let live=valid.reduce((a,d)=>({...d,events:combineFixtures(a?.events||[],d.events),stale:!!a?.stale||!!d.stale}),null);
-  let events=combineFixtures(history.fixtures(lid,local),live?.events||[],{singleRoundRobin:['eng','esp'].includes(lid)}).filter(m=>(!date||day(m)===date)&&(!team||m.home===team||m.away===team));
+  let events=combineFixtures(history.fixtures(lid,local),live?.events||[],{singleRoundRobin:['eng','esp','ger'].includes(lid)}).filter(m=>(!date||day(m)===date)&&(!team||m.home===team||m.away===team));
   // El día de hoy necesita confirmación de ESPN para los horarios provisionales de OpenFootball.
   if(date&&date<=D.dayInPeru()&&valid.length)events=events.filter(m=>!(m.provider==='SoccerData'&&m.status==='PROGRAMADO'&&!m.origins?.some(o=>o.provider==='ESPN')));
   if(!valid.length&&!events.length&&error)throw error;

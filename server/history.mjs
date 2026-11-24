@@ -15,7 +15,7 @@ export function preferMatch(old,incoming,{correction=false}={}){
 export function combineFixtures(local=[],remote=[],{singleRoundRobin=false}={}){
  const result=local.map(x=>({...x,origins:x.origins?.map(o=>({...o}))||[{provider:x.provider,id:x.id}]}));
  for(const m of remote){let candidates=result.filter(x=>pair(x,m)&&(x.provider===m.provider?String(x.id)===String(m.id):day(x)===day(m)));
-  // Premier y LaLiga: una sola localía por pareja en la temporada. ESPN puede
+  // Premier, LaLiga y Bundesliga: una sola localía por pareja en la temporada. ESPN puede
   // mover el día provisional de OpenFootball (p. ej. del domingo al viernes).
   if(!candidates.length&&singleRoundRobin){const samePair=result.filter(x=>pair(x,m));if(samePair.length===1&&samePair[0].provider!==m.provider)candidates=samePair;}
   if(candidates.length===1){const old=candidates[0],index=result.indexOf(old),winner=preferMatch(old,m);
@@ -65,7 +65,7 @@ export function createHistory(root,db){
   data.details[key(lid)]||={};data.details[key(lid)][d.id]=d;
   observe(lid,{events:[d],updatedAt:d.updatedAt});changed(lid);return true;
  }
- function fixtures(lid,local){return combineFixtures(local?.events||[],Object.values(data.fixtures[key(lid)]||{}).filter(m=>valid(m,lid)),{singleRoundRobin:['eng','esp'].includes(lid)})}
+ function fixtures(lid,local){return combineFixtures(local?.events||[],Object.values(data.fixtures[key(lid)]||{}).filter(m=>valid(m,lid)),{singleRoundRobin:['eng','esp','ger'].includes(lid)})}
  function detailsFor(lid){return Object.values(data.details[key(lid)]||{}).filter(d=>{const m=data.fixtures[key(lid)]?.[d.id];return valid(d,lid)&&final(d)&&(!m||m.status!=='FINAL'||m.hs===d.hs&&m.as===d.as)});}
  function playerRows(lid){const players=new Map(),details=detailsFor(lid);
   for(const d of details){for(const lu of d.lineups||[]){const team=Object.keys(db.teams).find(id=>db.teams[id].name===lu.team);if(!team)continue;

@@ -6,6 +6,26 @@ import fs from 'node:fs';
 import path from 'node:path';
 const URL_BASE='https://raw.githubusercontent.com/openfootball/football.json/master/2026-27/';
 const SOURCE_INFO={
+ ger:{file:'de.1.json',zone:'Europe/Berlin',names:{
+  "1. FC Union Berlin": "1-fc-union-berlin",
+  "Bayer 04 Leverkusen": "bayer-leverkusen",
+  "FC Bayern München": "bayern-munich",
+  "Borussia Dortmund": "borussia-dortmund",
+  "Borussia Mönchengladbach": "borussia-monchengladbach",
+  "Eintracht Frankfurt": "eintracht-frankfurt",
+  "FC Augsburg": "fc-augsburg",
+  "1. FC Köln": "1-fc-koln",
+  "Hamburger SV": "hamburger-sv",
+  "1. FSV Mainz 05": "mainz-05",
+  "RB Leipzig": "rb-leipzig",
+  "SC Freiburg": "sc-freiburg",
+  "SC Paderborn 07": "sc-paderborn-07",
+  "SV 07 Elversberg": "sv-elversberg",
+  "FC Schalke 04": "schalke-04",
+  "TSG 1899 Hoffenheim": "tsg-hoffenheim",
+  "VfB Stuttgart": "vfb-stuttgart",
+  "SV Werder Bremen": "werder-bremen"
+}},
  eng:{file:'en.1.json',zone:'Europe/London',names:{
   'AFC Bournemouth':'bournemouth','Arsenal FC':'arsenal','Aston Villa FC':'aston-villa','Brentford FC':'brentford','Brighton & Hove Albion FC':'brighton','Chelsea FC':'chelsea','Coventry City FC':'coventry-city','Crystal Palace FC':'crystal-palace','Everton FC':'everton','Fulham FC':'fulham','Hull City AFC':'hull-city','Ipswich Town FC':'ipswich-town','Leeds United FC':'leeds-united','Liverpool FC':'liverpool','Manchester City FC':'manchester-city','Manchester United FC':'manchester-united','Newcastle United FC':'newcastle-united','Nottingham Forest FC':'nottingham-forest','Sunderland AFC':'sunderland','Tottenham Hotspur FC':'tottenham'}},
  esp:{file:'es.1.json',zone:'Europe/Madrid',names:{
@@ -30,7 +50,7 @@ export function convertOpenFootball(source,league,db,{retrievedAt=new Date().toI
   if(hg>ag){H.g++;A.p++;H.pts+=3}else if(ag>hg){A.g++;H.p++;A.pts+=3}else{H.e++;A.e++;H.pts++;A.pts++}
  }
  }
- // Una carga incompleta no reemplaza un calendario íntegro: todos los 20 equipos deben estar incluidos.
+ // Una carga incompleta no reemplaza un calendario íntegro: todos los equipos deben estar incluidos.
  const present=new Set(events.flatMap(m=>[m.homeName,m.awayName]));if(present.size!==l.teams.length||events.length<10)throw Error(`Cobertura insuficiente: ${present.size} equipos, ${events.length} partidos`);
  if(unknown.size)throw Error('Identificación no comprobada: '+[...unknown].slice(0,5).join('; '));
  const src=openfootballSources[league],meta={schema:'cancha-soccerdata-v1',league,season:l.season,provider:'OpenFootball (CC0)',sourceUrl:src,retrievedAt,publication:'Calendario/resultado de datos abiertos; no resultados en vivo',seed};
@@ -39,12 +59,14 @@ export function convertOpenFootball(source,league,db,{retrievedAt=new Date().toI
  standings:{...meta,kind:'standings',records:standings,coverage:{calculatedFrom:events.filter(x=>x.status==='FINAL').length,warning:'Clasificación CALCULADA con los resultados disponibles en OpenFootball, no oficial ni garantizada al día.'}}
  };
 }
-export async function downloadOpenFootball(root,db,{fetchFn=globalThis.fetch,leagues=['eng','esp'],timeoutMs=10000,force=false,log=()=>{}}={}){
+export async function downloadOpenFootball(root,db,{fetchFn=globalThis.fetch,leagues=Object.keys(SOURCE_INFO),timeoutMs=10000,force=false,log=()=>{}}={}){
  const report=[],folder=path.join(root,'data-imports','soccerdata');fs.mkdirSync(folder,{recursive:true});
  for(const league of leagues){const cfg=SOURCE_INFO[league];if(!cfg){report.push({league,ok:false,error:'Liga no compatible'});continue}
  const files=['fixtures','standings'].map(kind=>path.join(folder,`${league}-${kind}.json`));const prev=files.find(fs.existsSync);
  if(!force&&prev){try{const d=JSON.parse(fs.readFileSync(prev,'utf8'));if(d.provider==='OpenFootball (CC0)'&&!d.seed&&Date.now()-Date.parse(d.retrievedAt)<24*3600*1000){report.push({league,ok:true,skipped:true});continue}}catch{}}
- try{const signal=AbortSignal.timeout(timeoutMs);const resp=await fetchFn(openfootballSources[league],{signal,headers:{'Accept':'application/json','User-Agent':'CANCHA/14.1 personal football dashboard (OpenFootball CC0)'}});if(!resp.ok)throw Error('HTTP '+resp.status);const body=await resp.text();if(body.length>2_000_000)throw Error('Fuente supera tamaño permitido');const dataset=JSON.parse(body);const obj=convertOpenFootball(dataset,league,db);if(obj.fixtures.records.length<100)throw Error('La fuente remota trae menos de 100 partidos; se conserva la copia anterior');
+ try{const signal=AbortSignal.timeout(timeoutMs);const resp=await fetchFn(openfootballSources[league],{signal,headers:{'Accept':'application/json','User-Agent':'CANCHA/14.1 personal football dashboard (OpenFootball CC0)'}});if(!resp.ok)throw Error('HTTP '+resp.status);const body=await resp.text();if(body.length>2_000_000)throw Error('Fuente supera tamaño permitido');const dataset=JSON.parse(body);const obj=convertOpenFootball(dataset,league,db);
+ const clubCount=db.leagues.find(l=>l.id===league).teams.length;
+ if(league==='ger' && obj.fixtures.records.length!==clubCount*(clubCount-1))throw Error('El calendario de Bundesliga está incompleto; se conserva la copia anterior');if(obj.fixtures.records.length<100)throw Error('La fuente remota trae menos de 100 partidos; se conserva la copia anterior');
  // Write atomically. Preserve last good results on network or data error.
  for(const kind of ['fixtures','standings']){const tmp=files[kind==='fixtures'?0:1]+'.tmp';fs.writeFileSync(tmp,JSON.stringify(obj[kind],null,0));fs.renameSync(tmp,files[kind==='fixtures'?0:1])}
  report.push({league,ok:true,matches:obj.fixtures.records.length,finished:obj.fixtures.records.filter(x=>x.status==='FINAL').length,source:openfootballSources[league]});log(`${league}: ${obj.fixtures.records.length} partidos; ${report.at(-1).finished} resultados.`);
