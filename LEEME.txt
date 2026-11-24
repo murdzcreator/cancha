@@ -1,4 +1,4 @@
-CANCHA V19.3 · Edicion completa de desarrollo
+CANCHA V19.4 · Edicion completa de desarrollo
 
 Windows: extrae todo el ZIP y abre INICIAR_CANCHA_WINDOWS.bat (Node.js 20+).
 Mac/Linux: npm start. No hay dependencias npm que instalar.

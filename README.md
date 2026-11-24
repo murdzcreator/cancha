@@ -1,4 +1,4 @@
-# CANCHA V19.3
+# CANCHA V19.4
 
 Centro de fútbol con nueve competiciones y 183 clubes del catálogo. Combina calendarios abiertos de OpenFootball con clasificaciones, plantillas y actualizaciones de partidos de ESPN, sin claves de pago.
 

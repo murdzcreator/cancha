@@ -6,15 +6,9 @@
  const team=id=>db.teams[id];
  const league=id=>db.leagues.find(l=>l.id===id);
  const date=s=>window.CANCHA_DATES.format(s);
- let healthLoaded=false;
  let routeGeneration=0,activeLeague=null,groups=[],groupSelected=0,activeStandings=null;
  let standingsDetailed=false,standingsSearch='';
  const fixturePages=new Map(),fixtureSnapshots=new Map();
- const status=()=>document.getElementById('v11-system-status');
- function headline(mark,info=''){
-   healthLoaded=true;
-   const el=status();if(el)el.innerHTML=`<a class="m16-source-link" href="#/fuentes" title="${esc(info||mark)}">Fuentes y cobertura</a>`;
- }
  function banner(type,message){return `<div class="v11-banner ${type}">${message}</div>`}
  const offline=location.protocol==='file:';
  const get=url=>window.CANCHA_API.get(url);
@@ -132,8 +126,8 @@
   if(!saved&&!archiveAvailable)el.innerHTML='<div class="v11-loading">Buscando partidos recientes y próximos…</div>';
   try{let data=await get(`/api/fixtures?league=${encodeURIComponent(lid)}`);if(gen!==routeGeneration||!document.getElementById('v11-fixtures'))return;write('fixtures',lid,data);el.innerHTML=fixtureHtml(data);updateFixtureCounters(lid,data)}catch(e){if(gen!==routeGeneration)return;if(!saved)el.innerHTML=archiveAvailable?banner('info','Se conservan los partidos documentados de la instantánea. Sin actualización automática para esta competición.')+archive:banner('warning','No hay calendario en vivo disponible: '+esc(e.message));}
  }
- async function loadHealth(){const panel=document.getElementById('v11-health');if(offline){headline('MODO ARCHIVO','No se ejecutan APIs');if(panel)panel.innerHTML=banner('warning','Para actualizar automáticamente, inicia el servidor de V12 como se explica en INSTRUCCIONES.md.');return}
-  try{const d=await get('/api/health');headline(d.espn?.enabled?'ESPN HABILITADO':d.hasImportedFixtures?'DATOS IMPORTADOS':d.liveCredentialsConfigured?'SERVIDOR ACTIVO':'SERVIDOR LOCAL',d.espn?.enabled?'Consulta periódica de marcadores · cobertura según la fuente':d.hasImportedFixtures?'Resultados importados (OpenFootball / SoccerData), no en vivo':d.liveCredentialsConfigured?'Claves instaladas · cobertura por verificar':'Sin claves privadas de APIs');if(panel){panel.innerHTML=`<div class="v11-provider-grid">${[['espn','ESPN'],['footballData','football-data.org'],['apiFootball','API-Football'],['theSportsDB','TheSportsDB']].map(([k,name])=>`<div class="source-card"><h3>${name}</h3><p>${d.providers?.[k]?(k==='espn'?'Consulta pública periódica, sin clave':k==='theSportsDB'?'Acceso público limitado':'Clave configurada'):'Sin clave configurada'}${k==='theSportsDB'?' · versión pública limitada':''}</p></div>`).join('')}</div><div class="section-heading"><h2>Datos de temporadas importados</h2></div><div class="v11-provider-grid">${(d.soccerdataImports||[]).filter(x=>x.fixtures||x.standings).map(x=>`<div class="source-card"><h3>${esc(league(x.league)?.name||x.league)}</h3><p>${x.fixtures} encuentros · ${x.standings} registros de tabla ${x.tableComplete?'· tabla completa':''}</p><small>${x.lastUpdated?esc(date(x.lastUpdated)):'Sin importación'}</small></div>`).join('')}</div>${!(d.soccerdataImports||[]).some(x=>x.fixtures||x.standings)?'<p class="subdued">No hay importaciones de temporada adicionales.</p>':''}<p class="subdued">Importaciones fechadas, no marcadores en vivo. Su disponibilidad y permiso de reutilización dependen de la fuente original.</p>`;}}catch{headline('SIN SERVIDOR','Solo datos locales');if(panel)panel.innerHTML=banner('warning','El servidor no está ejecutándose.');}
+ async function loadHealth(){const panel=document.getElementById('v11-health');if(offline){if(panel)panel.innerHTML=banner('warning','Para actualizar automáticamente, inicia el servidor de V12 como se explica en INSTRUCCIONES.md.');return}
+  try{const d=await get('/api/health');if(panel){panel.innerHTML=`<div class="v11-provider-grid">${[['espn','ESPN'],['footballData','football-data.org'],['apiFootball','API-Football'],['theSportsDB','TheSportsDB']].map(([k,name])=>`<div class="source-card"><h3>${name}</h3><p>${d.providers?.[k]?(k==='espn'?'Consulta pública periódica, sin clave':k==='theSportsDB'?'Acceso público limitado':'Clave configurada'):'Sin clave configurada'}${k==='theSportsDB'?' · versión pública limitada':''}</p></div>`).join('')}</div><div class="section-heading"><h2>Datos de temporadas importados</h2></div><div class="v11-provider-grid">${(d.soccerdataImports||[]).filter(x=>x.fixtures||x.standings).map(x=>`<div class="source-card"><h3>${esc(league(x.league)?.name||x.league)}</h3><p>${x.fixtures} encuentros · ${x.standings} registros de tabla ${x.tableComplete?'· tabla completa':''}</p><small>${x.lastUpdated?esc(date(x.lastUpdated)):'Sin importación'}</small></div>`).join('')}</div>${!(d.soccerdataImports||[]).some(x=>x.fixtures||x.standings)?'<p class="subdued">No hay importaciones de temporada adicionales.</p>':''}<p class="subdued">Importaciones fechadas, no marcadores en vivo. Su disponibilidad y permiso de reutilización dependen de la fuente original.</p>`;}}catch{if(panel)panel.innerHTML=banner('warning','El servidor no está ejecutándose.');}
  }
  function calendarShell(filter){return window.CANCHA_CALENDAR.shell(filter)}
  async function loadCalendar(){const gen=routeGeneration;const result=await window.CANCHA_CALENDAR.mount();if(gen===routeGeneration&&document.body.dataset.route==='partidos'&&!refreshing)autoRefresh('partidos');return result}
@@ -174,7 +168,7 @@
  function afterDraw(route,id,params=[]){routeGeneration++;activeStandings=null;let l=route==='liga'?id:null;
   if(l){if(activeLeague!==l){standingsSearch='';standingsDetailed=false;groupSelected=0}activeLeague=l;if(document.getElementById('v11-standings'))loadStandings(l);if(document.getElementById('v11-fixtures'))loadFixtures(l);refreshLeagueCounter(l)}
   if(route==='equipo'&&document.getElementById('rosterTarget'))loadRoster(id);
-  if(route==='fuentes'||route==='inicio'||!healthLoaded)loadHealth();if(route==='equipo'&&document.getElementById('v11-team-current'))loadTeamSummary(id);if(route==='partidos')loadCalendar();if(route==='perfil')loadPlayerProfile(id,params[0]);
+  if(route==='fuentes')loadHealth();if(route==='equipo'&&document.getElementById('v11-team-current'))loadTeamSummary(id);if(route==='partidos')loadCalendar();if(route==='perfil')loadPlayerProfile(id,params[0]);
   if(route==='evento-v12')loadMatch(id,params[0],params[1]);autoRefresh(route,id);
  }
  document.addEventListener('cancha:competition-day',e=>{if(document.body.dataset.route==='liga'&&!refreshing)autoRefresh('liga',e.detail.league)});

@@ -4,7 +4,7 @@
  const teams={query:'',league:'todos',page:0},players={query:'',league:'todos',club:'',team:'',page:0,token:0};let timer;
  const options=selected=>`<option value="todos">Todas las competiciones</option>`+D().leagues.map(l=>`<option value="${l.id}" ${selected===l.id?'selected':''}>${E(l.name)}</option>`).join('');
  const clubs=()=>Object.values(D().teams).filter(t=>players.league==='todos'||t.leagues.includes(players.league)).sort((a,b)=>a.name.localeCompare(b.name,'es'));
- function teamsShell(){return `<div class="eyebrow">DIRECTORIO</div><div class="page-head"><div><h1>Equipos</h1><p>Explora los ${Object.keys(D().teams).length} clubes del catálogo.</p></div></div><div class="c-directory-filters"><label>Nombre del club<input type="search" id="c-team-query" placeholder="Busca un equipo" value="${E(teams.query)}"></label><label>Competición<select id="c-team-league">${options(teams.league)}</select></label></div><div id="c-team-directory"></div>`;}
+ function teamsShell(){return `<div class="eyebrow">DIRECTORIO</div><div class="page-head"><div><h1>Equipos</h1></div></div><div class="c-directory-filters"><label>Nombre del club<input type="search" id="c-team-query" placeholder="Busca un equipo" value="${E(teams.query)}"></label><label>Competición<select id="c-team-league">${options(teams.league)}</select></label></div><div id="c-team-directory"></div>`;}
  function renderTeams(){
   const root=document.getElementById('c-team-directory');if(!root)return;
   const list=Object.values(D().teams).filter(t=>(teams.league==='todos'||t.leagues.includes(teams.league))&&V.normalize(t.name).includes(V.normalize(teams.query))).sort((a,b)=>a.name.localeCompare(b.name,'es')),p=V.page(list,teams.page,24);teams.page=p.index;

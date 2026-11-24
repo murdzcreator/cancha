@@ -1122,3 +1122,6 @@ body[data-route=jugadores] .v12-athlete-grid{display:grid;grid-template-columns:
  .c-event-icon>img{width:22px;height:22px}.c-match-event .c-event-score{min-width:52px;padding:5px}.c-match-event .c-event-score>span{font-size:16px;gap:4px}
 }
 @media(prefers-reduced-motion:reduce){.v13-event.c-match-event.is-goal{animation:none}}
+
+.c-match-competition { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; }
+.c-match-competition a { text-transform: none; letter-spacing: normal; text-decoration: underline; text-underline-offset: 3px; }
