@@ -12,7 +12,7 @@ test('la edición ligera conserva módulos y escudos sin fuentes duplicadas, pru
   assert.deepEqual(Object.keys(pkg.scripts),['start']);assert.equal(pkg.version,JSON.parse(await fs.readFile(path.join(root,'package.json'),'utf8')).version);
   for(const name of entries)assert.ok(!/^(?:review|test|scripts|work|output|data-cache)\//.test(name)&&name!=='.env',name);
   for(const name of ['app.js','home.js','styles.css','v18.css','assets/branding-data.js'])assert.ok(!entries.has(name));
-  for(const name of ['client/bootstrap.js','client/bundles/core.js','client/bundles/universal.js','dates.js','db.js','Dockerfile','render.yaml','PUBLICAR_WEB.md'])assert.ok(entries.has(name),name);
+  for(const name of ['client/bootstrap.js','client/bundles/core.js','client/bundles/universal.js','shared/dates.js','db.js','Dockerfile','render.yaml','PUBLICAR_WEB.md'])assert.ok(entries.has(name),name);
   for(const name of entries)if(name.startsWith('server/')&&name.endsWith('.mjs')||name==='server.mjs'){
    const s=await fs.readFile(path.join(out,name),'utf8');for(const match of s.matchAll(/(?:from\s*|import\s*)['"](\.[^'"]+)['"]/g)){const dep=path.posix.normalize(path.posix.join(path.posix.dirname(name),match[1]));assert.ok(entries.has(dep),name+' requiere '+dep);}
   }

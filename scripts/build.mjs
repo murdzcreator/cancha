@@ -4,7 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const bundles={
- core:['live-policy.js','dates.js','db.js','assets/branding-data.js','branding-client.js','match-ui.js','view-utils.js','icons.js','client/api.js','client/ui.js','live.js'],
+ core:['live-policy.js','shared/dates.js','db.js','assets/branding-data.js','branding-client.js','match-ui.js','view-utils.js','icons.js','client/api.js','client/ui.js','live.js'],
  avatars:['assets/club-avatar-themes.js','player-avatars.js'],
  universal:['client/live-connection.js','club-facts.js','club-matches.js','universal.js'],
  home:['home.js'],competition:['competition-ui.js'],insights:['insights.js'],directory:['directory.js'],calendar:['calendar.js'],app:['app.js']

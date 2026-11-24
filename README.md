@@ -1,5 +1,7 @@
 # CANCHA V19.4
 
+Desde cada partido puedes abrir la clasificación de su competición. En Alineaciones, los jugadores con cifras publicadas permiten consultar su rendimiento. El directorio muestra el número de equipos que coinciden con los filtros. Fuentes y cobertura se encuentra en el menú.
+
 Centro de fútbol con nueve competiciones y 183 clubes del catálogo. Combina calendarios abiertos de OpenFootball con clasificaciones, plantillas y actualizaciones de partidos de ESPN, sin claves de pago.
 
 ## Edición ligera y web compartible

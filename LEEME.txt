@@ -9,4 +9,4 @@ capturas, pruebas e informes antiguos. Para generarla: npm run package:runtime.
 
 Para compartir CANCHA mediante un enlace publico, consulta PUBLICAR_WEB.md.
 La direccion 127.0.0.1 solo funciona en tu propio ordenador.
-Guia: README.md. Novedades: NOVEDADES_V19_3.md.
+Guia y novedades: README.md.

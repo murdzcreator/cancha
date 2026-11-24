@@ -7,7 +7,7 @@ import {qualification,recentForm} from '../server/competition.mjs';
 import {createEspnProvider,normalizeEspnStandings} from '../server/espn.mjs';
 import {createPlayerIndex} from '../server/player-index.mjs';
 import {createHistory} from '../server/history.mjs';
-import '../dates.js';
+import '../shared/dates.js';
 import '../view-utils.js';
 const raw=fs.readFileSync(new URL('../db.js',import.meta.url),'utf8'),db=JSON.parse(raw.slice(raw.indexOf('=')+1).trim().replace(/;$/,''));
 const league={...db.leagues.find(l=>l.id==='per'),teams:['comerciantes-unidos','cienciano']},small={...db,leagues:[league]},V=globalThis.CANCHA_VIEW;

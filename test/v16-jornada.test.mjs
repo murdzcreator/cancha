@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import '../dates.js';
+import '../shared/dates.js';
 import '../match-ui.js';
 
 const M=globalThis.CANCHA_MATCHES;

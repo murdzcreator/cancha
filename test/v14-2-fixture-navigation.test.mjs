@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
-import '../dates.js';
+import '../shared/dates.js';
 import {fileURLToPath} from 'node:url';
 import {createSoccerDataImports} from '../server/soccerdata-import.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');

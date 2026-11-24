@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import '../dates.js';
+import '../shared/dates.js';
 import '../match-ui.js';
 import '../club-matches.js';
 const C=globalThis.CANCHA_CLUB_MATCHES,now=new Date('2026-11-01T12:00:00Z');

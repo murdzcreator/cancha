@@ -1,7 +1,7 @@
 import {combineFixtures,preferMatch} from './history.mjs';
 import {recentForm} from './competition.mjs';
 import {miniAnalytics,analyticsView} from './presenters.mjs';
-import '../dates.js';
+import '../shared/dates.js';
 import '../live-policy.js';
 const P=globalThis.CANCHA_LIVE_POLICY;
 const D=globalThis.CANCHA_DATES;
