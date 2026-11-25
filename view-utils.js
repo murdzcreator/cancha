@@ -15,5 +15,7 @@
   if(kind==='player'){const p=d.players?.find(p=>p.id===player&&p.team===id);return {title:'Participaciones observadas',label:p?`${p.played} ${p.played===1?'partido':'partidos'} · goles publicados en ${p.known?.goals||0}`:'Sin actas disponibles de este jugador'};}
   return {title:'Muestra de la competición',label:`${d.coverage.results} resultados · ${d.coverage.details} actas`};
  }
- globalThis.CANCHA_VIEW={normalize,shift,range,page,escape,pagination,coverage};
+ const positions = {por:'Portero',def:'Defensa',med:'Centrocampista',del:'Delantero',goalkeeper:'Portero',defender:'Defensa',midfielder:'Centrocampista',forward:'Delantero',striker:'Delantero',winger:'Extremo',g:'Portero',gk:'Portero',d:'Defensa',df:'Defensa',m:'Centrocampista',mf:'Centrocampista',f:'Delantero',fw:'Delantero'};
+ const positionName = value => positions[normalize(value)] || value;
+ globalThis.CANCHA_VIEW={positionName,normalize,shift,range,page,escape,pagination,coverage};
 })();

@@ -92,7 +92,7 @@
     return window.CANCHA_HOME.shell();
   }
   function leaguesPage() {
-    return `${makeTitle('EXPLORAR', 'Competiciones', 'Explora ligas, copas, equipos y sus calendarios.')}<div class="grid-cards">${leagues.map(smallCard).join('')}</div>`;
+    return `<div class="page-head"><h1>Competiciones</h1></div><div class="grid-cards">${leagues.map(smallCard).join('')}</div>`;
   }
   function leaguePage(id) {
     const l = leg(id);
@@ -118,10 +118,10 @@
       )
       .join(
         '',
-      )}</div><div class="c-league-layout"><div class="c-league-primary">${content}</div><aside class="c-league-context">${selected === 'tabla' ? window.CANCHA_COMPETITION.contextShell(id) : ''}<section class="panel"><div class="panel-title">La competición</div><div class="c-competition-facts"><span><b data-v14-league-counter="${E(id)}">…</b> encuentros disponibles</span><span>${E(l.country)} · ${E(l.season)}</span></div><a class="c-mini-more" href="${safeURL(l.source)}" target="_blank" rel="noopener noreferrer">Fuente de participantes ↗</a></section></aside>${selected === 'tabla' ? '<div class="c-league-rankings" id="c-competition-rankings"><p class="v11-loading">Consultando partidos analizados…</p></div>' : ''}</div>`;
+      )}</div>${selected === 'tabla' ? '<button class="c-round-jump btn btn-outline" data-jump-round>Partidos de la jornada ↓</button>' : ''}<div class="c-league-layout"><div class="c-league-primary">${content}</div><aside class="c-league-context">${selected === 'tabla' ? window.CANCHA_COMPETITION.contextShell(id) : ''}<section class="panel"><div class="panel-title">La competición</div><div class="c-competition-facts"><span><b data-v14-league-counter="${E(id)}">…</b> encuentros disponibles</span><span>${E(l.country)} · ${E(l.season)}</span></div><a class="c-mini-more" href="${safeURL(l.source)}" target="_blank" rel="noopener noreferrer">Fuente de participantes ↗</a></section></aside>${selected === 'tabla' ? '<div class="c-league-rankings" id="c-competition-rankings"><p class="v11-loading">Consultando partidos analizados…</p></div>' : ''}</div>`;
   }
   function teamTile(id) {
-    return `<a class="team-tile" href="${path('equipo', id)}">${logo(id)}<div><b>${E(n(id))}</b><small>Ver perfil →</small></div></a>`;
+    return `<a class="team-tile" href="${path('equipo', id)}">${logo(id)}<div><b>${E(n(id))}</b></div></a>`;
   }
   function teamsPage() {
     return window.CANCHA_DIRECTORY.teamsShell();
@@ -130,7 +130,7 @@
     return window.CANCHA_DIRECTORY.playerShell();
   }
   function matchList() {
-    return `${makeTitle('PARTIDOS', 'Calendario de competiciones', 'Elige una fecha o un rango para explorar los encuentros. Horarios de Perú.')}<div class="tabs">${[
+    return `${makeTitle('PARTIDOS', 'Calendario de competiciones', 'Horarios de Perú.')}<div class="tabs">${[
       ['todos', 'Todos'],
       ['vivo', 'En vivo'],
       ['resultados', 'Finalizados'],
@@ -149,7 +149,7 @@
     const included = t.leagues.map((l) => leg(l)).filter(Boolean),
       tab = S.teamTab,
       info = window.CANCHA_UNIVERSAL.clubInfoRows(id, t);
-    const squad = `<p class="c-club-intro">Jugadores publicados por la fuente para esta temporada. La cobertura puede ser parcial.</p><div class="section-switch"><button class="btn" data-fetch-roster="${id}">↻ Actualizar plantilla</button><small class="muted">Plantilla de temporada consultada en ESPN.</small></div><div id="rosterTarget" style="margin-top:12px">${renderCachedRoster(id)}</div>`;
+    const squad = `<div id="rosterTarget">${renderCachedRoster(id)}</div>`;
     let content = '';
     if (tab === 'resumen' || tab === 'partidos')
       content = `<div id="c-club-fixture-tools" data-club-view="${tab}"></div><section class="panel c-club-fixture-panel"><div class="panel-title"><span id="c-club-next-title">Próximos partidos</span><small id="v17-team-next-count">Consultando…</small></div><div id="v13-team-schedule"><p class="c-club-empty" role="status">Consultando próximos partidos…</p></div></section><section class="panel c-club-fixture-panel"><div class="panel-title"><span>Resultados recientes</span><small id="v17-team-results-count">Consultando…</small></div><div id="v15-team-results"><p class="c-club-empty" role="status">Consultando resultados disponibles…</p></div></section>`;
@@ -158,7 +158,7 @@
         `<section class="panel c-club-standing"><div class="panel-title">Situación en la liga <small>Clasificación publicada</small></div><div id="v11-team-current" class="pad"><div class="v11-loading">Consultando clasificación…</div></div></section>` +
         `<div class="c-club-summary-matches">${content}</div>`;
     if (tab === 'plantilla')
-      content = `<section class="panel"><div class="panel-title">Plantilla del club <small>Consulta bajo demanda</small></div><div class="pad">${squad}</div></section>`;
+      content = `<section class="panel"><div class="panel-title"><span>Plantilla del club <small id="c-roster-asof"></small></span><button class="btn btn-outline" data-fetch-roster="${id}">Actualizar plantilla</button></div><div class="pad">${squad}</div></section>`;
     if (tab === 'estadisticas') content = window.CANCHA_INSIGHTS.shell('team', id);
     if (tab === 'informacion')
       content = `<section class="panel"><div class="panel-title">Datos del club</div><div class="pad">${info}</div></section>`;
@@ -215,18 +215,8 @@
   function playerPage(id) {
     let p = D.matchPlayers[id];
     if (!p) return notFound();
-    return `${makeTitle('PERFIL DE JUGADOR', p.name, `${p.position} · Dorsal ${p.number} · ${n(p.team)}`, window.CANCHA_AVATARS.html(p.team, p, 'profile'))}${notice('Registro vinculado al encuentro PSG–Barcelona del 20/10/2026. <strong>Las estadísticas individuales detalladas no están verificadas:</strong> por eso no aparecen goles, pases o valoraciones de fantasía.')}<div class="split"><section class="panel"><div class="panel-title">Datos disponibles</div><div class="pad">${[
-      ['Club de referencia', n(p.team)],
-      ['Posición', p.position],
-      ['Dorsal', p.number],
-      ['Partido documentado', 'PSG 4–2 Barcelona'],
-      ['Rating individual', 'Sin registro verificable'],
-      ['Estadísticas de temporada', 'Pendientes de fuente'],
-    ]
-      .map(([a, b]) => `<div class="keyrow"><span>${E(a)}</span><strong>${E(b)}</strong></div>`)
-      .join(
-        '',
-      )}<div style="margin-top:17px"><a href="${path('partido', 'psg-barca')}" class="btn">Ver alineaciones interactivas →</a></div></div></section><section class="panel"><div class="panel-title">Más información</div><div class="pad"><a class="btn btn-outline" href="${path('equipo', p.team)}">Ver ${E(n(p.team))}</a></div></section></div>`;
+    return `${makeTitle('FICHA HISTÓRICA', p.name, `${E(window.CANCHA_VIEW.positionName(p.position))} · Dorsal ${E(p.number)} · <a href="${path('equipo', p.team)}">${E(n(p.team))}</a>`, window.CANCHA_AVATARS.html(p.team, p, 'profile'))}<section class="panel"><div class="panel-title">Partido documentado</div><div class="pad"><a href="${path('partido', 'psg-barca')}">PSG 4–2 Barcelona →</a><p class="subdued">20 de octubre de 2026 · Referencia visual de la alineación. Estadísticas individuales pendientes de verificación.</p></div></section>`;
+
   }
   function findPage(q) {
     q = String(q || '').trim();
@@ -236,7 +226,7 @@
     let li = leagues.filter((l) => norm(l.name).includes(query)),
       ts = Object.keys(teams).filter((id) => norm(n(id)).includes(query)),
       p = Object.values(D.matchPlayers).filter((p) => norm(p.name).includes(query));
-    return `${makeTitle('BUSCADOR', 'Resultados de búsqueda', `Para: ${E(q)}`)}${li.length ? `<div class="section-heading"><h2>Competiciones</h2></div><div class="grid-cards">${li.map(smallCard).join('')}</div>` : ''}${ts.length ? `<div class="section-heading"><h2>Equipos (${ts.length})</h2></div><div class="team-grid">${ts.map(teamTile).join('')}</div>` : ''}${p.length ? `<div class="section-heading"><h2>Jugadores</h2></div><div class="team-grid">${p.map((p) => `<a class="team-tile" href="${path('jugador', p.id)}">${window.CANCHA_AVATARS.html(p.team, p, 'directory')}<b>${E(p.name)}</b></a>`).join('')}</div>` : ''}<section class="panel"><div class="panel-title">Futbolistas del directorio</div><div class="pad" id="v18-search-players" data-query="${E(q)}" data-has-local="${Boolean(li.length || ts.length || p.length)}">Buscando futbolistas…</div></section><div class="blank" id="v18-search-empty" hidden>No encontramos coincidencias en los registros disponibles.</div>`;
+    return `${makeTitle('BUSCADOR', 'Resultados de búsqueda', `Para: ${E(q)}`)}${li.length ? `<div class="section-heading"><h2>Competiciones</h2></div><div class="grid-cards">${li.map(smallCard).join('')}</div>` : ''}${ts.length ? `<div class="section-heading"><h2>Equipos (${ts.length})</h2></div><div class="team-grid">${ts.map(teamTile).join('')}</div>` : ''}${p.length ? `<section id="c-search-historical"><div class="section-heading"><h2>Fichas de partido</h2></div><div class="team-grid">${p.map((p) => `<a class="team-tile" data-historical-id="${E(p.id)}" href="${path('jugador', p.id)}">${window.CANCHA_AVATARS.html(p.team, p, 'directory')}<b>${E(p.name)}</b></a>`).join('')}</div></section>` : ''}<section class="panel"><div class="panel-title">Futbolistas del directorio</div><div class="pad" id="v18-search-players" data-query="${E(q)}" data-has-local="${Boolean(li.length || ts.length || p.length)}">Buscando futbolistas…</div></section><div class="blank" id="v18-search-empty" hidden>No encontramos coincidencias en los registros disponibles.</div>`;
   }
   function sourcesPage() {
     const urls = leagues
@@ -245,13 +235,44 @@
           `<div class="source-card"><h3>${E(l.name)}</h3><p>${l.teams.length} equipos · ${E(l.season)} · lista consultada para ${E(l.checked || '26/10/2026')}</p><a href="${safeURL(l.source)}" target="_blank" rel="noopener noreferrer">Consultar lista de participantes ↗</a></div>`,
       )
       .join('');
-    return `${makeTitle('TRANSPARENCIA', 'Fuentes y actualizaciones', 'Qué es real, qué se puede consultar y qué sigue pendiente.')} ${notice('ESPN aporta clasificaciones, plantillas y actualizaciones de partidos. OpenFootball completa los calendarios de Premier League, LaLiga y Bundesliga y se sincroniza en segundo plano. Las estadísticas individuales y de equipos indican cuántos partidos del archivo cubren. Cada tabla identifica su fase y fecha; las referencias históricas conservan su procedencia.')}<div class="section-heading"><h2>Estado de las conexiones</h2></div><div id="v11-health"></div><div class="section-heading"><h2>Estado de los escudos</h2></div>${window.CANCHA_BRAND.auditHTML()}<div class="section-heading"><h2>Datos contrastados</h2></div><div class="sources-grid">${urls}</div><div class="section-heading"><h2>Clasificación y partidos</h2></div><div class="sources-grid"><div class="source-card"><h3>UEFA · Calendario</h3><p>Jornadas 3 y 4, resultados y próximos cruces. Fuente oficial.</p><a href="https://www.uefa.com/uefachampionsleague/news/02a8-2174c9e9019d-f909a77bd77a-1000--2026-27-champions-league-all-the-phase-fixtures/" target="_blank" rel="noopener noreferrer">UEFA ↗</a></div><div class="source-card"><h3>Clasificación · Sky Sport</h3><p>36 equipos, puntos, goles, diferencia y forma al 21/10/2026.</p><a href="${safeURL(D.snapshotUCL.source)}" target="_blank" rel="noopener noreferrer">Sky Sport ↗</a></div><div class="source-card"><h3>Plantillas y posiciones</h3><p>ESPN aporta las plantillas consultadas. API-Football, football-data.org y TheSportsDB son fuentes opcionales; cada registro conserva su procedencia y cobertura.</p><a href="https://www.api-football.com/documentation-v3" target="_blank" rel="noopener noreferrer">Documentación de API-Football ↗</a></div><div class="source-card"><h3>Alcance de las actualizaciones</h3><p>Los marcadores se consultan periódicamente desde el servidor. La demora y el detalle dependen de la fuente; las estadísticas individuales cubren únicamente las actas analizadas.</p></div></div>`;
+    return `${makeTitle('TRANSPARENCIA', 'Fuentes y actualizaciones', 'Qué es real, qué se puede consultar y qué sigue pendiente.')} ${notice('ESPN aporta clasificaciones, plantillas y actualizaciones de partidos. OpenFootball completa los calendarios de Premier League, LaLiga y Bundesliga y se sincroniza en segundo plano. Las estadísticas individuales y de equipos indican cuántos partidos del archivo cubren. Cada tabla identifica su fase y fecha; las referencias históricas conservan su procedencia.')}<div class="section-heading"><h2>Estado de las conexiones</h2></div><div id="v11-health"></div><details class="panel c-options"><summary>Estado de los escudos</summary>${window.CANCHA_BRAND.auditHTML()}</details><details class="panel c-options"><summary>Participantes y referencias por competición</summary><div class="sources-grid">${urls}</div></details><details class="panel c-options"><summary>Referencias históricas y cobertura</summary><div class="sources-grid"><div class="source-card"><h3>UEFA · Calendario</h3><p>Jornadas 3 y 4, resultados y próximos cruces. Fuente oficial.</p><a href="https://www.uefa.com/uefachampionsleague/news/02a8-2174c9e9019d-f909a77bd77a-1000--2026-27-champions-league-all-the-phase-fixtures/" target="_blank" rel="noopener noreferrer">UEFA ↗</a></div><div class="source-card"><h3>Clasificación · Sky Sport</h3><p>36 equipos, puntos, goles, diferencia y forma al 21/10/2026.</p><a href="${safeURL(D.snapshotUCL.source)}" target="_blank" rel="noopener noreferrer">Sky Sport ↗</a></div><div class="source-card"><h3>Plantillas y posiciones</h3><p>ESPN aporta las plantillas consultadas. API-Football, football-data.org y TheSportsDB son fuentes opcionales; cada registro conserva su procedencia y cobertura.</p><a href="https://www.api-football.com/documentation-v3" target="_blank" rel="noopener noreferrer">Documentación de API-Football ↗</a></div><div class="source-card"><h3>Alcance de las actualizaciones</h3><p>Los marcadores se consultan periódicamente desde el servidor. La demora y el detalle dependen de la fuente; las estadísticas individuales cubren únicamente las actas analizadas.</p></div></div></details>`;
   }
   function notFound() {
     return `${makeTitle('CANCHA', 'Página no encontrada', 'Regresa a las competiciones y selecciona un club del catálogo.')}<a class="btn" href="${path('inicio')}">Volver al inicio</a>`;
   }
   let drawToken = 0;
-  async function draw() {
+  // Separate visits to the same URL can have different tabs and reading positions.
+  history.scrollRestoration = 'manual';
+  const visits = new Map();
+  function entryKey() {
+    if (!history.state?.canchaVisit) {
+      history.replaceState({...history.state, canchaVisit:crypto.randomUUID?.() || String(Math.random())}, '');
+    }
+    return history.state.canchaVisit;
+  }
+  let entry = entryKey();
+  let stopRestoring = () => {};
+  function restoreScroll(y) {
+    stopRestoring();
+    if (!y) { window.scrollTo({top:0,behavior:'instant'}); return; }
+    const observer = new ResizeObserver(move);
+    const timer = setTimeout(stop, 15000);
+    const interruptions = ['wheel','touchstart','pointerdown','keydown'];
+    function stop() {
+      observer.disconnect();
+      clearTimeout(timer);
+      interruptions.forEach(type => window.removeEventListener(type, stop, true));
+    }
+    function move() {
+      window.scrollTo({top:y, behavior:'instant'});
+      if (Math.abs(window.scrollY - y) <= 1) stop();
+    }
+    stopRestoring = stop;
+    interruptions.forEach(type => window.addEventListener(type, stop, {capture:true, passive:true}));
+    observer.observe(main);
+    move();
+  }
+  async function draw(saved = null) {
     const generation = ++drawToken;
     let parts = (location.hash.replace(/^#\/?/, '').split('?')[0] || 'inicio')
         .split('/')
@@ -274,6 +295,13 @@
       return;
     }
     if (generation !== drawToken) return;
+    if (saved) {
+      Object.assign(S, saved.view);
+      if (route === 'partidos') window.CANCHA_CALENDAR?.restore(saved.calendar);
+      if (route === 'inicio') window.CANCHA_HOME?.restore(saved.home);
+      if (route === 'equipos' || route === 'jugadores') window.CANCHA_DIRECTORY?.restore(saved.directory);
+    }
+    if (['evento', 'partido', 'encuentro'].includes(route)) window.CANCHA_UNIVERSAL.prepare(saved?.match);
     if (route === 'inicio') out = home();
     else if (route === 'competiciones') out = leaguesPage();
     else if (route === 'liga') {
@@ -281,7 +309,7 @@
       const opensStandings =
         document.body.dataset.route !== 'liga' &&
         new URLSearchParams(location.hash.split('?')[1]).get('vista') === 'tabla';
-      if (S.pageLeague !== id || opensStandings) S.leagueTab = 'tabla';
+      if (S.pageLeague !== id || (!saved && opensStandings)) S.leagueTab = 'tabla';
       S.pageLeague = id;
       out = leaguePage(id);
     } else if (route === 'equipos') out = teamsPage();
@@ -334,8 +362,9 @@
     document.title =
       (route === 'inicio'
         ? 'Tu centro de fútbol'
-        : document.querySelector('h1')?.textContent || 'CANCHA') + ' · CANCHA V19.5';
-    if (!S.keepScroll) window.scrollTo(0, 0);
+        : document.querySelector('h1')?.textContent || 'CANCHA') + ' · CANCHA V19.6';
+    if (saved) restoreScroll(saved.y);
+    else if (!S.keepScroll) window.scrollTo({top:0,behavior:'instant'});
     S.keepScroll = false;
     closeSide();
   }
@@ -382,8 +411,19 @@
     window.scrollTo(0, sy);
   };
   window.addEventListener('hashchange', () => {
+    stopRestoring();
+    const route = document.body.dataset.route;
+    visits.set(entry, {
+      y:window.scrollY,
+      view:{pageLeague:S.pageLeague, leagueTab:S.leagueTab, leagueMetric:S.leagueMetric, teamTab:S.teamTab, pageTeam:S.pageTeam, matchFilter:S.matchFilter},
+      match:window.CANCHA_UNIVERSAL?.navigationState(),
+      calendar:route === 'partidos' && window.CANCHA_CALENDAR?.snapshot(),
+      home:route === 'inicio' && window.CANCHA_HOME?.snapshot(),
+      directory:window.CANCHA_DIRECTORY?.snapshot(),
+    });
+    entry = entryKey();
     S.matchPlayer = null;
-    draw();
+    draw(visits.get(entry));
   });
   byId('menuButton').setAttribute('aria-controls', 'sidebar');
   byId('menuButton').addEventListener('click', openSide);
@@ -454,6 +494,13 @@
     if (e.target.closest('[data-close-player]')) {
       S.matchPlayer = null;
       refresh();
+      return;
+    }
+    if (e.target.closest('[data-jump-round]')) {
+      const panel = document.querySelector('.c-round-panel');
+      panel.tabIndex = -1;
+      panel.focus({preventScroll:true});
+      panel.scrollIntoView();
       return;
     }
     const r = e.target.closest('[data-fetch-roster]');

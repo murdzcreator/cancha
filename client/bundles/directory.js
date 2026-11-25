@@ -35,19 +35,25 @@
         .sort((a, b) => a.name.localeCompare(b.name, 'es')),
       p = V.page(list, teams.page, 24);
     teams.page = p.index;
-    root.innerHTML = `<p class="c-directory-count" role="status">${p.total} ${p.total === 1 ? 'equipo' : 'equipos'} encontrados</p>${V.pagination(p, 'teams')}<div class="team-grid">${p.items.map((t) => `<a class="team-tile" href="#/equipo/${encodeURIComponent(t.id)}">${globalThis.CANCHA_BRAND.teamHTML(t.id)}<div><b>${E(t.name)}</b><small>${E(t.country)} · Ver perfil →</small></div></a>`).join('')}</div>${!list.length ? '<p class="c-directory-empty">No hay equipos con estos filtros.</p>' : ''}${V.pagination(p, 'teams')}`;
+    root.innerHTML = `<p class="c-directory-count" role="status">${p.total} ${p.total === 1 ? 'equipo' : 'equipos'} encontrados</p><div class="team-grid">${p.items.map((t) => `<a class="team-tile" href="#/equipo/${encodeURIComponent(t.id)}">${globalThis.CANCHA_BRAND.teamHTML(t.id)}<div><b>${E(t.name)}</b><small>${E(t.country)}</small></div></a>`).join('')}</div>${!list.length ? '<p class="c-directory-empty">No hay equipos con estos filtros.</p>' : ''}${V.pagination(p, 'teams')}`;
   }
   function playerShell() {
-    return `<div class="eyebrow">DIRECTORIO</div><div class="page-head"><div><h1>Jugadores</h1><p>Busca futbolistas por nombre, club o competición.</p></div></div><section class="panel"><div class="panel-title">Explorar futbolistas <small>25 por página</small></div><div class="pad"><div class="c-directory-filters c-player-filters"><label>Competición<select id="c-player-league">${options(players.league)}</select></label><label>Club<input type="search" id="c-player-club" list="c-player-clubs" value="${E(players.club)}" placeholder="Escribe o elige un club" autocomplete="off"><datalist id="c-player-clubs">${clubs()
-      .map((t) => `<option value="${E(t.name)}"></option>`)
-      .join(
-        '',
-      )}</datalist></label><label>Nombre<input type="search" id="c-player-query" value="${E(players.query)}" placeholder="Busca un futbolista" autocomplete="off"></label></div><div class="c-directory-actions"><button type="button" class="btn btn-outline" data-directory-clear>Limpiar filtros</button><button type="button" class="btn btn-outline" data-directory-sync>Consultar más clubes</button><span id="c-directory-message" role="status"></span></div><div id="c-player-directory"><p class="v11-loading">Consultando jugadores…</p></div></div></section>`;
+    const filtered = players.club || players.league !== 'todos';
+    const expanded = filtered || window.matchMedia('(min-width:761px)').matches;
+    return `<div class="page-head"><h1>Jugadores</h1></div><section class="panel"><div class="pad">
+      <div class="c-directory-filters"><label>Nombre<input type="search" id="c-player-query" value="${E(players.query)}" placeholder="Busca un futbolista" autocomplete="off"></label></div>
+      <details class="c-options" ${expanded ? 'open' : ''}><summary>Filtrar por competición y club</summary><div class="c-directory-filters">
+        <label>Competición<select id="c-player-league">${options(players.league)}</select></label>
+        <label>Club<input type="search" id="c-player-club" list="c-player-clubs" value="${E(players.club)}" placeholder="Escribe o elige un club" autocomplete="off"><datalist id="c-player-clubs">${clubs().map(t => `<option value="${E(t.name)}"></option>`).join('')}</datalist></label>
+      </div><button type="button" class="btn btn-outline" data-directory-sync>Consultar más clubes</button></details>
+      <button type="button" class="c-help-inline" data-directory-clear ${filtered || players.query ? '' : 'hidden'}>Limpiar filtros</button><span id="c-directory-message" role="status"></span>
+      <div id="c-player-directory"><p class="v11-loading">Consultando jugadores…</p></div></div></section>`;
   }
   const json = (url) => window.CANCHA_API.get(url);
   async function loadPlayers(roster = false) {
     const root = document.getElementById('c-player-directory');
     if (!root) return;
+    document.querySelector('[data-directory-clear]').hidden = !(players.club || players.query || players.league !== 'todos');
     const mark = ++players.token;
     if (players.club && !players.team) {
       root.innerHTML =
@@ -88,13 +94,13 @@
         loadPlayers();
         return;
       }
-      root.innerHTML = `<p class="c-directory-count" role="status">${d.total} jugadores disponibles · ${d.teamsIndexed} clubes consultados <button type="button" class="c-help-inline" data-directory-coverage>¿Qué incluye?</button></p><p class="c-directory-explanation" hidden>El directorio contiene plantillas consultadas y registros fechados. Elegir un club recupera su plantilla disponible; no equivale a un censo completo de todas las ligas.</p>${V.pagination(p, 'players')}${d.players.length ? `<div class="v12-athlete-grid">${d.players.map((p) => `<a class="v12-athlete" href="#/perfil/${encodeURIComponent(p.team)}/${encodeURIComponent(p.id)}">${globalThis.CANCHA_AVATARS.html(p.team, p, 'directory')}<span><b>${E(p.name)}</b><small>${E(D().teams[p.team]?.name)} · ${E(p.position || 'Posición no publicada')}${p.scope === 'match-observation' ? ' · Registro de acta' : ''}</small></span><span class="arr">›</span></a>`).join('')}</div>` : '<p class="c-directory-empty">No hay coincidencias en los registros disponibles. Elige un club para consultar su plantilla.</p>'}${V.pagination(p, 'players')}`;
+      root.innerHTML = `<p class="c-directory-count" role="status">${d.total} jugadores disponibles · ${d.teamsIndexed} clubes consultados <button type="button" class="c-help-inline" data-directory-coverage>¿Qué incluye?</button></p><p class="c-directory-explanation" hidden>El directorio contiene plantillas consultadas y registros fechados. Elegir un club recupera su plantilla disponible; no equivale a un censo completo de todas las ligas.</p>${d.players.length ? `<div class="v12-athlete-grid">${d.players.map((p) => `<a class="v12-athlete" href="#/perfil/${encodeURIComponent(p.team)}/${encodeURIComponent(p.id)}">${globalThis.CANCHA_AVATARS.html(p.team, p, 'directory')}<span><b>${E(p.name)}</b><small>${E(D().teams[p.team]?.name)} · ${E(V.positionName(p.position) || 'Posición no publicada')}${p.scope === 'match-observation' ? ' · Registro de acta' : ''}</small></span><span class="arr">›</span></a>`).join('')}</div>` : '<p class="c-directory-empty">No hay coincidencias en los registros disponibles. Elige un club para consultar su plantilla.</p>'}${V.pagination(p, 'players')}`;
       if (roster && msg && msg.textContent === 'Consultando plantilla del club…')
         msg.textContent = 'Plantilla consultada';
     } catch {
       if (mark === players.token && document.contains(root))
         root.innerHTML =
-          '<p class="c-directory-empty">No se pudo consultar el directorio. Vuelve a elegir un club para reintentar.</p>';
+          '<p class="c-directory-empty">No se pudo consultar el directorio. <button type="button" class="btn btn-outline" data-directory-retry>Reintentar</button></p>';
     }
   }
   function chooseClub(value) {
@@ -156,6 +162,7 @@
     }
   });
   document.addEventListener('click', async (e) => {
+    if (e.target.closest('[data-directory-retry]')) { loadPlayers(); return; }
     const p = e.target.closest('[data-view-page]');
     if (p && ['teams', 'players'].includes(p.dataset.viewPage) && !p.disabled) {
       const n = Number(p.dataset.pageIndex);
@@ -167,6 +174,7 @@
         players.page = n;
         loadPlayers();
       }
+      document.getElementById(p.dataset.viewPage === 'teams' ? 'c-team-directory' : 'c-player-directory')?.scrollIntoView({ block: 'start' });
       return;
     }
     if (e.target.closest('[data-directory-coverage]')) {
@@ -200,6 +208,8 @@
     }
   });
   globalThis.CANCHA_DIRECTORY = {
+    snapshot: () => ({teams:{...teams}, players:{query:players.query,league:players.league,club:players.club,team:players.team,page:players.page}}),
+    restore: (saved) => { if (saved) { Object.assign(teams,saved.teams); Object.assign(players,saved.players); } },
     teamsShell,
     playerShell,
     afterDraw: (route) => {

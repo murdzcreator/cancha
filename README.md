@@ -1,4 +1,6 @@
-# CANCHA V19.5
+# CANCHA V19.6
+
+En esta versión, las alineaciones móviles se consultan por equipo. Desde la ficha del jugador, Atrás recupera la selección del partido. El historial permite alternar entre la cronología y los duelos anteriores.
 
 La Bundesliga 2026/27 incluye 18 clubes y 306 encuentros. Para consultar un ejemplo, abre Partidos, selecciona Bundesliga y elige el 28 de agosto de 2026. Desde Bayern Múnich–VfB Stuttgart puedes consultar las cifras individuales y abrir la clasificación.
 
@@ -21,7 +23,7 @@ También puedes ejecutar `npm start`. No se necesitan dependencias npm adicional
 ## Qué puedes consultar
 
 - **Inicio:** partidos del día en hora de Perú, fecha elegible, filtros de estado y competición, destacado de esa jornada y grupos por liga.
-- **Diseño:** fondo morado oscuro, superficies violeta y acentos lavanda. Portada sin título grande, logo lateral, destacado con escudos de 88 px en escritorio y 66 px en móvil, paneles compactos y navegación inferior en teléfono. La cabecera de cada partido tiene ancho máximo de 920 px y escudos de 96 px en escritorio. Las fichas de club muestran filas de próximos/resultados con escudos, fechas breves, filtro por competición y paginación. Se conservan las pestañas y apartados anteriores. Los escudos llevan sombras discretas, Premier League conserva su marca morada y el bloque de competiciones mantiene otra tonalidad. El fondo recupera el morado liso de V17.2.
+- **Diseño:** fondo morado oscuro, superficies violeta y acentos lavanda. Portada sin título grande, logo lateral, destacado con escudos de 88 px en escritorio y 46 px en móvil, paneles compactos y navegación inferior en teléfono. La cabecera de cada partido tiene ancho máximo de 920 px y escudos de 96 px en escritorio. Las fichas de club muestran filas de próximos/resultados con escudos, fechas breves, filtro por competición y paginación. Se conservan las pestañas y apartados anteriores. Los escudos llevan sombras discretas, Premier League conserva su marca morada y el bloque de competiciones mantiene otra tonalidad. El fondo recupera el morado liso de V17.2.
 
 - **Competiciones → Clasificación:** tablas ESPN con fase/grupo, puntos y orden publicados por la fuente. Puntos destacados, ayuda en las cabeceras y leyenda de las zonas publicadas por la fuente. Rachas V/E/D de los cinco últimos resultados disponibles, con detalle al pulsar. En teléfono, puntos/PJ/DG y rachas debajo del equipo; **Vista detallada** permite consultar todas las columnas. La tabla usa filas, columnas y cabecera compactas. A su lado aparece la jornada por fecha, y debajo los cuatro rankings a lo ancho de la página; en móvil se elige una métrica. Las actas se consultan al acercarse al bloque. Cambiar la fecha de los partidos conserva la clasificación actual.
 - **Partidos:** abre en **Hoy**, con accesos **Mañana**, **Próximos 7 días** y fecha libre; 24 encuentros por página agrupados por día y competición. Filtros por competición, equipo y estado; los filtros secundarios se pliegan en móvil. Bundesliga incluye 306 partidos y Premier League y LaLiga conservan sus 380 partidos de OpenFootball y reciben los horarios y marcadores de ESPN. Las fechas reprogramadas sustituyen al horario provisional sin duplicar el encuentro.

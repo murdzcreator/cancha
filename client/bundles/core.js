@@ -182,7 +182,9 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
   if(kind==='player'){const p=d.players?.find(p=>p.id===player&&p.team===id);return {title:'Participaciones observadas',label:p?`${p.played} ${p.played===1?'partido':'partidos'} · goles publicados en ${p.known?.goals||0}`:'Sin actas disponibles de este jugador'};}
   return {title:'Muestra de la competición',label:`${d.coverage.results} resultados · ${d.coverage.details} actas`};
  }
- globalThis.CANCHA_VIEW={normalize,shift,range,page,escape,pagination,coverage};
+ const positions = {por:'Portero',def:'Defensa',med:'Centrocampista',del:'Delantero',goalkeeper:'Portero',defender:'Defensa',midfielder:'Centrocampista',forward:'Delantero',striker:'Delantero',winger:'Extremo',g:'Portero',gk:'Portero',d:'Defensa',df:'Defensa',m:'Centrocampista',mf:'Centrocampista',f:'Delantero',fw:'Delantero'};
+ const positionName = value => positions[normalize(value)] || value;
+ globalThis.CANCHA_VIEW={positionName,normalize,shift,range,page,escape,pagination,coverage};
 })();
 
 /* icons.js */
@@ -515,24 +517,24 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
   }
   function position(p) {
     let x = (p.position || '').toLowerCase();
-    if (/portero|goal|keeper/.test(x)) return 'Porteros';
-    if (/defensa|defender|back/.test(x)) return 'Defensas';
-    if (/medio|mid/.test(x)) return 'Centrocampistas';
-    if (/delanter|forward|attack|wing/.test(x)) return 'Delanteros';
+    if (/^(g|gk)$|arquero|porter|goal|keeper/.test(x)) return 'Porteros';
+    if (/^(d|df)$|defens|defender|back/.test(x)) return 'Defensas';
+    if (/^(m|mf)$|medio|centrocamp|volante|mid/.test(x)) return 'Centrocampistas';
+    if (/^(f|fw)$|delanter|forward|attack|wing|striker/.test(x)) return 'Delanteros';
     return 'Otros';
   }
   function rosterHtml(d) {
     let p = d.players || [];
     let groups = ['Porteros', 'Defensas', 'Centrocampistas', 'Delanteros', 'Otros'];
-    let html = banner(
-      'info',
-      `Datos obtenidos de <b>${esc(d.source)}</b>. ${esc(d.coverage || '')} · ${d.snapshot ? 'Instantánea ' + esc(d.retrievedOn || 'sin fecha') : esc(date(d.updatedAt))}`,
-    );
+    const asof = document.getElementById('c-roster-asof');
+    if (asof) asof.textContent = [d.source, d.snapshot ? 'Instantánea ' + (d.retrievedOn || 'sin fecha') : date(d.updatedAt)].filter(Boolean).join(' · ');
+    let html = '';
     if (d.cache?.state === 'stale')
       html += banner(
         'warning',
         'Mostrando la última plantilla guardada; la actualización ha fallado.',
       );
+    if (d.coverage) html += `<small class="subdued">${esc(d.coverage)}</small>`;
     if (d.coach) html += `<div class="v11-coach"><b>Director técnico:</b> ${esc(d.coach)}</div>`;
     if (d.sources?.length > 1)
       html += `<div class="v12-provider-chips">${d.sources.map((s) => `<span>${esc(s.source)} · ${esc(s.count)} registros</span>`).join('')}</div>`;
@@ -544,7 +546,7 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
       if (!arr.length) continue;
       html += `<div class="roster-group"><h3>${group} <span class="muted">${arr.length}</span></h3><div class="v11-roster-list">`;
       for (let pl of arr) {
-        html += `<button class="v11-roster-player" data-v11-player="${esc(pl.id)}" data-v11-team="${esc(d.team)}" data-v11-source="${esc(pl.provider)}">${window.CANCHA_AVATARS.html(d.team, pl, 'roster')}<span class="v11-player-main"><b>${esc(pl.name)}</b><small>${esc(pl.position || '')} · ${esc(pl.country || 'Nacionalidad no publicada')}${pl.birth ? ' · ' + esc(pl.birth) : ''}</small></span><span class="v11-player-extra">#${esc(pl.number ?? '—')}<small>${esc(pl.age ?? '—')} años</small></span><span class="arr">›</span></button>`;
+        html += `<button class="v11-roster-player" data-v11-player="${esc(pl.id)}" data-v11-team="${esc(d.team)}" data-v11-source="${esc(pl.provider)}">${window.CANCHA_AVATARS.html(d.team, pl, 'roster')}<span class="v11-player-main"><b>${esc(pl.name)}</b><small>${esc(window.CANCHA_VIEW.positionName(pl.position) || '')} · ${esc(pl.country || 'Nacionalidad no publicada')}${pl.birth ? ' · ' + esc(pl.birth) : ''}</small></span><span class="v11-player-extra">#${esc(pl.number ?? '—')}<small>${esc(pl.age ?? '—')} años</small></span><span class="arr">›</span></button>`;
       }
       html += '</div></div>';
     }
@@ -577,11 +579,7 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
         el.innerHTML = banner('warning', 'No se encontraron jugadores publicados para este club.');
     } catch (e) {
       if (gen !== routeGeneration) return;
-      if (!saved)
-        el.innerHTML = banner(
-          'warning',
-          'La plantilla no está accesible: ' + esc(e.message) + '. No se inventaron jugadores.',
-        );
+      el.innerHTML = banner('warning', saved ? 'No se pudo actualizar. Se muestra la plantilla guardada.' : 'No se pudo cargar la plantilla. Puedes reintentar con «Actualizar plantilla».') + (saved ? rosterHtml(saved) : '');
     }
   }
   async function loadPlayer(btn) {
@@ -720,7 +718,8 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
     try {
       const d = await get('/api/health');
       if (panel) {
-        panel.innerHTML = `<div class="v11-provider-grid">${[
+        const latest = d.espn?.lastSuccess;
+        panel.innerHTML = `<div class="source-card"><h3>ESPN · partidos y clasificaciones</h3><p>${d.providers?.espn ? 'Consulta automática habilitada' : 'Consulta automática desactivada'}</p><p>${latest ? 'Última respuesta de ESPN · ' + esc(date(latest)) : 'Sin respuesta registrada desde el inicio del servidor.'}</p></div><details class="panel c-options"><summary>Conexiones y credenciales</summary><div class="v11-provider-grid">${[
           ['espn', 'ESPN'],
           ['footballData', 'football-data.org'],
           ['apiFootball', 'API-Football'],
@@ -732,7 +731,7 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
           )
           .join(
             '',
-          )}</div><div class="section-heading"><h2>Datos de temporadas importados</h2></div><div class="v11-provider-grid">${(
+          )}</div></details><details class="panel c-options"><summary>Datos de temporadas importados</summary><div class="v11-provider-grid">${(
           d.soccerdataImports || []
         )
           .filter((x) => x.fixtures || x.standings)
@@ -742,7 +741,7 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
           )
           .join(
             '',
-          )}</div>${!(d.soccerdataImports || []).some((x) => x.fixtures || x.standings) ? '<p class="subdued">No hay importaciones de temporada adicionales.</p>' : ''}<p class="subdued">Importaciones fechadas, no marcadores en vivo. Su disponibilidad y permiso de reutilización dependen de la fuente original.</p>`;
+          )}</div>${!(d.soccerdataImports || []).some((x) => x.fixtures || x.standings) ? '<p class="subdued">No hay importaciones de temporada adicionales.</p>' : ''}<p class="subdued">Importaciones fechadas, no marcadores en vivo. Su disponibilidad y permiso de reutilización dependen de la fuente original.</p></details>`;
       }
     } catch {
       if (panel) panel.innerHTML = banner('warning', 'El servidor no está ejecutándose.');
@@ -784,7 +783,7 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
   }
 
   function playerShell(teamId, playerId) {
-    return `<div class="eyebrow">CANCHA · PERFIL CONECTADO</div><div class="page-head"><div><h1>Ficha del futbolista</h1><p>Información del proveedor y temporada documentada</p></div></div><section class="panel"><div class="panel-title">Registro individual <small>Fecha y procedencia visibles</small></div><div id="v12-player-profile" class="pad"><div class="v11-loading">Consultando el índice de jugadores…</div></div></section>`;
+    return '<div id="v12-player-profile"><h1 class="v11-loading">Consultando futbolista…</h1></div>';
   }
   async function loadPlayerProfile(t, id) {
     let el = document.getElementById('v12-player-profile');
@@ -795,7 +794,8 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
         `/api/player-profile?team=${encodeURIComponent(t)}&id=${encodeURIComponent(id)}`,
       );
       if (gen !== routeGeneration || !document.contains(el)) return;
-      el.innerHTML = `<div class="v12-profile-heading">${window.CANCHA_AVATARS.html(t, p, 'profile')}<div><h2>${esc(p.name)}</h2><span>${esc(team(t)?.name || t)} · ${esc(p.position || 'Posición no registrada')}</span></div></div><div class="v12-profile-facts">${[
+      document.title = p.name + ' · CANCHA';
+      el.innerHTML = `<div class="v12-profile-heading">${window.CANCHA_AVATARS.html(t, p, 'profile')}<div><h1>${esc(p.name)}</h1><span>${esc(team(t)?.name || t)} · ${esc(window.CANCHA_VIEW.positionName(p.position) || 'Posición no registrada')}</span></div></div>${window.CANCHA_INSIGHTS.shell('player', t, id)}<details class="panel c-options"><summary>Datos personales y procedencia</summary><div class="v12-profile-facts">${[
         ['Club registrado', team(t)?.name || t],
         ['Dorsal', p.number ?? 'No publicado'],
         ['Nacionalidad', p.country || 'No publicada'],
@@ -821,11 +821,12 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
         )
         .join(
           '',
-        )}</div>${window.CANCHA_INSIGHTS.shell('player', t, id)}<div class="v12-profile-actions"><a class="btn btn-outline" href="#/equipo/${encodeURIComponent(t)}">Ver ficha del club →</a></div>`;
+        )}</div></details><div class="v12-profile-actions"><a class="btn btn-outline" href="#/equipo/${encodeURIComponent(t)}">Ver ficha del club →</a></div>`;
     } catch (e) {
-      el.innerHTML = banner('warning', 'Ficha no disponible en el índice: ' + esc(e.message));
+      if (gen !== routeGeneration || !el.isConnected) return;
+      el.innerHTML = '<h1>Ficha del futbolista</h1>' + banner('warning', 'Ficha no disponible en el índice. <button class="btn btn-outline" data-retry-page>Reintentar</button>');
     } finally {
-      window.CANCHA_INSIGHTS.afterDraw('perfil', t, [id]);
+      if (gen === routeGeneration && el.isConnected) window.CANCHA_INSIGHTS.afterDraw('perfil', t, [id]);
     }
   }
   let periodic = null,
@@ -859,7 +860,7 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
         candidates
           .map(
             (x) =>
-              `<div class="c-club-standing-top"><strong>${esc(league(l)?.name)} · ${esc(x.name)}</strong><a href="#/liga/${encodeURIComponent(l)}">Ver tabla →</a></div><div class="c-club-standing-grid"><div><span>Posición</span><b>${esc(x.row.position)}º</b></div><div><span>Puntos</span><b>${esc(x.row.pts)}</b><small>${esc(x.row.g ?? '—')} G · ${esc(x.row.e ?? '—')} E · ${esc(x.row.p ?? '—')} P</small></div><div><span>Jugados</span><b>${esc(x.row.pj ?? '—')}</b></div><div><span>Goles · GF / GC</span><b>${esc(x.row.gf ?? '—')}–${esc(x.row.gc ?? '—')}</b><small>DG ${x.row.dg > 0 ? '+' : ''}${esc(x.row.dg ?? '—')}</small></div></div>`,
+              `<div class="c-club-standing-top"><strong>${esc(league(l)?.name)} · ${esc(x.name)}</strong><a href="#/liga/${encodeURIComponent(l)}">Ver tabla →</a></div><div class="c-club-standing-grid"><div><span>Posición</span><b>${esc(x.row.position)}º</b></div><div><span>Puntos</span><b>${esc(x.row.pts)}</b></div><div><span>Jugados</span><b>${esc(x.row.pj ?? '—')}</b></div></div>`,
           )
           .join('') +
         `<p class="c-club-standing-source">${esc(data.source)} · ${esc(date(data.updatedAt || data.retrievedOn))}${data.calculated ? ' · Tabla calculada, no oficial' : ''}${data.snapshot ? ' · Referencia histórica' : ''}${data.stale || data.cache?.state === 'stale' ? ' · Sin actualizar' : ''}</p>`;
@@ -920,7 +921,7 @@ window.CANCHA_BRANDING_DATA={"version":"12.4","date":"2026-10-27","source":"COLE
       refreshLeagueCounter(l);
     }
     if (route === 'equipo' && document.getElementById('rosterTarget')) loadRoster(id);
-    if (route === 'fuentes') loadHealth();
+    if (route === 'fuentes' || route === 'escudos') loadHealth();
     if (route === 'equipo' && document.getElementById('v11-team-current')) loadTeamSummary(id);
     if (route === 'partidos') loadCalendar();
     if (route === 'perfil') loadPlayerProfile(id, params[0]);

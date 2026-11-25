@@ -111,3 +111,75 @@ body[data-route=jugadores] .v12-athlete-grid{display:grid;grid-template-columns:
 
 .c-match-competition { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; }
 .c-match-competition a { text-transform: none; letter-spacing: normal; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Directorios, fichas y controles de la jornada */
+.c-options { margin: 8px 0; }
+.c-options > summary { padding: 10px 12px; color: var(--text); cursor: pointer; font-weight: 600; }
+.c-options > :not(summary) { margin: 8px 12px 12px; }
+.c-options:not(.panel) > summary { padding-inline: 0; }
+.c-options:not(.panel) > .c-directory-filters { margin-inline: 0; }
+[data-route=jugadores] .c-directory-filters { padding: 0; border: 0; margin-bottom: 4px; }
+[data-route=jugadores] .c-directory-filters:has(> label:only-child) { grid-template-columns: 1fr; }
+.v12-athlete { display: grid; grid-template-columns: auto minmax(0,1fr) auto; min-height: 74px; gap: 10px; }
+#c-team-directory, #c-player-directory, .c-round-panel { scroll-margin-top: 80px; }
+.v12-profile-heading { margin: 0 0 12px; gap: 12px; }
+.v12-profile-heading h1 { margin: 0; line-height: 1.15; }
+.c-club-standing-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.c-club-standing-grid > div { padding: 3px 8px; }
+.c-club-standing-source { margin-bottom: 0; }
+.c-club-summary-matches .c-club-tools { margin: 0; padding: 0; border: 0; }
+.c-club-summary-matches .c-club-tools label { display: flex; align-items: center; gap: 8px; }
+.c-match-meta { display:flex; flex-wrap:wrap; align-items:baseline; gap:0 16px; max-width:920px; margin:4px auto 8px; }
+.c-match-meta .v13-info-strip { margin:0; padding:4px 0; flex:1 1 auto; }
+.c-match-meta .c-sync-status { padding:4px 0; min-height:0; }
+.m16-refresh-warning:empty { display:none; }
+.c-period { margin:0; padding:6px 12px; background:var(--panel2); color:var(--muted); font-size:12px; }
+.c-segment { display:flex; gap:4px; margin:0 0 8px; }
+.c-segment button { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; min-width:0; min-height:40px; padding:6px; border:1px solid var(--line); background:var(--panel); color:var(--muted); border-radius:6px; }
+.c-segment button[aria-pressed=true] { color:var(--text); background:var(--panel2); border-color:var(--lime); }
+.c-segment img { width:24px; height:24px; object-fit:contain; }
+.c-lineup-picker, .c-round-jump { display:none; }
+#sideLeagues a[href="#/liga/eng"] img { background:#c6aadc; border-radius:5px; padding:2px; }
+@media (min-width:1240px) and (max-width:1300px) {
+ .c-league-layout:has(.c-league-rankings) { grid-template-columns:minmax(0,1fr) 230px; grid-template-areas:'table context' 'rankings rankings'; }
+ .c-league-context { grid-template-columns:1fr; }
+}
+@media (max-width:1239px) { .c-round-jump { display:inline-flex; margin:0 0 8px; } }
+@media (max-width:760px) {
+ .c-lineup-picker { display:flex; }
+ #v13-lineups[data-side="0"] [data-lineup-side="1"], #v13-lineups[data-side="1"] [data-lineup-side="0"] { display:none; }
+ .m16-match-overview.c-has-goals > :last-child { order:-1; }
+ .m16-featured .m16-featured-body { min-height:108px; padding:10px 0; }
+ .m16-featured-club, .m16-featured-club:last-child { gap:6px; }
+ .m16-featured .m16-featured-club img, .m16-featured .m16-featured-club .initial-mark { width:46px; height:46px; }
+ .m16-featured-bottom { padding-top:7px; }
+ .c-club-standing .pad { padding:8px 12px; }
+ .c-club-standing-grid { margin:4px 0; }
+ .c-club-standing-grid b { font-size:20px; }
+ .c-club-summary-matches { row-gap:8px; }
+ .c-club-coverage { margin:4px 0; }
+ .v12-athlete-grid { gap:6px; }
+ [data-route=competiciones] .league-card, [data-route=equipos] .team-tile { min-height:56px; padding:8px 12px; gap:10px; }
+ [data-route=competiciones] .league-card img { height:32px; width:32px; }
+ [data-route=partidos] .c-calendar-ranges, [data-route=partidos] .c-calendar-secondary { margin-block:6px; }
+ .v18-insight-toolbar [data-v18-message]:empty { display:none; }
+}
+.c-club-layout--summary .c-club-standing-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin:4px 0; }
+.c-club-layout--summary .c-club-standing-grid > div { padding:3px 8px; }
+.c-club-standing-top { margin-bottom:4px; }
+.c-search-result { display:flex; align-items:center; justify-content:space-between; gap:8px; border-bottom:1px solid var(--line); }
+.c-search-result a:first-child { display:grid; flex:1; gap:2px; }
+.c-search-result .c-history-link { font-size:12px; }
+#c-search-historical [hidden], #c-search-historical[hidden] { display:none; }
+.c-classification .c-table-phase { padding-block:8px; }
+.c-classification .c-table-source { padding-block:2px; }
+@media (max-width:760px) {
+ .c-club-layout--summary .c-club-standing-top { flex-direction:row; align-items:center; }
+ .c-club-layout--summary .c-club-standing-grid b { font-size:20px; }
+ .c-club-layout--summary .c-club-standing-grid > div { min-height:0; }
+ .c-club-layout--summary .c-club-fixture-panel > .panel-title { padding-block:8px; }
+ body[data-route=jugadores] .v12-athlete-grid { gap:6px; }
+}
+.c-bench-empty { display:none; }
+#c-roster-asof { display:block; margin-top:3px; color:var(--muted); font-weight:400; }
+@media (max-width:760px) { .v17-bench .c-bench-empty { display:block; } }

@@ -131,5 +131,37 @@ try{
  await run('Las cifras y los goles se ajustan a 320 px y escapan nombres externos',async p=>{
   await p.setViewportSize({width:320,height:844});await p.route('**/api/match-detail?*',r=>r.fulfill({json:{...game('2026-11-03'),status:'FINAL',homeName:'Nombre de equipo local muy largo',awayName:'Paris Saint-Germain',stats:[{name:'Posesión (%)',home:29.4,away:70.6}],lineups:[],events:[{id:'x',type:'Goal',detail:'Gol',teamId:'chelsea',team:'Paris Saint-Germain',minute:'90+10',scorer:'Autor <img src=x onerror=alert(1)>',assist:'Asistente con apellido largo',scoreAfter:{home:0,away:6}}]}}));await p.goto(base+'evento/eng/ESPN/901');await p.locator('#c-match-moments .is-goal').waitFor();assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.ok(await p.locator('#c-match-moments .is-goal .v13-event-minute').evaluate(el=>el.getBoundingClientRect().right<=el.nextElementSibling.getBoundingClientRect().left));assert.equal(await p.locator('.c-event-body img').count(),0);assert.match(await p.locator('.c-event-player').first().innerText(),/<img src=x/);await p.locator('[data-moment-filter="goals"]').click();assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  });
+ await run('La alineación móvil recupera equipo y jugador al volver del perfil', async p => {
+  await p.setViewportSize({width:390,height:844});
+  const detail = {...game('2026-11-03'), status:'FINAL', events:[], stats:[], lineups:[
+   {team:'Arsenal',starting:[{id:'10',name:'Jugador local'}]},
+   {team:'Chelsea',starting:[{id:'20',name:'Portero visitante',position:'Goalkeeper'}]}
+  ]};
+  await p.route('**/api/match-detail?*',r=>r.fulfill({json:detail}));
+  await p.route('**/api/player-profile?*',r=>r.fulfill({json:{id:'20',name:'Portero visitante',position:'Goalkeeper'}}));
+  await p.goto(base+'evento/eng/ESPN/901');
+  await p.locator('[role=tab][data-match-tab=alineaciones]').click();
+  await p.locator('[data-pick-side="1"]').click();
+  const player = p.locator('#v13-lineups [data-v13-player]:visible');
+  assert.equal(await player.count(),1);
+  await player.click();
+  await p.locator('dialog[open] a[href*="/perfil/"]').click();
+  await p.locator('.v12-profile-heading h1').waitFor();
+  assert.match(await p.locator('.v12-profile-heading').innerText(),/Portero/);
+  await p.goBack();
+  await p.locator('dialog[open] .v13-side-heading').waitFor();
+  assert.match(await p.locator('dialog[open] .v13-side-heading').innerText(),/Portero visitante/);
+  assert.equal(await p.locator('[data-pick-side="1"]').getAttribute('aria-pressed'),'true');
+ });
+ await run('El historial conserva el tiempo añadido dentro de cada mitad', async p => {
+  const events = ['45+3','46','90+8','105+1'].map((minute,i)=>({id:String(i),minute,type:'Card',team:'Arsenal',detail:'Amarilla'}));
+  await p.route('**/api/match-detail?*',r=>r.fulfill({json:{...game('2026-11-03'),status:'FINAL',events,lineups:[],stats:[]}}));
+  await p.goto(base+'evento/eng/ESPN/901');
+  await p.locator('[role=tab][data-match-tab=historial]').click();
+  assert.deepEqual(await p.locator('.c-period').allTextContents(),['Primera parte de la prórroga','Segundo tiempo','Primer tiempo']);
+  await p.locator('[data-history-view=previous]').click();
+  assert.ok(!await p.locator('[data-history-content=match]').isVisible());
+  assert.ok(await p.locator('[data-history-content=previous]').isVisible());
+ });
 }finally{await b.close()}
 console.log(`${report.filter(r=>r.pass).length}/${report.length} comprobaciones aprobadas`);if(report.some(r=>!r.pass))process.exitCode=1;
