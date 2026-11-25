@@ -112,6 +112,8 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
     clock: null,
     sync: null,
     momentFilter: 'all',
+    lineupSide: 0,
+    historyView: 'match',
   };
   function metricsFor(p) {
     const s = p?.statistics?.[0] || p?.stats || {};
@@ -321,7 +323,7 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
   function benchHTML(data, offset) {
     const players = benchPlayers(data);
     return players.length
-      ? `<section class="panel v17-bench"><div class="panel-title">Suplentes publicados</div><div class="v17-bench-list">${players.map((p, i) => `<button class="btn btn-outline" data-v13-player="${offset + i}">${esc(p.number ?? '—')} · ${esc(p.name)} <small>${esc(p.teamName)}${p.subbedIn ? ' · Ingresó' : ''}</small></button>`).join('')}</div></section>`
+      ? `<section class="panel v17-bench"><div class="panel-title">Suplentes publicados</div><div class="v17-bench-list">${players.map((p, i) => `<button class="btn btn-outline" data-lineup-side="${p.side}" data-v13-player="${offset + i}">${esc(p.number ?? '—')} · ${esc(p.name)} <small>${esc(p.teamName)}${p.subbedIn ? ' · Ingresó' : ''}</small></button>`).join('')}${[0,1].filter(side => !players.some(p => p.side === side)).map(side => `<p class="c-bench-empty v13-quiet" data-lineup-side="${side}">Sin suplentes publicados para este equipo.</p>`).join('')}</div></section>`
       : '';
   }
   function pitch(data, players) {
@@ -341,15 +343,19 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
       return `<div class="v13-side-empty"><span>♙</span><strong>Explora la alineación</strong><p>Selecciona una camiseta para consultar los datos de ese futbolista en el partido.</p></div>`;
     const p = players[index],
       metrics = metricsFor(p),
-      hasReal = Boolean(p.statistics?.length);
-    return `<div class="v13-side-heading">${window.CANCHA_AVATARS.html(p.side === 0 ? data.home : data.away, p, 'card')}<div><strong>${esc(p.name)}</strong><small>${esc(p.teamName)} · ${esc(p.position || p.pos || 'Posición no indicada')}</small></div></div><div class="v13-metrics">${
-      [
-        ['Participación', [0, 1]],
-        ['Ataque', [2, 3, 4, 5]],
-        ['Pases', [6, 7]],
-        ['Defensa', [8, 9, 10, 11, 14]],
-        ['Disciplina', [12, 13, 15, 16]],
-      ]
+      hasReal = Boolean(p.statistics?.length),
+      role = norm(window.CANCHA_VIEW.positionName(p.position || p.pos)),
+      groups = [
+        ['Participación', [0, 1]], ['Ataque', [2, 3, 4, 5]],
+        ['Pases', [6, 7]], ['Defensa', [9, 10, 11]], ['Regates', [8]],
+        ['Portería', [14]], ['Disciplina', [12, 13, 15, 16]],
+      ];
+    const priority = /porter|arquero|^por$/.test(role) ? 'Portería' :
+      /defens|^def$/.test(role) ? 'Defensa' : /medio|centrocamp|^med$/.test(role) ? 'Pases' : 'Ataque';
+    const [primaryGroup] = groups.splice(groups.findIndex(([label]) => label === priority), 1);
+    groups.splice(1, 0, primaryGroup);
+    return `<div class="v13-side-heading">${window.CANCHA_AVATARS.html(p.side === 0 ? data.home : data.away, p, 'card')}<div><strong>${esc(p.name)}</strong><small>${esc(p.teamName)} · ${esc(window.CANCHA_VIEW.positionName(p.position || p.pos) || 'Posición no indicada')}</small></div></div><div class="v13-metrics">${
+      groups
         .map(([name, ids]) => {
           const fields = ids.map((i) => metrics[i]).filter(([, value]) => value !== '—');
           return fields.length
@@ -414,7 +420,14 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
       return { id: data.away, name: data.awayName, side: 'away' };
     return { id: null, name: e.team || 'Equipo sin confirmar', side: 'unknown' };
   }
-  function eventsHTML(data, limit = null, { goalsOnly = false } = {}) {
+  function periodLabel(event) {
+    if (event.shootout) return 'Tanda de penales';
+    const minute = /^(\d+)/.exec(String(event.minute || ''));
+    if (!minute) return '';
+    const n = Number(minute[1]);
+    return n <= 45 ? 'Primer tiempo' : n <= 90 ? 'Segundo tiempo' : n <= 105 ? 'Primera parte de la prórroga' : 'Segunda parte de la prórroga';
+  }
+  function eventsHTML(data, limit = null, { goalsOnly = false, periods = false } = {}) {
     let rows = (data.events || []).filter((e) => !goalsOnly || (goalEvent(e) && !e.shootout));
     rows = limit ? rows.slice(-limit).reverse() : rows.slice().reverse();
     return rows.length
@@ -437,7 +450,9 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
                 score.home >= 0 &&
                 Number.isInteger(score?.away) &&
                 score.away >= 0;
-            return `<div class="v13-event c-match-event ${goal ? 'is-goal' : ''} is-${club.side}" data-key="event-${esc(e.id || e.minute + '-' + e.type + '-' + i)}" data-goal="${goal}"><b class="v13-event-minute">${minute}</b><span class="c-event-icon" aria-hidden="true">${club.id ? icon(club.id) : eventIcon(e)}</span><div class="c-event-body"><div class="c-event-heading"><span class="c-event-kind">${goal ? '⚽ ' + esc(e.detail || 'Gol') : eventIcon(e) + ' ' + esc(e.detail || e.type || 'Evento')}</span>${club.id ? `<a href="#/equipo/${esc(club.id)}">${esc(club.name)}</a>` : `<span>${esc(club.name)}</span>`}</div><strong class="c-event-player">${esc(goal ? scorer || 'Autor sin identificar' : e.player || 'Jugador no publicado')}</strong>${goal && e.assist ? `<span class="c-event-detail">Asistencia: ${esc(e.assist)}</span>` : goal && !scorer && people ? `<span class="c-event-detail">Participantes: ${esc(people)}</span>` : ''}</div>${hasScore ? `<div class="c-event-score" aria-label="Marcador: ${esc(data.homeName)} ${score.home}, ${esc(data.awayName)} ${score.away}" title="${esc(data.homeName)} ${score.home} – ${score.away} ${esc(data.awayName)}"><small>Marcador</small><span><b class="c-stat-home">${score.home}</b><i>–</i><b class="c-stat-away">${score.away}</b></span></div>` : ''}</div>`;
+            const period = periods && periodLabel(e);
+            const divider = period && (!i || periodLabel(rows[i-1]) !== period) ? `<h3 class="c-period">${period}</h3>` : '';
+            return `${divider}<div class="v13-event c-match-event ${goal ? 'is-goal' : ''} is-${club.side}" data-key="event-${esc(e.id || e.minute + '-' + e.type + '-' + i)}" data-goal="${goal}"><b class="v13-event-minute">${minute}</b><span class="c-event-icon" aria-hidden="true">${club.id ? icon(club.id) : eventIcon(e)}</span><div class="c-event-body"><div class="c-event-heading"><span class="c-event-kind">${goal ? '⚽ ' + esc(e.detail || 'Gol') : eventIcon(e) + ' ' + esc(e.detail || e.type || 'Evento')}</span>${club.id ? `<a href="#/equipo/${esc(club.id)}">${esc(club.name)}</a>` : `<span>${esc(club.name)}</span>`}</div><strong class="c-event-player">${esc(goal ? scorer || 'Autor sin identificar' : e.player || 'Jugador no publicado')}</strong>${goal && e.assist ? `<span class="c-event-detail">Asistencia: ${esc(e.assist)}</span>` : goal && !scorer && people ? `<span class="c-event-detail">Participantes: ${esc(people)}</span>` : ''}</div>${hasScore ? `<div class="c-event-score" aria-label="Marcador: ${esc(data.homeName)} ${score.home}, ${esc(data.awayName)} ${score.away}" title="${esc(data.homeName)} ${score.home} – ${score.away} ${esc(data.awayName)}"><small>Marcador</small><span><b class="c-stat-home">${score.home}</b><i>–</i><b class="c-stat-away">${score.away}</b></span></div>` : ''}</div>`;
           })
           .join('')
       : `<p class="v13-quiet">${goalsOnly ? 'No hay goles publicados para este encuentro.' : 'No hay cronología publicada para este encuentro.'}</p>`;
@@ -449,10 +464,11 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
   }
 
   function rosterList(data, players) {
-    return `<div class="m16-lineup-list">${[data.homeName, data.awayName]
+    const sides = [data.homeName, data.awayName];
+    return `<div class="c-lineup-picker c-segment" role="group" aria-label="Equipo de la alineación">${sides.map((name, side) => `<button type="button" data-pick-side="${side}" aria-pressed="${side === state.lineupSide}">${icon(side ? data.away : data.home)}${esc(name)}</button>`).join('')}</div><div class="m16-lineup-list">${[data.homeName, data.awayName]
       .map(
         (name, side) =>
-          `<section class="panel"><div class="panel-title"><span>${esc(name)}</span><small>${esc(data.lineups?.find((l) => norm(l.team) === norm(name))?.formation || 'Formación no publicada')}</small></div>${
+          `<section class="panel" data-lineup-side="${side}"><div class="panel-title"><span>${esc(name)}</span><small>${esc(data.lineups?.find((l) => norm(l.team) === norm(name))?.formation || 'Formación no publicada')}</small></div>${
             players
               .filter((p) => p.side === side)
               .map(
@@ -470,7 +486,9 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
       live = data.status === 'EN VIVO' && !stale;
     if (data.status === 'PROGRAMADO')
       return `<div class="c-pregame"><section class="panel"><div class="panel-title">Antes del partido</div><div class="pad"><p><b>${esc(dateShort(data.date))}</b></p><p>Estadio: ${esc(data.stadium || 'por confirmar')}</p><p>El marcador y los eventos se actualizarán cuando la fuente publique el inicio.</p></div></section><section class="panel"><div class="panel-title">Alineaciones</div><div class="pad"><p>${has ? 'Hay futbolistas publicados para este encuentro.' : 'La fuente todavía no publica el once inicial. Las formaciones suelen aparecer cerca del inicio.'}</p>${has ? '<button class="btn btn-outline" data-match-tab="alineaciones">Ver alineaciones →</button>' : ''}</div></section></div>`;
-    return `<div class="c-match-phase"><b>${live ? 'En juego · ' + esc(label) : esc(label)}</b> · ${stale ? 'Última copia guardada con su fecha original.' : live ? 'Modo rápido · consultas cada 10 s; la fuente puede publicar con demora.' : data.status === 'FINAL' ? 'Resultado y datos publicados por la fuente.' : 'Estado informado por la fuente; consulta los cambios de programación.'}</div><div class="m16-match-overview"><section class="panel"><div class="panel-title">El partido en cifras <button class="m16-text-button" data-match-tab="estadisticas">Ver todas →</button></div>${statisticsHTML(data, 5)}</section><section class="panel"><div class="panel-title">Últimos momentos <button class="m16-text-button" data-match-tab="historial">Ver cronología →</button></div><div id="c-match-moments">${momentsHTML(data)}</div></section></div>`;
+    const withGoals = (data.events || []).some(e => goalEvent(e) && !e.shootout);
+    const phase = stale || (!live && data.status !== 'FINAL') ? `<p class="c-match-phase">${esc(label)} · ${stale ? 'Última copia guardada.' : 'Estado informado por la fuente.'}</p>` : '';
+    return `${phase}<div class="m16-match-overview ${withGoals ? 'c-has-goals' : ''}"><section class="panel"><div class="panel-title">El partido en cifras <button class="m16-text-button" data-match-tab="estadisticas">Ver todas →</button></div>${statisticsHTML(data, 5)}</section><section class="panel"><div class="panel-title">Últimos momentos <button class="m16-text-button" data-match-tab="historial">Ver cronología →</button></div><div id="c-match-moments">${momentsHTML(data)}</div></section></div>`;
   }
   let scoreObserver = null;
   function stickyScore() {
@@ -491,10 +509,6 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
   function matchHTML(data, { historyHTML = '' } = {}) {
     const players = collectPlayers(data),
       has = players.length > 0;
-    if (state.detail?.id !== data.id || state.detail?.league !== data.league) {
-      state.tab = 'resumen';
-      state.momentFilter = 'all';
-    }
     state.detail = data;
     const name = league(data.league)?.name || data.leagueName || 'Partido',
       score = data.hs != null && data.as != null ? data.hs + ' – ' + data.as : '– : –',
@@ -508,15 +522,15 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
     ];
     const active = state.tab || 'resumen',
       panel = (tab, id, html) =>
-        `<div id="${id}" class="m16-match-panel" role="tabpanel" aria-labelledby="m16-tab-${tab}" ${active !== tab ? 'hidden' : ''}>${html}</div>`;
+        `<div id="${id}" class="m16-match-panel" ${tab === 'alineaciones' ? `data-side="${state.lineupSide}"` : ''} role="tabpanel" aria-labelledby="m16-tab-${tab}" ${active !== tab ? 'hidden' : ''}>${html}</div>`;
     return `<div class="eyebrow c-match-competition"><span>${esc(name)} · CENTRO DEL PARTIDO</span>${league(data.league) ? `<a href="#/liga/${encodeURIComponent(data.league)}?vista=tabla">Ver clasificación →</a>` : ''}</div><h1 class="v13-sr-only">${esc(data.homeName)} contra ${esc(data.awayName)}</h1><div class="c-match-sticky" aria-hidden="true"><span>${icon(data.home)}<strong>${esc(data.homeName)}</strong></span><b>${esc(score)}<small>${esc(window.CANCHA_DATES.statusLabel(data))}</small></b><span>${icon(data.away)}<strong>${esc(data.awayName)}</strong></span></div><div class="v13-match-header"><a class="v13-score-team" href="#/equipo/${esc(data.home)}">${icon(data.home)}<strong>${esc(data.homeName)}</strong></a><div class="v13-main-score"><b>${esc(score)}</b><span>${esc(window.CANCHA_DATES.statusLabel(data))}</span><small>${esc(dateShort(data.date))}</small></div><a class="v13-score-team" href="#/equipo/${esc(data.away)}">${icon(data.away)}<strong>${esc(data.awayName)}</strong></a></div>
- <details class="v13-info-strip m16-provenance"><summary>${esc(data.source || data.scoreSource || 'Catálogo')} · ${esc(asof)}</summary><p>${esc(data.note || 'Datos de la fuente indicada para este encuentro.')}${data.lineupWarning ? ' ' + esc(data.lineupWarning) : ''}</p></details><div class="m16-refresh-warning" role="status">${data.stale || data.cache?.state === 'stale' ? 'No se pudo actualizar. Se conserva la última copia con su fecha.' : ''}</div>
- ${data.provider === 'ESPN' ? '<div class="c-sync-status" id="c-sync-status" role="status" aria-live="off">Conectando con la fuente…</div>' : ''}
+ <div class="c-match-meta"><details class="v13-info-strip m16-provenance"><summary>${data.provider === 'ESPN' ? '<span class="c-sync-status" id="c-sync-status" aria-live="off">ESPN · Conectando…</span>' : esc(data.source || data.scoreSource || 'Catálogo') + ' · ' + esc(asof)}</summary><p data-match-asof>Datos de ${esc(data.source || data.scoreSource || 'Catálogo')} · ${esc(asof)}</p><p>${esc(data.note || 'Datos de la fuente indicada para este encuentro.')}${data.lineupWarning ? ' ' + esc(data.lineupWarning) : ''}</p></details></div><div class="m16-refresh-warning" role="status">${data.stale || data.cache?.state === 'stale' ? 'No se pudo actualizar. Se conserva la última copia con su fecha.' : ''}</div>
  <div class="v13-match-tabs" role="tablist" aria-label="Información del partido">${tabs.map(([tab, label, id]) => `<button type="button" role="tab" id="m16-tab-${tab}" data-match-tab="${tab}" data-v14-jump="${id}" aria-controls="${id}" aria-selected="${active === tab}" tabindex="${active === tab ? 0 : -1}">${label}${tab === 'alineaciones' && has ? ` <small>${players.length}</small>` : ''}</button>`).join('')}</div>
  ${panel('resumen', 'm16-match-summary', summaryHTML(data, has))}
  ${panel('alineaciones', 'v13-lineups', `<h2 class="v13-section-h">Alineaciones <small>${has ? players.length + ' titulares publicados' : 'Sin once inicial disponible'}</small></h2>${data.lineupWarning ? `<p class="m16-warning">${esc(data.lineupWarning)}</p>` : ''}${[...players, ...benchPlayers(data)].some((player) => metricsFor(player).some(([, value]) => value !== '—')) ? '<p class="m16-caption">Toca un jugador para ver sus cifras del partido.</p>' : ''}<div class="v13-match-grid"><div class="v13-pitch-wrap">${pitch(data, players)}</div><aside class="v13-player-panel" id="v13-side-panel">${playerCard(data, players, null)}</aside></div>${rosterList(data, players)}${benchHTML(data, players.length)}`)}
  ${panel('estadisticas', 'v13-stats', `<section class="panel"><div class="panel-title">Estadísticas del encuentro <small>${esc(data.homeName)} / ${esc(data.awayName)}</small></div>${statisticsHTML(data)}</section>`)}
- ${panel('historial', 'v13-events', `<section class="panel"><div class="panel-title">Cronología <small>${(data.events || []).length} eventos publicados</small></div>${eventsHTML(data)}</section>${relatedMatchHTML(data)}${data.league ? `<section class="panel" data-v18-match-history data-league="${esc(data.league)}" data-home="${esc(data.home)}" data-away="${esc(data.away)}" data-id="${esc(data.id)}" data-date="${esc(data.date)}">${historyHTML}</section>` : ''}`)}
+ ${panel('historial', 'v13-events', `${data.league ? `<div class="c-segment" role="group" aria-label="Contenido del historial">${[['match','Este partido'],['previous','Duelos anteriores']].map(([id,label]) => `<button type="button" data-history-view="${id}" aria-pressed="${state.historyView === id}">${label}</button>`).join('')}</div>` : ''}<section class="panel" data-history-content="match" ${state.historyView !== 'match' ? 'hidden' : ''}><div class="panel-title">Cronología <small>${(data.events || []).length} eventos publicados</small></div>${eventsHTML(data, null, {periods:true})}</section>${data.league ? `<section class="panel" data-history-content="previous" ${state.historyView !== 'previous' ? 'hidden' : ''} data-v18-match-history data-league="${esc(data.league)}" data-home="${esc(data.home)}" data-away="${esc(data.away)}" data-id="${esc(data.id)}" data-date="${esc(data.date)}">${historyHTML || '<p class="v13-quiet">Consultando duelos anteriores…</p>'}</section>` : ''}`)}
+
  ${panel(
    'informacion',
    'v13-match-facts',
@@ -529,7 +543,7 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
      ['Alineaciones', has ? 'Disponibles / parciales' : 'No publicadas'],
    ]
      .map(([k, v]) => `<div class="keyrow"><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`)
-     .join('')}</div></section>`,
+     .join('')}</div></section>${relatedMatchHTML(data)}`,
  )}
  `;
   }
@@ -610,6 +624,8 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
             el.classList.toggle('selected', String(players[i]?.playerId) === String(selected)),
           );
         document.getElementById('v13-side-panel').innerHTML = playerCard(d, players, index);
+        if (reopenSheet && window.matchMedia('(max-width:760px)').matches) playerSheet(d, players, index);
+        reopenSheet = false;
         if (sheet?.open)
           sheet.querySelector('.m16-sheet-body').innerHTML = playerCard(d, players, index);
       }
@@ -641,7 +657,7 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
       late = !terminal && age > Math.max(30, (s.intervalSeconds || 10) * 2 + 10);
     el.classList.toggle('is-stale', !!s.stale || late);
     if (terminal) {
-      el.textContent = 'Partido finalizado · Última consulta ' + dateShort(s.checkedAt) + ' · ESPN';
+      el.textContent = 'ESPN · Partido finalizado · Consultado ' + window.CANCHA_DATES.format(s.checkedAt);
       return;
     }
     el.textContent = `${s.stale ? 'Sin actualizar · ' : late ? 'Comprobación pendiente · ' : ''}Última consulta hace ${Number.isFinite(age) ? age : 0} s${state.detail?.status === 'FINAL' && !s.stale ? ' · Partido finalizado' : s.stale ? ' · Reintentando' : s.intervalSeconds ? ' · Consulta cada ' + s.intervalSeconds + ' s' : ''} · ESPN puede publicar con demora`;
@@ -656,7 +672,7 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
       Date.parse(sync.sourceUpdatedAt) >= Date.parse(state.detail.updatedAt || '')
     ) {
       state.detail.updatedAt = sync.sourceUpdatedAt;
-      const source = document.querySelector('.m16-provenance summary');
+      const source = document.querySelector('[data-match-asof]');
       if (source)
         source.textContent =
           (state.detail.source || 'ESPN') + ' · ' + dateShort(sync.sourceUpdatedAt);
@@ -826,7 +842,7 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
     if (!el) return;
     const included = (team(clubFixtures.id)?.leagues || []).map(league).filter(Boolean),
       providers = [...new Set(clubFixtures.datasets.map((d) => d.source || 'Archivo local'))];
-    el.innerHTML = `<div class="c-club-tools"><div><strong>Calendario del club</strong><small>Horarios de Perú · resultados disponibles en el archivo</small></div><label>Competición<select id="c-club-competition" aria-label="Competición de los partidos del club"><option value="todos">Todas las competiciones</option>${included.map((l) => `<option value="${esc(l.id)}" ${clubFixtures.league === l.id ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label></div><details class="c-club-coverage"><summary>Fuentes y actualización · ${esc(providers.join(' · '))}${clubFixtures.failed ? ' · Respuesta parcial' : ''}</summary>${clubFixtures.datasets.map((d) => `<p><b>${esc(league(d.league)?.name)}</b> · ${esc(d.source || 'Archivo local')} · ${esc(d.updatedAt ? dateShort(d.updatedAt) : 'Referencia histórica')}${d.stale || d.cache?.state === 'stale' ? ' · Sin actualizar' : ''}</p>`).join('')}<p>${clubFixtures.failed ? 'Algunas fuentes no respondieron. ' : ''}El historial muestra los resultados disponibles; puede ser parcial. No representa necesariamente todos los encuentros jugados por el club.</p></details>`;
+    el.innerHTML = `<div class="c-club-tools">${el.dataset.clubView === 'resumen' ? '' : '<strong>Calendario del club</strong>'}<label>Competición<select id="c-club-competition" aria-label="Competición de los partidos del club"><option value="todos">Todas las competiciones</option>${included.map((l) => `<option value="${esc(l.id)}" ${clubFixtures.league === l.id ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label></div><details class="c-club-coverage"><summary>Fuentes y actualización · ${esc(providers.join(' · '))}${clubFixtures.failed ? ' · Respuesta parcial' : ''}</summary>${clubFixtures.datasets.map((d) => `<p><b>${esc(league(d.league)?.name)}</b> · ${esc(d.source || 'Archivo local')} · ${esc(d.updatedAt ? dateShort(d.updatedAt) : 'Referencia histórica')}${d.stale || d.cache?.state === 'stale' ? ' · Sin actualizar' : ''}</p>`).join('')}<p>${clubFixtures.failed ? 'Algunas fuentes no respondieron. ' : ''}El historial muestra los resultados disponibles; puede ser parcial. No representa necesariamente todos los encuentros jugados por el club.</p></details>`;
   }
   async function loadTeamFixtures(id) {
     const box = document.getElementById('v13-team-schedule');
@@ -890,17 +906,26 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
       ?.focus({ preventScroll: true });
   });
 
+  let reopenSheet = false;
+  function prepare(saved) {
+    state.tab = saved?.tab || 'resumen';
+    state.momentFilter = saved?.momentFilter || 'all';
+    state.selected = saved?.selected ?? null;
+    state.lineupSide = saved?.lineupSide ?? 0;
+    state.historyView = saved?.historyView || 'match';
+    reopenSheet = !!saved?.sheetOpen;
+  }
+  function navigationState() {
+    return {tab:state.tab, momentFilter:state.momentFilter, selected:state.selected, lineupSide:state.lineupSide, historyView:state.historyView, sheetOpen:!!sheet?.open};
+  }
   function afterDraw(route, id, params) {
     state.connection?.();
     state.connection = null;
     clearInterval(state.clock);
     state.clock = null;
     state.sync = null;
-    state.momentFilter = 'all';
     scoreObserver?.disconnect();
     clubFixtures.token++;
-    state.selected = null;
-    state.tab = 'resumen';
     state.token++;
     if (sheet?.open) sheet.close();
     if (state.poll) {
@@ -921,13 +946,37 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
       } else hydrateRemote(id, params[0], params[1]);
     }
 
-    if (['partido', 'encuentro'].includes(route)) stickyScore();
+    if (['partido', 'encuentro'].includes(route)) {
+      stickyScore();
+      const players = state.detail ? allPlayers(state.detail) : [];
+      const index = players.findIndex(p => state.selected != null && p.playerId === state.selected);
+      if (index >= 0) {
+        document.getElementById('v13-side-panel').innerHTML = playerCard(state.detail, players, index);
+        document.querySelector(`.v13-player[data-v13-player="${index}"]`)?.classList.add('selected');
+        if (reopenSheet && window.matchMedia('(max-width:760px)').matches) playerSheet(state.detail, players, index);
+      }
+      reopenSheet = false;
+    }
     if (route === 'equipo') {
       loadClub(id);
       if (document.getElementById('v13-team-schedule')) loadTeamFixtures(id);
     }
   }
   document.addEventListener('click', (e) => {
+    const side = e.target.closest('[data-pick-side]');
+    if (side) {
+      state.lineupSide = Number(side.dataset.pickSide);
+      document.getElementById('v13-lineups').dataset.side = state.lineupSide;
+      document.querySelectorAll('[data-pick-side]').forEach(b => b.setAttribute('aria-pressed', b === side));
+      return;
+    }
+    const historyButton = e.target.closest('[data-history-view]');
+    if (historyButton) {
+      state.historyView = historyButton.dataset.historyView;
+      document.querySelectorAll('[data-history-content]').forEach(panel => panel.hidden = panel.dataset.historyContent !== state.historyView);
+      document.querySelectorAll('[data-history-view]').forEach(b => b.setAttribute('aria-pressed', b === historyButton));
+      return;
+    }
     const filter = e.target.closest('[data-moment-filter]');
     if (filter && state.detail) {
       state.momentFilter = filter.dataset.momentFilter;
@@ -978,5 +1027,7 @@ window.CANCHA_CLUB_FACTS={"paris-saint-germain":{"city":"París","stadium":"Parc
     afterDraw,
     matchHTML,
     knownMatch,
+    prepare,
+    navigationState,
   };
 })();
